@@ -24,7 +24,6 @@
         .stagger-anim { opacity: 0; animation: slideInRight 0.3s ease forwards; }
 
         /* ================= MOBA LOBBY UI ================= */
-        /* Cấu trúc sảnh trong suốt, đẩy các nút ra viền */
         #moba-lobby { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
         
         .moba-element { pointer-events: auto; position: absolute; }
@@ -57,9 +56,6 @@
         #moba-bottom-center { bottom: 50px; left: 50%; transform: translateX(-50%); }
         .play-btn { background: rgba(0, 0, 0, 0.7); border: 2px solid #00ffcc; color: #fff; font-family: 'Cinzel', serif; font-size: 2.5rem; padding: 20px 80px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 6px; border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,204,0.2), inset 0 0 20px rgba(0,255,204,0.1); }
         .play-btn:hover { background: rgba(0, 255, 204, 0.2); text-shadow: 0 0 20px #fff; box-shadow: 0 0 50px rgba(0,255,204,0.6), inset 0 0 30px rgba(0,255,204,0.4); transform: scale(1.05) translateY(-5px); }
-
-        /* Tiêu đề GAME ngay trên nút PLAY */
-        #moba-title { position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%); font-size: 5rem; letter-spacing: 12px; margin: 0; font-weight: 700; animation: powerFlicker 5s infinite; text-align: center; font-family: 'Cinzel', serif;}
 
         /* ================= CÁC HỘP THOẠI (BOXES) ================= */
         .menu-box { background: rgba(10, 10, 15, 0.85); border: 1px solid rgba(0, 255, 204, 0.3); padding: 40px 60px; border-radius: 12px; box-shadow: 0 0 40px rgba(0, 255, 204, 0.1), inset 0 0 20px rgba(0,0,0,0.8); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; position: relative; }
@@ -127,8 +123,9 @@
         #wave-progress-bar { width: 0%; height: 100%; background: #fff; transition: width 0.3s ease-out; box-shadow: 0 0 10px #fff;}
 
         #right-hud { width: 30%; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-        #ingame-gold-display { font-size: 2rem; font-weight: bold; color: #ffcc00; text-shadow: 0 0 10px #ffcc00; display: flex; align-items: center; gap: 5px;}
-        #ingame-gold-display::before { content: '✦'; font-size: 2.2rem; }
+        .ingame-currency { font-size: 1.8rem; font-weight: bold; display: flex; align-items: center; gap: 5px;}
+        #ig-gold { color: #ffcc00; text-shadow: 0 0 10px #ffcc00; }
+        #ig-dia { color: #00ffff; text-shadow: 0 0 10px #00ffff; }
         #timer-display { font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 10px #fff; letter-spacing: 2px;}
         #pause-btn-hud { pointer-events: auto; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 20px; font-family: 'Cinzel', serif; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 4px; margin-top: 10px;}
         
@@ -172,7 +169,6 @@
                     </button>
                 </div>
 
-                <h1 id="moba-title">FIGHT UP</h1>
                 <div id="moba-bottom-center" class="moba-element">
                     <button class="play-btn" onclick="actStartGame()">PLAY</button>
                 </div>
@@ -293,9 +289,6 @@
         let globalGold = parseInt(localStorage.getItem('fightup_gold')) || 0;
         let unlockedItems = getLocalData('fightup_unlocked_items', ['skin_default']);
         let equippedSkin = localStorage.getItem('fightup_eq_skin') || 'skin_default';
-        let equippedWing = localStorage.getItem('fightup_eq_wing') || null;
-        let equippedWeapon = localStorage.getItem('fightup_eq_weapon') || null;
-        let equippedPet = localStorage.getItem('fightup_eq_pet') || null; // PET HỆ THỐNG MỚI
 
         let statKills = parseInt(localStorage.getItem('fightup_stat_kills')) || 0;
         let statMaxWave = parseInt(localStorage.getItem('fightup_stat_wave')) || 1;
@@ -303,11 +296,10 @@
 
         let bpExp = parseInt(localStorage.getItem('fightup_bp_exp')) || 0;
         let bpClaimedTiers = getLocalData('fightup_bp_claimed', []);
-        const EXP_PER_BP_LEVEL = 1000; // TĂNG LÊN 1000 ĐỂ TRY HARD CÀY CUỐC
+        const EXP_PER_BP_LEVEL = 1000; 
         
         document.getElementById('global-gold').innerText = globalGold;
 
-        // ĐIỀU CHỈNH GIÁ ITEM (TĂNG ĐỂ TRY HARD) VÀ THÊM PETS
         const ITEMS_DB = {
             skins: [
                 { id: 'skin_default', name: 'White Spirit', cost: 0, color: '#ffffff', pColor: '#ffffff', isBp: false },
@@ -316,36 +308,18 @@
                 { id: 'skin_golden', name: 'Golden King', cost: 6000, color: '#ffcc00', pColor: '#ffff00', isBp: false },
                 { id: 'skin_abyssal', name: 'Void Walker', cost: 10000, color: '#aa00ff', pColor: '#5500ff', isBp: false },
                 { id: 'skin_cosmic', name: 'Cosmic Deity', cost: 0, color: '#ff00ff', pColor: '#ffccff', isBp: true }
-            ],
-            wings: [
-                { id: 'wing_bat', name: 'Demon Wings', cost: 5000, color: '#222', icon: '🦇', isBp: false },
-                { id: 'wing_fairy', name: 'Fairy Dust', cost: 8000, color: '#00ffcc', icon: '🦋', isBp: false },
-                { id: 'wing_angel', name: 'Seraphim Wings', cost: 0, color: '#fff', icon: '🕊️', isBp: true }
-            ],
-            weapons: [
-                { id: 'wpn_orb', name: 'Orb of Light', cost: 4000, color: '#ffff00', icon: '🔮', isBp: false },
-                { id: 'wpn_sword', name: 'Plasma Blade', cost: 9000, color: '#00ffff', icon: '🗡️', isBp: false }
-            ],
-            pets: [ // DANH MỤC THÚ CƯNG MỚI
-                { id: 'pet_ghost', name: 'Little Ghost', cost: 2000, color: '#fff', icon: '👻', isBp: false },
-                { id: 'pet_wolf', name: 'Shadow Wolf', cost: 7000, color: '#888', icon: '🐺', isBp: false },
-                { id: 'pet_dragon', name: 'Aurelion Baby', cost: 15000, color: '#00ffff', icon: '🐉', isBp: false }
             ]
         };
 
         const BP_TIERS = [];
         for(let i = 1; i <= 80; i++) {
             if (i === 80) BP_TIERS.push({ level: 80, type: 'item', itemId: 'skin_cosmic', name: 'Skin: Cosmic Deity' });
-            else if (i === 40) BP_TIERS.push({ level: 40, type: 'item', itemId: 'wing_angel', name: 'Wing: Seraphim Wings' });
-            else BP_TIERS.push({ level: i, type: 'gold', amount: 200 + (i * 50), name: `${200 + (i * 50)} Gold` }); // Tăng thưởng vàng
+            else BP_TIERS.push({ level: i, type: 'gold', amount: 200 + (i * 50), name: `${200 + (i * 50)} Gold` }); 
         }
 
         function saveGameData() {
             localStorage.setItem('fightup_gold', globalGold); localStorage.setItem('fightup_unlocked_items', JSON.stringify(unlockedItems));
             localStorage.setItem('fightup_eq_skin', equippedSkin);
-            if(equippedWing) localStorage.setItem('fightup_eq_wing', equippedWing); else localStorage.removeItem('fightup_eq_wing');
-            if(equippedWeapon) localStorage.setItem('fightup_eq_weapon', equippedWeapon); else localStorage.removeItem('fightup_eq_weapon');
-            if(equippedPet) localStorage.setItem('fightup_eq_pet', equippedPet); else localStorage.removeItem('fightup_eq_pet');
             localStorage.setItem('fightup_bp_exp', bpExp); localStorage.setItem('fightup_bp_claimed', JSON.stringify(bpClaimedTiers));
             localStorage.setItem('fightup_stat_kills', statKills); localStorage.setItem('fightup_stat_wave', statMaxWave); localStorage.setItem('fightup_stat_deaths', statDeaths);
             document.getElementById('global-gold').innerText = globalGold;
@@ -361,7 +335,6 @@
             if (state === STATES.LEVEL_UP) { rerollsLeft = 1; generateRandomPowerUps(); }
             if (state === STATES.SHOP) renderShop(); if (state === STATES.BP) renderBattlePass(); if (state === STATES.PROFILE) renderProfile();
             
-            // Xử lý game over stats
             if (state === STATES.GAME_OVER) { 
                 statDeaths++; statKills += sessionKills; if(currentWave > statMaxWave) statMaxWave = currentWave;
                 sessionBPExp = sessionKills * 2; bpExp += sessionBPExp; globalGold += sessionGold; saveGameData();
@@ -392,7 +365,7 @@
             items.forEach(item => {
                 if(item.isBp) return; const isUnlocked = unlockedItems.includes(item.id); 
                 let isEquipped = false;
-                if(equipVarType === 'skin') isEquipped = (equippedSkin === item.id); else if(equipVarType === 'wing') isEquipped = (equippedWing === item.id); else if(equipVarType === 'weapon') isEquipped = (equippedWeapon === item.id); else if(equipVarType === 'pet') isEquipped = (equippedPet === item.id);
+                if(equipVarType === 'skin') isEquipped = (equippedSkin === item.id);
                 
                 let btnHtml = isEquipped ? `<button class="std-btn shop-btn equipped" onclick="unequipItem('${equipVarType}')">Unequip</button>` : 
                               isUnlocked ? `<button class="std-btn shop-btn" onclick="equipItem('${equipVarType}', '${item.id}')">Equip</button>` : 
@@ -401,15 +374,15 @@
                 html += `<div class="shop-card">${visual}<div class="item-name">${item.name}</div>${btnHtml}</div>`;
             }); return html + `</div>`;
         }
-        function renderShop() { document.getElementById('shop-items-container').innerHTML = renderShopGrid(ITEMS_DB.skins, 'Body Cores', 'skin') + renderShopGrid(ITEMS_DB.wings, 'Wings', 'wing') + renderShopGrid(ITEMS_DB.weapons, 'Floating Weapons', 'weapon') + renderShopGrid(ITEMS_DB.pets, 'Companions (Pets)', 'pet'); }
+        function renderShop() { document.getElementById('shop-items-container').innerHTML = renderShopGrid(ITEMS_DB.skins, 'Body Cores', 'skin'); }
         function buyItem(id, cost) { if (globalGold >= cost) { globalGold -= cost; unlockedItems.push(id); saveGameData(); renderShop(); triggerShake(); } else { alert("Not enough Gold!"); } }
-        function equipItem(type, id) { if(type === 'skin') equippedSkin = id; else if(type === 'wing') equippedWing = id; else if(type === 'weapon') equippedWeapon = id; else if(type === 'pet') equippedPet = id; saveGameData(); renderShop(); triggerShake(); }
-        function unequipItem(type) { if(type === 'skin') return; if(type === 'wing') equippedWing = null; else if(type === 'weapon') equippedWeapon = null; else if(type === 'pet') equippedPet = null; saveGameData(); renderShop(); triggerShake(); }
+        function equipItem(type, id) { if(type === 'skin') equippedSkin = id; saveGameData(); renderShop(); triggerShake(); }
+        function unequipItem(type) { if(type === 'skin') return; saveGameData(); renderShop(); triggerShake(); }
 
         function triggerShake() { const wrapper = document.getElementById('game-wrapper'); wrapper.classList.remove('shake-effect'); void wrapper.offsetWidth; wrapper.classList.add('shake-effect'); }
 
         const WORLD_WIDTH = 4000; const WORLD_HEIGHT = 4000; let camera = { x: 0, y: 0 };
-        const player = { x: WORLD_WIDTH / 2, y: WORLD_HEIGHT / 2, radius: 15, speed: 5, color: '#ffffff', particleColor: '#ffffff', hp: 100, maxHp: 100, lastHitFrame: 0, level: 1, exp: 0, maxExp: 100, expMultiplier: 1.0, magnetRange: 40, damage: 30, fireRate: 35, attackRange: 500, bulletSpeed: 10, bulletSize: 4.5, hasAura: false, auraRadius: 120, auraDamage: 0.5, isDashing: false, dashSpeed: 18, dashFrames: 0, maxDashFrames: 12, dashCooldown: 0, maxDashCooldown: 90, dashDx: 0, dashDy: 0, trailHistory: [], skinParticles: [], wpnAngle: 0, petX: WORLD_WIDTH / 2, petY: WORLD_HEIGHT / 2 };
+        const player = { x: WORLD_WIDTH / 2, y: WORLD_HEIGHT / 2, radius: 15, speed: 5, color: '#ffffff', particleColor: '#ffffff', hp: 100, maxHp: 100, lastHitFrame: 0, level: 1, exp: 0, maxExp: 100, expMultiplier: 1.0, magnetRange: 40, damage: 30, fireRate: 35, attackRange: 500, bulletSpeed: 10, bulletSize: 4.5, hasAura: false, auraRadius: 120, auraDamage: 0.5, isDashing: false, dashSpeed: 18, dashFrames: 0, maxDashFrames: 12, dashCooldown: 0, maxDashCooldown: 90, dashDx: 0, dashDy: 0, trailHistory: [], skinParticles: [], wpnAngle: 0 };
         
         let enemies = []; let projectiles = []; let enemyProjectiles = []; let expGems = []; let floatingTexts = []; let crosshairs = []; let particleBursts = [];
         let frames = 0; let lastFiredFrame = 0; let gameSeconds = 0;
@@ -448,7 +421,7 @@
         function applySkinColors() { const activeSkin = ITEMS_DB.skins.find(s => s.id === equippedSkin) || ITEMS_DB.skins[0]; player.color = activeSkin.color; player.particleColor = activeSkin.pColor; }
 
         function resetGame() {
-            applySkinColors(); player.x = WORLD_WIDTH/2; player.y = WORLD_HEIGHT/2; player.petX = player.x; player.petY = player.y; player.hp = 100; player.maxHp = 100; player.level = 1; player.exp = 0; player.maxExp = 100; player.expMultiplier = 1.0; player.magnetRange = 40; player.damage = 30; player.fireRate = 35; player.attackRange = 450; player.bulletSpeed = 10; player.bulletSize = 4.5; player.speed = 5; player.hasAura = false; player.auraRadius = 120; player.auraDamage = 0.5; player.isDashing = false; player.dashCooldown = 0; player.trailHistory = []; player.skinParticles = []; player.wpnAngle = 0;
+            applySkinColors(); player.x = WORLD_WIDTH/2; player.y = WORLD_HEIGHT/2; player.hp = 100; player.maxHp = 100; player.level = 1; player.exp = 0; player.maxExp = 100; player.expMultiplier = 1.0; player.magnetRange = 40; player.damage = 30; player.fireRate = 35; player.attackRange = 450; player.bulletSpeed = 10; player.bulletSize = 4.5; player.speed = 5; player.hasAura = false; player.auraRadius = 120; player.auraDamage = 0.5; player.isDashing = false; player.dashCooldown = 0; player.trailHistory = []; player.skinParticles = []; player.wpnAngle = 0;
             enemies = []; projectiles = []; enemyProjectiles = []; expGems = []; floatingTexts = []; crosshairs = []; particleBursts = []; frames = 0; gameSeconds = 0;
             currentWave = 1; enemiesKilled = 0; sessionKills = 0; killsNeededForNextWave = 25; sessionGold = 0; sessionBPExp = 0;
             isBossActive = false; bossEntity = null; document.getElementById('boss-ui').style.opacity = 0; document.getElementById('end-title').innerText = "YOU DIED"; document.getElementById('end-title').style.color = "#ff0044";
@@ -615,24 +588,9 @@
                     if (!player.isDashing && dist < player.radius + enemy.radius && frames - player.lastHitFrame > 60) { player.hp -= enemy.damage; player.lastHitFrame = frames; triggerShake(); updateHUD(); addFloatingText(player.x, player.y, `-${enemy.damage}`, '#ff0044', 20); if (player.hp <= 0) switchScreen(STATES.GAME_OVER); }
                 }
 
-                for (let i = floatingTexts.length - 1; i >= 0; i--) { let ft = floatingTexts[i]; ft.y += ft.dy; ft.alpha -= 0.025; ctx.globalAlpha = Math.max(0, ft.alpha); ctx.fillStyle = ft.color; ctx.font = `bold ${ft.size}px 'Rajdhani', sans-serif`; ctx.textAlign = "center"; ctx.fillText(ft.text, ft.x, ft.y); ctx.globalAlpha = 1.0; if (ft.alpha <= 0) floatingTexts.splice(i, 1); }
-                
                 if (frames - player.lastHitFrame > 60 || Math.floor(frames / 5) % 2 === 0) { 
-                    if (equippedWing) { let wingColor = ITEMS_DB.wings.find(w => w.id === equippedWing).color; ctx.fillStyle = wingColor; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.ellipse(player.x - 20, player.y, 25, 10, Math.PI/4 + Math.sin(frames/10)*0.2, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(player.x + 20, player.y, 25, 10, -Math.PI/4 - Math.sin(frames/10)*0.2, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1.0; }
                     ctx.beginPath(); ctx.arc(player.x, player.y, player.radius + 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
                     ctx.shadowBlur = 20; ctx.shadowColor = player.color; ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2); ctx.fillStyle = player.color; ctx.fill(); ctx.shadowBlur = 0; 
-                    if (equippedWeapon) { let wpnColor = ITEMS_DB.weapons.find(w => w.id === equippedWeapon).color; player.wpnAngle += 0.05; let wx = player.x + Math.cos(player.wpnAngle) * 35; let wy = player.y + Math.sin(player.wpnAngle) * 35; ctx.shadowBlur = 15; ctx.shadowColor = wpnColor; ctx.beginPath(); ctx.arc(wx, wy, 6, 0, Math.PI * 2); ctx.fillStyle = wpnColor; ctx.fill(); ctx.shadowBlur = 0; }
-                }
-
-                // VẼ PET
-                if (equippedPet) {
-                    let pet = ITEMS_DB.pets.find(p => p.id === equippedPet);
-                    // LERP bám theo người chơi mượt mà (có offset lên trên một chút)
-                    player.petX += (player.x - 40 - player.petX) * 0.05;
-                    player.petY += (player.y - 40 - player.petY) * 0.05;
-                    ctx.font = "24px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                    // Nhấp nhô nhẹ
-                    ctx.fillText(pet.icon, player.petX, player.petY + Math.sin(frames/15)*5);
                 }
 
                 ctx.restore();
