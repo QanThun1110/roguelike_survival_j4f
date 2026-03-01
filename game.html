@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIGHT UP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ================= CÀI ĐẶT CSS TỔNG THỂ ================= */
+        body { margin: 0; padding: 0; background-color: #020202; color: #ffffff; font-family: 'Cinzel', serif; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; user-select: none; }
+        
+        #bg-canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+        #mouse-glow { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 255, 204, 0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 1; transform: translate(-50%, -50%); transition: 0.05s linear; mix-blend-mode: screen; }
+        #game-wrapper { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background-color: transparent; overflow: hidden; z-index: 2; }
+        
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(15,15,20,0.85) 0%, rgba(0,0,0,1) 100%); transition: opacity 0.3s ease; z-index: 10; }
+        .hidden { display: none !important; }
+        
+        /* HOẠT ẢNH */
+        @keyframes powerFlicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 10px #fff, 0 0 20px #00ffcc, 0 0 40px #fff; opacity: 1; transform: scale(1); } 20%, 24%, 55% { text-shadow: none; opacity: 0.8; transform: scale(0.99); } 50% { transform: scale(1.02); text-shadow: 0 0 20px #fff, 0 0 50px #fff, 0 0 80px #00ffff; } }
+        @keyframes popIn { 0% { transform: scale(0.8) translateY(50px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+        @keyframes slideInRight { 0% { transform: translateX(30px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        .pop-animation { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .stagger-anim { opacity: 0; animation: slideInRight 0.3s ease forwards; }
+
+        /* ================= MOBA LOBBY UI ================= */
+        /* Cấu trúc sảnh trong suốt, đẩy các nút ra viền */
+        #moba-lobby { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
+        
+        .moba-element { pointer-events: auto; position: absolute; }
+        
+        /* Góc trên trái: Profile */
+        #moba-top-left { top: 30px; left: 40px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; padding: 10px; border-radius: 50px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); }
+        #moba-top-left:hover { background: rgba(0,255,204,0.1); border-color: #00ffcc; box-shadow: 0 0 15px rgba(0,255,204,0.2); }
+        .avatar-placeholder { width: 50px; height: 50px; border-radius: 50%; background: #222; border: 2px solid #00ffcc; display: flex; justify-content: center; align-items: center; font-size: 24px; }
+        .commander-name { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
+
+        /* Góc trên giữa: Vàng (Gold) */
+        #moba-top-center { top: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); padding: 10px 30px; border-radius: 30px; border: 1px solid rgba(255,204,0,0.3); box-shadow: 0 0 15px rgba(255,204,0,0.1); }
+        .gold-display { font-size: 1.8rem; color: #ffcc00; font-weight: bold; text-shadow: 0 0 10px #ffcc00; display: flex; align-items: center; gap: 10px; font-family: 'Rajdhani', sans-serif; }
+        .gold-display::before { content: '✦'; font-size: 2rem; }
+
+        /* Góc trên phải: Cài đặt / Credits */
+        #moba-top-right { top: 30px; right: 40px; display: flex; gap: 15px; }
+        .icon-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.5rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
+        .icon-btn:hover { background: rgba(255,255,255,0.1); border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.5); transform: scale(1.1); }
+
+        /* Giữa viền phải: Battle Pass & Shop */
+        #moba-mid-right { top: 50%; right: 40px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; }
+        .side-menu-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; transition: 0.2s; background: transparent; border: none; outline: none; color: #ccc; }
+        .side-menu-btn .icon-bg { width: 70px; height: 70px; border-radius: 15px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,204,0.3); display: flex; justify-content: center; align-items: center; font-size: 2rem; transition: 0.2s; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+        .side-menu-btn span { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: 0.2s; }
+        .side-menu-btn:hover .icon-bg { background: rgba(0,255,204,0.2); border-color: #00ffcc; box-shadow: 0 0 20px rgba(0,255,204,0.4); transform: scale(1.05); color: #fff; }
+        .side-menu-btn:hover span { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
+
+        /* Giữa viền dưới: Play Button */
+        #moba-bottom-center { bottom: 50px; left: 50%; transform: translateX(-50%); }
+        .play-btn { background: rgba(0, 0, 0, 0.7); border: 2px solid #00ffcc; color: #fff; font-family: 'Cinzel', serif; font-size: 2.5rem; padding: 20px 80px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 6px; border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,204,0.2), inset 0 0 20px rgba(0,255,204,0.1); }
+        .play-btn:hover { background: rgba(0, 255, 204, 0.2); text-shadow: 0 0 20px #fff; box-shadow: 0 0 50px rgba(0,255,204,0.6), inset 0 0 30px rgba(0,255,204,0.4); transform: scale(1.05) translateY(-5px); }
+
+        /* Tiêu đề GAME ngay trên nút PLAY */
+        #moba-title { position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%); font-size: 5rem; letter-spacing: 12px; margin: 0; font-weight: 700; animation: powerFlicker 5s infinite; text-align: center; font-family: 'Cinzel', serif;}
+
+        /* ================= CÁC HỘP THOẠI (BOXES) ================= */
+        .menu-box { background: rgba(10, 10, 15, 0.85); border: 1px solid rgba(0, 255, 204, 0.3); padding: 40px 60px; border-radius: 12px; box-shadow: 0 0 40px rgba(0, 255, 204, 0.1), inset 0 0 20px rgba(0,0,0,0.8); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; position: relative; }
+        .menu-box::before, .menu-box::after { content: ''; position: absolute; width: 30px; height: 30px; border: 2px solid #00ffcc; opacity: 0.7; }
+        .menu-box::before { top: -10px; left: -10px; border-right: none; border-bottom: none; }
+        .menu-box::after { bottom: -10px; right: -10px; border-left: none; border-top: none; }
+        h2 { font-size: 2.2rem; text-shadow: 0 0 15px #fff; margin-bottom: 25px; letter-spacing: 4px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;}
+        
+        .btn-group { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; min-width: 350px; z-index: 20;}
+        .std-btn { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; font-family: 'Cinzel', serif; font-size: 1.3rem; padding: 12px 30px; width: 100%; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 3px; border-radius: 4px; pointer-events: auto;}
+        .std-btn:hover:not(:disabled) { border-color: #00ffcc; color: #fff; text-shadow: 0 0 10px #00ffcc; box-shadow: 0 0 15px rgba(0, 255, 204, 0.3) inset; transform: scale(1.02); background: rgba(0, 50, 40, 0.5); }
+        .std-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #333; color: #555;}
+        
+        /* SHOP GRID UI */
+        .shop-wrapper { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 850px; max-height: 55vh; overflow-y: auto; padding-right: 10px;}
+        .shop-section-title { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: #00ffcc; border-bottom: 1px dashed #00ffcc; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; font-weight: bold;}
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; width: 100%; }
+        .shop-card { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; transition: 0.2s; gap: 10px;}
+        .shop-card:hover { background: rgba(255,255,255,0.08); border-color: #00ffcc; transform: translateY(-3px);}
+        .skin-preview { width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 0 20px currentColor; margin-bottom: 5px;}
+        .item-icon { font-size: 2.8rem; text-shadow: 0 0 15px currentColor; margin-bottom: 5px;}
+        .item-name { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; text-align: center;}
+        .shop-btn { padding: 8px 15px; font-size: 1rem; width: 100%; border-color: #ffcc00; color: #ffcc00; }
+        .shop-btn.equipped { border-color: #00ffcc; color: #00ffcc; box-shadow: 0 0 10px #00ffcc inset; }
+        
+        /* BATTLE PASS CSS */
+        .bp-progress-header { width: 100%; display: flex; justify-content: space-between; font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; color: #00ffcc;}
+        .bp-bar-bg { width: 100%; height: 12px; background: #222; border-radius: 6px; margin-bottom: 20px; overflow: hidden; border: 1px solid #444;}
+        .bp-bar-fill { height: 100%; background: linear-gradient(90deg, #00ffcc, #0088ff); transition: width 0.3s; }
+        .bp-list { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 600px; max-height: 40vh; overflow-y: auto; padding-right: 10px; font-family: 'Rajdhani', sans-serif;}
+        .bp-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 5px; border-left: 4px solid #555;}
+        .bp-item.unlocked { border-left-color: #00ffcc; background: rgba(0, 255, 204, 0.05); }
+        .bp-tier { font-weight: bold; color: #fff; width: 80px; font-size: 1.2rem;}
+        .bp-reward { color: #ffcc00; font-size: 1.3rem; flex-grow: 1; font-weight: 600;}
+        
+        /* PROFILE UI */
+        .profile-stats { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: #ddd; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;}
+        .stat-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        .stat-val { color: #00ffcc; font-weight: bold; text-shadow: 0 0 10px #00ffcc;}
+
+        .power-btn { padding: 15px 20px; text-transform: none; text-align: left; }
+        .power-btn strong { display: block; font-size: 1.6rem; margin-bottom: 8px; color: #fff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px #fff;}
+        .skill-desc { display: block; font-size: 1rem; color: #aaa; font-family: sans-serif; letter-spacing: 1px; line-height: 1.4;}
+        .reroll-btn { margin-top: 10px; border-color: rgba(255, 170, 0, 0.4); color: #ffaa00; width: auto; font-size: 1.2rem; }
+
+        #game-canvas { display: block; width: 100%; height: 100%; z-index: 1; }
+        
+        /* HUD IN-GAME */
+        #game-hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; display: flex; flex-direction: column; font-family: 'Rajdhani', sans-serif;}
+        #exp-container { width: 100%; height: 8px; background-color: #111; position: absolute; top: 0; border-bottom: 1px solid #333;}
+        #exp-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00ffcc, #0088ff); transition: width 0.3s ease; box-shadow: 0 0 15px #0088ff; }
+        #hud-top { display: flex; justify-content: space-between; align-items: flex-start; padding: 20px; width: 100%; box-sizing: border-box; margin-top: 10px; }
+        
+        #status-container { display: flex; flex-direction: column; gap: 5px; width: 30%; }
+        #level-display { font-size: 1.8rem; font-weight: bold; color: #00ffcc; text-shadow: 0 0 10px #00ffcc; letter-spacing: 2px; margin-bottom: 0px; font-family: 'Cinzel', serif;}
+        #hp-container { width: 100%; max-width: 250px; background: #222; border: 2px solid #555; height: 25px; position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff0044, #ff6600); transition: width 0.2s ease; }
+        #hp-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; line-height: 25px; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 3px #000; }
+        #dash-container { width: 100%; max-width: 250px; height: 5px; background: #222; border-radius: 2px; overflow: hidden; border: 1px solid #444;}
+        #dash-bar { width: 100%; height: 100%; background: #00ffff; box-shadow: 0 0 5px #00ffff; }
+
+        #wave-container { display: flex; flex-direction: column; align-items: center; width: 40%; }
+        #wave-text { font-size: 2rem; font-weight: bold; letter-spacing: 4px; text-shadow: 0 0 10px #fff; margin-bottom: 5px; font-family: 'Cinzel', serif;}
+        #wave-progress-bg { width: 100%; height: 8px; background: rgba(0,0,0,0.8); border: 1px solid #555; border-radius: 4px; overflow: hidden; }
+        #wave-progress-bar { width: 0%; height: 100%; background: #fff; transition: width 0.3s ease-out; box-shadow: 0 0 10px #fff;}
+
+        #right-hud { width: 30%; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        #ingame-gold-display { font-size: 2rem; font-weight: bold; color: #ffcc00; text-shadow: 0 0 10px #ffcc00; display: flex; align-items: center; gap: 5px;}
+        #ingame-gold-display::before { content: '✦'; font-size: 2.2rem; }
+        #timer-display { font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 10px #fff; letter-spacing: 2px;}
+        #pause-btn-hud { pointer-events: auto; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 20px; font-family: 'Cinzel', serif; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 4px; margin-top: 10px;}
+        
+        #boss-ui { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 70%; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s; opacity: 0; }
+        #boss-name { font-size: 2rem; color: #ff0044; text-shadow: 0 0 15px #ff0044; margin-bottom: 10px; letter-spacing: 5px; font-family: 'Cinzel', serif;}
+        #boss-hp-bg { width: 100%; height: 20px; background: #111; border: 2px solid #550000; }
+        #boss-hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #aa0000, #ff0044); box-shadow: 0 0 20px #ff0044; transition: width 0.1s linear;}
+        
+        .shake-effect { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-4px, 1px, 0); } 20%, 80% { transform: translate3d(5px, -2px, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 3px, 0); } 40%, 60% { transform: translate3d(8px, -2px, 0); } }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <div id="mouse-glow"></div>
+
+    <div id="game-wrapper">
+        <div id="main-menu" class="screen" style="background: transparent;">
+            <div id="moba-lobby">
+                <div id="moba-top-left" class="moba-element" onclick="actShowProfile()">
+                    <div class="avatar-placeholder">👤</div>
+                    <div class="commander-name">COMMANDER</div>
+                </div>
+
+                <div id="moba-top-center" class="moba-element">
+                    <div id="global-gold" class="gold-display">0</div>
+                </div>
+
+                <div id="moba-top-right" class="moba-element">
+                    <button class="icon-btn" onclick="actShowCredits()" title="Credits">⚙️</button>
+                </div>
+
+                <div id="moba-mid-right" class="moba-element">
+                    <button class="side-menu-btn" onclick="actShowBattlePass()">
+                        <div class="icon-bg" style="color: #0088ff; border-color: rgba(0,136,255,0.5);">📜</div>
+                        <span style="color: #0088ff;">Pass</span>
+                    </button>
+                    <button class="side-menu-btn" onclick="actShowShop()">
+                        <div class="icon-bg" style="color: #ffaa00; border-color: rgba(255,170,0,0.5);">🛒</div>
+                        <span style="color: #ffaa00;">Shop</span>
+                    </button>
+                </div>
+
+                <h1 id="moba-title">FIGHT UP</h1>
+                <div id="moba-bottom-center" class="moba-element">
+                    <button class="play-btn" onclick="actStartGame()">PLAY</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-screen" class="screen hidden">
+            <div class="menu-box" style="padding: 40px 60px; width: 400px;">
+                <h2>COMMANDER PROFILE</h2>
+                <div class="profile-stats">
+                    <div class="stat-row"><span>Highest Wave:</span> <span class="stat-val" id="prof-wave">0</span></div>
+                    <div class="stat-row"><span>Enemies Slain:</span> <span class="stat-val" id="prof-kills">0</span></div>
+                    <div class="stat-row"><span>Total Deaths:</span> <span class="stat-val" id="prof-deaths" style="color: #ff0044;">0</span></div>
+                    <div class="stat-row"><span>Total Wealth:</span> <span class="stat-val" id="prof-gold" style="color: #ffcc00;">0 ✦</span></div>
+                </div>
+                <button class="std-btn" style="width: auto; padding: 10px 40px;" onclick="actQuitToMenu()">Back to Lobby</button>
+            </div>
+        </div>
+
+        <div id="bp-screen" class="screen hidden">
+            <div class="menu-box" style="padding: 40px 60px; width: 600px;">
+                <h2>BATTLE PASS</h2>
+                <div class="bp-progress-header">
+                    <span id="bp-lvl-text">BP LEVEL: 1</span>
+                    <span id="bp-exp-text">EXP: 0 / 1000</span>
+                </div>
+                <div class="bp-bar-bg"><div id="bp-bar-fill" class="bp-bar-fill"></div></div>
+                <div class="bp-list" id="bp-tiers-container"></div>
+                <button class="std-btn" style="width: auto; padding: 10px 40px; margin-top: 15px;" onclick="actQuitToMenu()">Back to Lobby</button>
+            </div>
+        </div>
+
+        <div id="shop-screen" class="screen hidden">
+            <div class="menu-box" style="padding: 30px 50px; max-width: 850px; width: 90%;">
+                <h2>ARMORY SHOP</h2>
+                <div class="shop-wrapper" id="shop-items-container"></div>
+                <button class="std-btn" style="width: auto; padding: 10px 40px;" onclick="actQuitToMenu()">Back to Lobby</button>
+            </div>
+        </div>
+
+        <canvas id="game-canvas" class="hidden"></canvas>
+
+        <div id="game-hud" class="hidden">
+            <div id="exp-container"><div id="exp-bar"></div></div>
+            <div id="hud-top">
+                <div id="status-container">
+                    <div id="level-display">LV. 1</div>
+                    <div id="hp-container"><div id="hp-bar"></div><div id="hp-text">100 / 100</div></div>
+                    <div id="dash-container"><div id="dash-bar"></div></div>
+                </div>
+                <div id="wave-container">
+                    <div id="wave-text">WAVE 1</div>
+                    <div id="wave-progress-bg"><div id="wave-progress-bar"></div></div>
+                </div>
+                <div id="right-hud">
+                    <div id="ingame-gold-display">0</div>
+                    <div id="timer-display">00:00</div>
+                    <button id="pause-btn-hud" onclick="actPauseGame()">|| PAUSE</button>
+                </div>
+            </div>
+            <div id="boss-ui"><div id="boss-name">ABYSSAL OVERLORD</div><div id="boss-hp-bg"><div id="boss-hp-bar"></div></div></div>
+        </div>
+
+        <div id="pause-menu" class="screen hidden">
+            <div class="menu-box">
+                <h2>PAUSED</h2>
+                <div class="btn-group">
+                    <button class="std-btn" onclick="actResumeGame()">Resume</button>
+                    <button class="std-btn" onclick="actQuitToMenu()">Quit to Lobby</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="level-up-menu" class="screen hidden" style="background: rgba(0,0,0,0.85);">
+            <div class="menu-box" id="level-up-box" style="border-color: #00ffcc; box-shadow: 0 0 50px rgba(0,255,204,0.2);">
+                <h2 style="border-bottom: none; color: #00ffcc; text-shadow: 0 0 20px #00ffcc;">POWER AWAKENED</h2>
+                <div class="btn-group" id="dynamic-power-list" style="margin-bottom: 20px;"></div>
+                <button id="btn-reroll" class="std-btn reroll-btn" onclick="actReroll()">✦ Reroll (1 Left) ✦</button>
+            </div>
+        </div>
+
+        <div id="game-over-screen" class="screen hidden">
+            <h1 class="title" id="end-title" style="color: #ff0044; animation: none;">YOU DIED</h1>
+            <div class="profile-stats" id="game-over-stats" style="margin-bottom: 40px; text-align: left;">
+                <div class="stat-row"><span>Level Reached:</span> <span class="stat-val" id="go-level">1</span></div>
+                <div class="stat-row"><span>Wave Reached:</span> <span class="stat-val" id="go-wave">Wave 1</span></div>
+                <div class="stat-row"><span>Enemies Defeated:</span> <span class="stat-val" id="go-kills">0</span></div>
+                <div class="stat-row"><span>Gold Earned:</span> <span class="stat-val" id="go-gold" style="color:#ffcc00;">0 ✦</span></div>
+                <div class="stat-row"><span>BP EXP Earned:</span> <span class="stat-val" id="go-bp" style="color:#0088ff;">0</span></div>
+            </div>
+            <div class="btn-group" style="max-width: 400px;">
+                <button class="std-btn" onclick="actStartGame()">Try Again</button>
+                <button class="std-btn" onclick="actQuitToMenu()">Back to Lobby</button>
+            </div>
+        </div>
+
+        <div id="credits-screen" class="screen hidden">
+            <div class="menu-box">
+                <h2>CREDITS</h2>
+                <div style="font-size: 1.4rem; line-height: 2.5; text-align: center; margin-bottom: 40px; color: #ccc;">
+                    <p>Art Director & Game Design:<br><strong style="font-size: 2.5rem; color: #00ffcc; text-shadow: 0 0 10px #00ffcc; font-family: 'Cinzel', serif;">WANG</strong></p><br>
+                    <p>Coding Partner:<br><strong style="font-size: 1.5rem; color: #fff;">Gemini AI</strong></p>
+                </div>
+                <button class="std-btn" style="width: auto; padding: 10px 40px;" onclick="actQuitToMenu()">Back to Lobby</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bgCanvas = document.getElementById('bg-canvas'); const bgCtx = bgCanvas.getContext('2d');
+        const gameCanvas = document.getElementById('game-canvas'); const ctx = gameCanvas.getContext('2d');
+        const glowEl = document.getElementById('mouse-glow');
+        function resizeCanvases() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; gameCanvas.width = window.innerWidth; gameCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvases); resizeCanvases();
+
+        function getLocalData(key, defaultValue) { try { let val = localStorage.getItem(key); return val ? JSON.parse(val) : defaultValue; } catch(e) { return defaultValue; } }
+        
+        let globalGold = parseInt(localStorage.getItem('fightup_gold')) || 0;
+        let unlockedItems = getLocalData('fightup_unlocked_items', ['skin_default']);
+        let equippedSkin = localStorage.getItem('fightup_eq_skin') || 'skin_default';
+        let equippedWing = localStorage.getItem('fightup_eq_wing') || null;
+        let equippedWeapon = localStorage.getItem('fightup_eq_weapon') || null;
+        let equippedPet = localStorage.getItem('fightup_eq_pet') || null; // PET HỆ THỐNG MỚI
+
+        let statKills = parseInt(localStorage.getItem('fightup_stat_kills')) || 0;
+        let statMaxWave = parseInt(localStorage.getItem('fightup_stat_wave')) || 1;
+        let statDeaths = parseInt(localStorage.getItem('fightup_stat_deaths')) || 0;
+
+        let bpExp = parseInt(localStorage.getItem('fightup_bp_exp')) || 0;
+        let bpClaimedTiers = getLocalData('fightup_bp_claimed', []);
+        const EXP_PER_BP_LEVEL = 1000; // TĂNG LÊN 1000 ĐỂ TRY HARD CÀY CUỐC
+        
+        document.getElementById('global-gold').innerText = globalGold;
+
+        // ĐIỀU CHỈNH GIÁ ITEM (TĂNG ĐỂ TRY HARD) VÀ THÊM PETS
+        const ITEMS_DB = {
+            skins: [
+                { id: 'skin_default', name: 'White Spirit', cost: 0, color: '#ffffff', pColor: '#ffffff', isBp: false },
+                { id: 'skin_neon', name: 'Neon Blur', cost: 1500, color: '#00ffff', pColor: '#0088ff', isBp: false },
+                { id: 'skin_blood', name: 'Crimson Assassin', cost: 3000, color: '#ff0044', pColor: '#ff0000', isBp: false },
+                { id: 'skin_golden', name: 'Golden King', cost: 6000, color: '#ffcc00', pColor: '#ffff00', isBp: false },
+                { id: 'skin_abyssal', name: 'Void Walker', cost: 10000, color: '#aa00ff', pColor: '#5500ff', isBp: false },
+                { id: 'skin_cosmic', name: 'Cosmic Deity', cost: 0, color: '#ff00ff', pColor: '#ffccff', isBp: true }
+            ],
+            wings: [
+                { id: 'wing_bat', name: 'Demon Wings', cost: 5000, color: '#222', icon: '🦇', isBp: false },
+                { id: 'wing_fairy', name: 'Fairy Dust', cost: 8000, color: '#00ffcc', icon: '🦋', isBp: false },
+                { id: 'wing_angel', name: 'Seraphim Wings', cost: 0, color: '#fff', icon: '🕊️', isBp: true }
+            ],
+            weapons: [
+                { id: 'wpn_orb', name: 'Orb of Light', cost: 4000, color: '#ffff00', icon: '🔮', isBp: false },
+                { id: 'wpn_sword', name: 'Plasma Blade', cost: 9000, color: '#00ffff', icon: '🗡️', isBp: false }
+            ],
+            pets: [ // DANH MỤC THÚ CƯNG MỚI
+                { id: 'pet_ghost', name: 'Little Ghost', cost: 2000, color: '#fff', icon: '👻', isBp: false },
+                { id: 'pet_wolf', name: 'Shadow Wolf', cost: 7000, color: '#888', icon: '🐺', isBp: false },
+                { id: 'pet_dragon', name: 'Aurelion Baby', cost: 15000, color: '#00ffff', icon: '🐉', isBp: false }
+            ]
+        };
+
+        const BP_TIERS = [];
+        for(let i = 1; i <= 80; i++) {
+            if (i === 80) BP_TIERS.push({ level: 80, type: 'item', itemId: 'skin_cosmic', name: 'Skin: Cosmic Deity' });
+            else if (i === 40) BP_TIERS.push({ level: 40, type: 'item', itemId: 'wing_angel', name: 'Wing: Seraphim Wings' });
+            else BP_TIERS.push({ level: i, type: 'gold', amount: 200 + (i * 50), name: `${200 + (i * 50)} Gold` }); // Tăng thưởng vàng
+        }
+
+        function saveGameData() {
+            localStorage.setItem('fightup_gold', globalGold); localStorage.setItem('fightup_unlocked_items', JSON.stringify(unlockedItems));
+            localStorage.setItem('fightup_eq_skin', equippedSkin);
+            if(equippedWing) localStorage.setItem('fightup_eq_wing', equippedWing); else localStorage.removeItem('fightup_eq_wing');
+            if(equippedWeapon) localStorage.setItem('fightup_eq_weapon', equippedWeapon); else localStorage.removeItem('fightup_eq_weapon');
+            if(equippedPet) localStorage.setItem('fightup_eq_pet', equippedPet); else localStorage.removeItem('fightup_eq_pet');
+            localStorage.setItem('fightup_bp_exp', bpExp); localStorage.setItem('fightup_bp_claimed', JSON.stringify(bpClaimedTiers));
+            localStorage.setItem('fightup_stat_kills', statKills); localStorage.setItem('fightup_stat_wave', statMaxWave); localStorage.setItem('fightup_stat_deaths', statDeaths);
+            document.getElementById('global-gold').innerText = globalGold;
+        }
+
+        const STATES = { MENU: 'MENU', SHOP: 'SHOP', BP: 'BP', PROFILE: 'PROFILE', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', CREDITS: 'CREDITS', GAME_OVER: 'GAME_OVER' };
+        let currentState = STATES.MENU;
+        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.CREDITS]: document.getElementById('credits-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
+
+        function switchScreen(state) {
+            currentState = state; Object.values(screens).forEach(screen => { if(screen) screen.classList.add('hidden'); });
+            if (state === STATES.PLAYING || state === STATES.PAUSED || state === STATES.LEVEL_UP) { gameCanvas.classList.remove('hidden'); document.getElementById('game-hud').classList.remove('hidden'); glowEl.style.display = 'none'; } else { gameCanvas.classList.add('hidden'); document.getElementById('game-hud').classList.add('hidden'); glowEl.style.display = 'block'; }
+            if (state === STATES.LEVEL_UP) { rerollsLeft = 1; generateRandomPowerUps(); }
+            if (state === STATES.SHOP) renderShop(); if (state === STATES.BP) renderBattlePass(); if (state === STATES.PROFILE) renderProfile();
+            
+            // Xử lý game over stats
+            if (state === STATES.GAME_OVER) { 
+                statDeaths++; statKills += sessionKills; if(currentWave > statMaxWave) statMaxWave = currentWave;
+                sessionBPExp = sessionKills * 2; bpExp += sessionBPExp; globalGold += sessionGold; saveGameData();
+                document.getElementById('go-level').innerText = player.level; document.getElementById('go-wave').innerText = isBossActive ? "BOSS STAGE" : `Wave ${currentWave}`; 
+                document.getElementById('go-kills').innerText = sessionKills; document.getElementById('go-gold').innerText = `+${sessionGold} ✦`; document.getElementById('go-bp').innerText = `+${sessionBPExp}`;
+            }
+            if(screens[state]) screens[state].classList.remove('hidden');
+        }
+
+        function renderProfile() { document.getElementById('prof-wave').innerText = statMaxWave; document.getElementById('prof-kills').innerText = statKills; document.getElementById('prof-deaths').innerText = statDeaths; document.getElementById('prof-gold').innerText = `${globalGold} ✦`; }
+
+        function renderBattlePass() {
+            let currentLevel = Math.floor(bpExp / EXP_PER_BP_LEVEL) + 1; let currentExp = bpExp % EXP_PER_BP_LEVEL;
+            if(currentLevel > 80) { currentLevel = 80; currentExp = EXP_PER_BP_LEVEL; } 
+            document.getElementById('bp-lvl-text').innerText = `BP LEVEL: ${currentLevel} / 80`; document.getElementById('bp-exp-text').innerText = `EXP: ${currentExp} / ${EXP_PER_BP_LEVEL}`; document.getElementById('bp-bar-fill').style.width = `${(currentExp / EXP_PER_BP_LEVEL) * 100}%`;
+            const container = document.getElementById('bp-tiers-container'); container.innerHTML = '';
+            BP_TIERS.forEach(tier => {
+                let isUnlocked = currentLevel >= tier.level; let isClaimed = bpClaimedTiers.includes(tier.level);
+                let btnHtml = isClaimed ? `<button class="std-btn shop-btn" disabled>Claimed</button>` : isUnlocked ? `<button class="std-btn shop-btn" onclick="claimBPReward(${tier.level})">Claim</button>` : `<button class="std-btn shop-btn" disabled>Locked</button>`;
+                let textColor = tier.type === 'item' ? '#00ffcc' : '#ffcc00';
+                container.innerHTML += `<div class="bp-item ${isUnlocked ? 'unlocked' : ''}" style="opacity: ${isUnlocked ? 1 : 0.5}"><div class="bp-tier">LVL ${tier.level}</div><div class="bp-reward" style="color: ${textColor}; font-weight: bold;">${tier.name}</div>${btnHtml}</div>`;
+            });
+        }
+        function claimBPReward(level) { let tier = BP_TIERS.find(t => t.level === level); if (!tier || bpClaimedTiers.includes(level)) return; if (tier.type === 'gold') { globalGold += tier.amount; } else if (tier.type === 'item') { unlockedItems.push(tier.itemId); } bpClaimedTiers.push(level); saveGameData(); renderBattlePass(); triggerShake(); }
+
+        function renderShopGrid(items, typeLabel, equipVarType) {
+            let html = `<div class="shop-section-title">${typeLabel}</div><div class="shop-grid">`;
+            items.forEach(item => {
+                if(item.isBp) return; const isUnlocked = unlockedItems.includes(item.id); 
+                let isEquipped = false;
+                if(equipVarType === 'skin') isEquipped = (equippedSkin === item.id); else if(equipVarType === 'wing') isEquipped = (equippedWing === item.id); else if(equipVarType === 'weapon') isEquipped = (equippedWeapon === item.id); else if(equipVarType === 'pet') isEquipped = (equippedPet === item.id);
+                
+                let btnHtml = isEquipped ? `<button class="std-btn shop-btn equipped" onclick="unequipItem('${equipVarType}')">Unequip</button>` : 
+                              isUnlocked ? `<button class="std-btn shop-btn" onclick="equipItem('${equipVarType}', '${item.id}')">Equip</button>` : 
+                                           `<button class="std-btn shop-btn" onclick="buyItem('${item.id}', ${item.cost})">Buy (${item.cost} ✦)</button>`;
+                let visual = (equipVarType === 'skin') ? `<div class="skin-preview" style="background: ${item.color}; color: ${item.color}"></div>` : `<div class="item-icon" style="color: ${item.color}">${item.icon}</div>`;
+                html += `<div class="shop-card">${visual}<div class="item-name">${item.name}</div>${btnHtml}</div>`;
+            }); return html + `</div>`;
+        }
+        function renderShop() { document.getElementById('shop-items-container').innerHTML = renderShopGrid(ITEMS_DB.skins, 'Body Cores', 'skin') + renderShopGrid(ITEMS_DB.wings, 'Wings', 'wing') + renderShopGrid(ITEMS_DB.weapons, 'Floating Weapons', 'weapon') + renderShopGrid(ITEMS_DB.pets, 'Companions (Pets)', 'pet'); }
+        function buyItem(id, cost) { if (globalGold >= cost) { globalGold -= cost; unlockedItems.push(id); saveGameData(); renderShop(); triggerShake(); } else { alert("Not enough Gold!"); } }
+        function equipItem(type, id) { if(type === 'skin') equippedSkin = id; else if(type === 'wing') equippedWing = id; else if(type === 'weapon') equippedWeapon = id; else if(type === 'pet') equippedPet = id; saveGameData(); renderShop(); triggerShake(); }
+        function unequipItem(type) { if(type === 'skin') return; if(type === 'wing') equippedWing = null; else if(type === 'weapon') equippedWeapon = null; else if(type === 'pet') equippedPet = null; saveGameData(); renderShop(); triggerShake(); }
+
+        function triggerShake() { const wrapper = document.getElementById('game-wrapper'); wrapper.classList.remove('shake-effect'); void wrapper.offsetWidth; wrapper.classList.add('shake-effect'); }
+
+        const WORLD_WIDTH = 4000; const WORLD_HEIGHT = 4000; let camera = { x: 0, y: 0 };
+        const player = { x: WORLD_WIDTH / 2, y: WORLD_HEIGHT / 2, radius: 15, speed: 5, color: '#ffffff', particleColor: '#ffffff', hp: 100, maxHp: 100, lastHitFrame: 0, level: 1, exp: 0, maxExp: 100, expMultiplier: 1.0, magnetRange: 40, damage: 30, fireRate: 35, attackRange: 500, bulletSpeed: 10, bulletSize: 4.5, hasAura: false, auraRadius: 120, auraDamage: 0.5, isDashing: false, dashSpeed: 18, dashFrames: 0, maxDashFrames: 12, dashCooldown: 0, maxDashCooldown: 90, dashDx: 0, dashDy: 0, trailHistory: [], skinParticles: [], wpnAngle: 0, petX: WORLD_WIDTH / 2, petY: WORLD_HEIGHT / 2 };
+        
+        let enemies = []; let projectiles = []; let enemyProjectiles = []; let expGems = []; let floatingTexts = []; let crosshairs = []; let particleBursts = [];
+        let frames = 0; let lastFiredFrame = 0; let gameSeconds = 0;
+        let currentWave = 1; const MAX_WAVE = 5; let enemiesKilled = 0; let killsNeededForNextWave = 25; let sessionKills = 0; let isBossActive = false; let bossEntity = null;
+        let sessionGold = 0; let sessionBPExp = 0; let rerollsLeft = 1; let waveBannerText = ""; let waveBannerAlpha = 0;
+
+        const POWER_UP_POOL = [
+            { id: 'atk_speed', weight: 100, name: 'Frenzy Fire', desc: 'Increase attack speed.', apply: () => { player.fireRate = Math.max(10, player.fireRate - 8); } },
+            { id: 'atk_dmg', weight: 100, name: 'Astral Power', desc: 'Increase bullet damage.', apply: () => { player.damage += 15; player.bulletSize += 1; } },
+            { id: 'range_up', weight: 80, name: 'Eagle Eye', desc: 'Expand attack range.', apply: () => { player.attackRange += 100; } },
+            { id: 'move_speed', weight: 80, name: 'Void Walker', desc: 'Increase movement speed.', apply: () => { player.speed += 1.0; } },
+            { id: 'aura_unlock', weight: 40, name: 'Hellfire Aura', desc: 'Emit a damaging energy ring.', apply: () => { player.hasAura = true; player.auraRadius += 30; player.auraDamage += 0.3; } },
+            { id: 'heal', weight: 50, name: 'Vitality Surge', desc: 'Instantly recover 50% HP.', apply: () => { player.hp = Math.min(player.maxHp, player.hp + player.maxHp * 0.5); } },
+            { id: 'magnet', weight: 70, name: 'Magnetic Field', desc: 'Increase EXP pickup radius.', apply: () => { player.magnetRange += 60; } },
+            { id: 'exp_boost', weight: 60, name: 'Enlightenment', desc: 'Gain 30% more EXP.', apply: () => { player.expMultiplier += 0.3; } },
+            { id: 'aura_dmg', weight: 50, name: 'Infernal Heat', desc: 'Multiply Aura damage.', apply: () => { player.auraDamage += 0.8; } },
+            { id: 'dash_cd', weight: 60, name: 'Phantom Wind', desc: 'Reduce Dash cooldown.', apply: () => { player.maxDashCooldown = Math.max(30, player.maxDashCooldown - 20); } }
+        ];
+
+        function getWeightedRandomPowerUps(count) { let selected = []; let tempPool = [...POWER_UP_POOL]; for(let i = 0; i < count; i++) { if(tempPool.length === 0) break; let totalWeight = tempPool.reduce((sum, item) => sum + item.weight, 0); let r = Math.random() * totalWeight; let sum = 0; for(let j = 0; j < tempPool.length; j++) { sum += tempPool[j].weight; if(r <= sum) { selected.push(tempPool[j]); tempPool.splice(j, 1); break; } } } return selected; }
+
+        function generateRandomPowerUps() {
+            let currentChoices = getWeightedRandomPowerUps(3); const listEl = document.getElementById('dynamic-power-list'); listEl.innerHTML = '';
+            const box = document.getElementById('level-up-box'); box.classList.remove('pop-animation'); void box.offsetWidth; box.classList.add('pop-animation');
+            currentChoices.forEach((skill, index) => { 
+                const btn = document.createElement('button'); btn.className = 'std-btn power-btn stagger-anim'; btn.style.animationDelay = `${index * 0.1}s`; 
+                btn.innerHTML = `<strong>${skill.name}</strong><span class="skill-desc">${skill.desc}</span>`;
+                btn.onclick = () => { triggerShake(); skill.apply(); switchScreen(STATES.PLAYING); updateHUD(); };
+                listEl.appendChild(btn);
+            });
+            const rerollBtn = document.getElementById('btn-reroll');
+            if (rerollsLeft > 0) { rerollBtn.disabled = false; rerollBtn.innerText = `✦ Reroll (${rerollsLeft} Left) ✦`; } else { rerollBtn.disabled = true; rerollBtn.innerText = `Out of Rerolls`; }
+        }
+
+        function triggerWaveBanner(text) { waveBannerText = text; waveBannerAlpha = 2.0; }
+        function applySkinColors() { const activeSkin = ITEMS_DB.skins.find(s => s.id === equippedSkin) || ITEMS_DB.skins[0]; player.color = activeSkin.color; player.particleColor = activeSkin.pColor; }
+
+        function resetGame() {
+            applySkinColors(); player.x = WORLD_WIDTH/2; player.y = WORLD_HEIGHT/2; player.petX = player.x; player.petY = player.y; player.hp = 100; player.maxHp = 100; player.level = 1; player.exp = 0; player.maxExp = 100; player.expMultiplier = 1.0; player.magnetRange = 40; player.damage = 30; player.fireRate = 35; player.attackRange = 450; player.bulletSpeed = 10; player.bulletSize = 4.5; player.speed = 5; player.hasAura = false; player.auraRadius = 120; player.auraDamage = 0.5; player.isDashing = false; player.dashCooldown = 0; player.trailHistory = []; player.skinParticles = []; player.wpnAngle = 0;
+            enemies = []; projectiles = []; enemyProjectiles = []; expGems = []; floatingTexts = []; crosshairs = []; particleBursts = []; frames = 0; gameSeconds = 0;
+            currentWave = 1; enemiesKilled = 0; sessionKills = 0; killsNeededForNextWave = 25; sessionGold = 0; sessionBPExp = 0;
+            isBossActive = false; bossEntity = null; document.getElementById('boss-ui').style.opacity = 0; document.getElementById('end-title').innerText = "YOU DIED"; document.getElementById('end-title').style.color = "#ff0044";
+            updateHUD(); triggerWaveBanner("WAVE 1 START");
+        }
+
+        function updateHUD() {
+            document.getElementById('level-display').innerText = `LV. ${player.level}`; document.getElementById('hp-bar').style.width = Math.max(0, (player.hp / player.maxHp) * 100) + '%'; document.getElementById('hp-text').innerText = `${Math.floor(player.hp)} / ${player.maxHp}`; document.getElementById('exp-bar').style.width = Math.min(100, (player.exp / player.maxExp) * 100) + '%'; document.getElementById('timer-display').innerText = `${Math.floor(gameSeconds / 60).toString().padStart(2, '0')}:${(gameSeconds % 60).toString().padStart(2, '0')}`; document.getElementById('ingame-gold-display').innerText = sessionGold;
+            if (isBossActive) { document.getElementById('wave-text').innerText = "BOSS FIGHT"; document.getElementById('wave-text').style.color = "#ff0044"; document.getElementById('wave-progress-bar').style.width = "100%"; document.getElementById('wave-progress-bar').style.background = "#ff0044"; if(bossEntity) document.getElementById('boss-hp-bar').style.width = Math.max(0, (bossEntity.hp / bossEntity.maxHp) * 100) + '%'; } else { document.getElementById('wave-text').innerText = `WAVE ${currentWave}`; document.getElementById('wave-text').style.color = "#fff"; document.getElementById('wave-progress-bar').style.width = Math.min(100, (enemiesKilled / killsNeededForNextWave) * 100) + '%'; document.getElementById('wave-progress-bar').style.background = "#fff"; }
+        }
+
+        function actStartGame() { triggerShake(); resetGame(); switchScreen(STATES.PLAYING); }
+        function actShowShop() { triggerShake(); switchScreen(STATES.SHOP); }
+        function actShowBattlePass() { triggerShake(); switchScreen(STATES.BP); }
+        function actShowProfile() { triggerShake(); switchScreen(STATES.PROFILE); }
+        function actShowCredits() { triggerShake(); switchScreen(STATES.CREDITS); }
+        function actPauseGame() { triggerShake(); if(currentState === STATES.PLAYING) switchScreen(STATES.PAUSED); }
+        function actResumeGame() { triggerShake(); switchScreen(STATES.PLAYING); }
+        function actQuitToMenu() { triggerShake(); switchScreen(STATES.MENU); }
+        function actReroll() { if(rerollsLeft > 0) { rerollsLeft--; triggerShake(); generateRandomPowerUps(); } }
+
+        let mouseXBg = window.innerWidth / 2; let mouseYBg = window.innerHeight / 2;
+        window.addEventListener('mousemove', (e) => { mouseXBg = e.clientX; mouseYBg = e.clientY; if(currentState !== STATES.PLAYING) { glowEl.style.left = mouseXBg + 'px'; glowEl.style.top = mouseYBg + 'px'; }});
+        const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowLeft: false, ArrowDown: false, ArrowRight: false, ' ': false };
+        window.addEventListener('keydown', (e) => { const key = e.key; if (keys.hasOwnProperty(key)) keys[key] = true; if (currentState === STATES.PLAYING && (key === 'Escape' || key === 'p' || key === 'P')) actPauseGame(); else if (currentState === STATES.PAUSED && (key === 'Escape' || key === 'p' || key === 'P')) actResumeGame(); else if ((currentState !== STATES.MENU && currentState !== STATES.PLAYING && currentState !== STATES.LEVEL_UP) && key === 'Escape') actQuitToMenu(); });
+        window.addEventListener('keyup', (e) => { const key = e.key; if (keys.hasOwnProperty(key)) keys[key] = false; });
+
+        const particlesBg = Array.from({length: 120}, () => ({ x: Math.random() * bgCanvas.width, y: Math.random() * bgCanvas.height, radius: Math.random() * 2 + 0.5, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, alpha: Math.random() * 0.6 + 0.1, type: 'dust' }));
+        for(let i=0; i<40; i++) { particlesBg.push({ x: Math.random() * bgCanvas.width, y: Math.random() * bgCanvas.height, radius: Math.random() * 2 + 1, vx: (Math.random() - 0.5) * 1, vy: -Math.random() * 1.5 - 0.5, alpha: Math.random() * 0.8 + 0.2, type: 'ember' }); }
+        const nebulasBg = Array.from({length: 5}, () => ({ x: Math.random() * bgCanvas.width, y: Math.random() * bgCanvas.height, radius: Math.random() * 400 + 200, color: `hsla(${Math.random() * 60 + 180}, 100%, 50%, 0.05)` }));
+
+        function animateParticles() { 
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height); 
+            let offsetX = 0; let offsetY = 0;
+            if(currentState !== STATES.PLAYING) { offsetX = (mouseXBg - window.innerWidth / 2) * 0.03; offsetY = (mouseYBg - window.innerHeight / 2) * 0.03; }
+            bgCtx.save(); bgCtx.translate(-offsetX, -offsetY);
+            nebulasBg.forEach(n => { let gradient = bgCtx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius); gradient.addColorStop(0, n.color); gradient.addColorStop(1, 'transparent'); bgCtx.beginPath(); bgCtx.arc(n.x, n.y, n.radius, 0, Math.PI * 2); bgCtx.fillStyle = gradient; bgCtx.fill(); }); 
+            bgCtx.restore(); bgCtx.save(); bgCtx.translate(-offsetX * 2, -offsetY * 2); 
+            particlesBg.forEach(p => { 
+                p.x += p.vx; p.y += p.vy; 
+                if (p.x < -50) p.x = bgCanvas.width + 50; if (p.x > bgCanvas.width + 50) p.x = -50; if (p.y < -50) p.y = bgCanvas.height + 50; if (p.y > bgCanvas.height + 50) p.y = -50; 
+                bgCtx.beginPath(); bgCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); 
+                if(p.type === 'ember') { bgCtx.fillStyle = `rgba(255, ${Math.random()*100 + 100}, 0, ${p.alpha})`; bgCtx.shadowBlur = 10; bgCtx.shadowColor = '#ff6600'; } else { bgCtx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`; bgCtx.shadowBlur = 0; }
+                bgCtx.fill(); 
+            }); bgCtx.restore(); requestAnimationFrame(animateParticles); 
+        }
+
+        // TẠO HIỆU ỨNG NỔ HẠT (BURST)
+        function createBurst(x, y, color) {
+            for(let i=0; i<8; i++) {
+                let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 3 + 2;
+                particleBursts.push({ x: x, y: y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, radius: Math.random()*3+2, color: color, alpha: 1.0 });
+            }
+        }
+
+        function spawnEnemy() {
+            if (isBossActive) return; 
+            const angle = Math.random() * Math.PI * 2; const distance = Math.max(gameCanvas.width, gameCanvas.height) / 2 + 100; const ex = player.x + Math.cos(angle) * distance; const ey = player.y + Math.sin(angle) * distance;
+            let isElite = false; let isRanged = false; let type = 'normal'; let color = '#cc0000'; let radius = 12; let speed = Math.random() * 1.5 + 1.2 + (currentWave * 0.2); let hp = 20 + ((currentWave - 1) * 15); let expReward = 20; let damage = 15;
+            const rand = Math.random();
+            if (currentWave >= 2 && rand < 0.2) { isRanged = true; type = 'sniper'; color = '#00ff44'; radius = 14; speed = Math.random() * 1.0 + 1.5; hp = 40 + (currentWave * 10); expReward = 40; damage = 15; } else if (currentWave >= 3 && rand < 0.3) { isElite = true; type = 'phantom'; color = '#0088ff'; radius = 15; speed = Math.random() * 1.5 + 2.5; hp = 100 + (currentWave * 20); expReward = 100; damage = 25; } else if (currentWave >= 4 && rand < 0.45) { isElite = true; type = 'berserker'; color = '#ff3300'; radius = 18; speed = Math.random() * 1.0 + 1.0; hp = 150 + (currentWave * 30); expReward = 120; damage = 35; }
+            enemies.push({ x: ex, y: ey, radius, speed, color, hp, maxHp: hp, isElite, isRanged, type, expReward, damage, state: 'moving', stateTimer: 0, dodgeCooldown: 0 });
+        }
+
+        function spawnBoss() { isBossActive = true; document.getElementById('boss-ui').style.opacity = 1; enemies = enemies.slice(-5); bossEntity = { x: player.x, y: player.y - 600, radius: 70, speed: 1.5, color: '#ff0044', hp: 6000 + (player.level * 150), maxHp: 6000 + (player.level * 150), isElite: true, isBoss: true, damage: 50, expReward: 5000, state: 'moving', stateTimer: frames, isFiring: false }; enemies.push(bossEntity); }
+
+        function handleEnemyKill(enemy) {
+            sessionKills++;
+            if (enemy.isBoss) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 100 }); } else if (enemy.isElite) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 5 }); } else if (Math.random() < 0.1) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 1 }); }
+            if (!isBossActive && !enemy.isBoss) { enemiesKilled++; if (enemiesKilled >= killsNeededForNextWave) { if (currentWave < MAX_WAVE) { currentWave++; enemiesKilled = 0; killsNeededForNextWave = currentWave * 25; triggerWaveBanner(`WAVE ${currentWave} START`); } else { spawnBoss(); triggerWaveBanner("WARNING: ABYSSAL OVERLORD"); } } }
+        }
+
+        function autoFire() {
+            if (enemies.length === 0 || frames - lastFiredFrame < player.fireRate) return;
+            let nearestEnemy = null; let minDistance = Infinity; enemies.forEach(enemy => { const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y); if (dist < minDistance) { minDistance = dist; nearestEnemy = enemy; } });
+            if (nearestEnemy && minDistance <= player.attackRange) { const angle = Math.atan2(nearestEnemy.y - player.y, nearestEnemy.x - player.x); const startX = player.x + Math.cos(angle) * player.radius; const startY = player.y + Math.sin(angle) * player.radius; projectiles.push({ x: startX, y: startY, vx: Math.cos(angle) * player.bulletSpeed, vy: Math.sin(angle) * player.bulletSpeed, radius: player.bulletSize, color: player.particleColor, damage: player.damage, history: [{x: startX, y: startY}], isCrit: Math.random() < 0.2 }); lastFiredFrame = frames; }
+        }
+
+        function addFloatingText(x, y, text, color, fontSize = 16) { floatingTexts.push({ x: x + (Math.random()*20-10), y: y - 20, text: text, color: color, alpha: 1.0, dy: -1.5, size: fontSize }); }
+
+        function gameLoop() {
+            if (currentState === STATES.PLAYING) {
+                frames++; if (frames % 60 === 0) { gameSeconds++; updateHUD(); }
+                
+                camera.x = player.x - gameCanvas.width / 2; camera.y = player.y - gameCanvas.height / 2; camera.x = Math.max(0, Math.min(camera.x, WORLD_WIDTH - gameCanvas.width)); camera.y = Math.max(0, Math.min(camera.y, WORLD_HEIGHT - gameCanvas.height));
+                if (!isBossActive) { let spawnRate = Math.max(10, 45 - (currentWave * 5)); if (frames % spawnRate === 0) spawnEnemy(); } else { if (frames % 120 === 0) spawnEnemy(); }
+                autoFire();
+
+                if (player.dashCooldown > 0) player.dashCooldown--; document.getElementById('dash-bar').style.width = Math.min(100, (1 - player.dashCooldown / player.maxDashCooldown) * 100) + '%'; if (player.dashCooldown === 0) document.getElementById('dash-bar').style.background = '#00ffff'; else document.getElementById('dash-bar').style.background = '#444';
+                if (keys[' '] && player.dashCooldown <= 0 && !player.isDashing) { player.isDashing = true; player.dashFrames = player.maxDashFrames; player.dashCooldown = player.maxDashCooldown; let dx = 0; let dy = 0; if (keys.w || keys.ArrowUp) dy -= 1; if (keys.s || keys.ArrowDown) dy += 1; if (keys.a || keys.ArrowLeft) dx -= 1; if (keys.d || keys.ArrowRight) dx += 1; if (dx === 0 && dy === 0) dx = 1; const len = Math.hypot(dx, dy); player.dashDx = dx / len; player.dashDy = dy / len; triggerShake(); }
+                if (player.isDashing) { player.x += player.dashDx * player.dashSpeed; player.y += player.dashDy * player.dashSpeed; player.dashFrames--; if (player.dashFrames <= 0) player.isDashing = false; player.lastHitFrame = frames; if(frames % 2 === 0) player.trailHistory.push({x: player.x, y: player.y, alpha: 0.8}); } else { if (keys.w || keys.ArrowUp) player.y -= player.speed; if (keys.s || keys.ArrowDown) player.y += player.speed; if (keys.a || keys.ArrowLeft) player.x -= player.speed; if (keys.d || keys.ArrowRight) player.x += player.speed; }
+                if (player.x < player.radius) player.x = player.radius; if (player.x > WORLD_WIDTH - player.radius) player.x = WORLD_WIDTH - player.radius; if (player.y < player.radius) player.y = player.radius; if (player.y > WORLD_HEIGHT - player.radius) player.y = WORLD_HEIGHT - player.radius;
+                if (frames % 3 === 0) { player.skinParticles.push({ x: player.x + (Math.random()*20-10), y: player.y + 10, radius: Math.random()*3 + 1, alpha: 1, color: player.particleColor }); }
+
+                ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); ctx.save(); ctx.translate(-camera.x, -camera.y);
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)'; ctx.lineWidth = 2; const gridSize = 100; const startX = Math.floor(camera.x / gridSize) * gridSize; const startY = Math.floor(camera.y / gridSize) * gridSize; for (let x = startX; x < camera.x + gameCanvas.width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, camera.y); ctx.lineTo(x, camera.y + gameCanvas.height); ctx.stroke(); } for (let y = startY; y < camera.y + gameCanvas.height; y += gridSize) { ctx.beginPath(); ctx.moveTo(camera.x, y); ctx.lineTo(camera.x + gameCanvas.width, y); ctx.stroke(); }
+                
+                for (let i = crosshairs.length - 1; i >= 0; i--) { 
+                    let ch = crosshairs[i]; ch.radius -= 0.5; if(ch.radius < 5) ch.radius = 5;
+                    ctx.beginPath(); ctx.arc(ch.x, ch.y, ch.radius, 0, Math.PI * 2); ctx.strokeStyle = `rgba(255, 0, 68, ${ch.framesLeft > 10 ? 0.8 : 0.2})`; ctx.lineWidth = 2; ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(ch.x-ch.radius-5, ch.y); ctx.lineTo(ch.x+ch.radius+5, ch.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(ch.x, ch.y-ch.radius-5); ctx.lineTo(ch.x, ch.y+ch.radius+5); ctx.stroke();
+                    ch.framesLeft--; if (ch.framesLeft <= 0) crosshairs.splice(i, 1); 
+                }
+
+                for (let i = player.trailHistory.length - 1; i >= 0; i--) { let trail = player.trailHistory[i]; ctx.beginPath(); ctx.arc(trail.x, trail.y, player.radius, 0, Math.PI * 2); ctx.fillStyle = `rgba(0, 255, 255, ${trail.alpha})`; ctx.fill(); trail.alpha -= 0.1; if (trail.alpha <= 0) player.trailHistory.splice(i, 1); }
+                for (let i = player.skinParticles.length - 1; i >= 0; i--) { let sp = player.skinParticles[i]; ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.radius, 0, Math.PI * 2); ctx.fillStyle = sp.color; ctx.globalAlpha = sp.alpha; ctx.shadowBlur = 10; ctx.shadowColor = sp.color; ctx.fill(); ctx.shadowBlur=0; ctx.globalAlpha = 1.0; sp.y -= 0.5; sp.alpha -= 0.05; if (sp.alpha <= 0) player.skinParticles.splice(i, 1); }
+                if (player.hasAura) { ctx.beginPath(); ctx.arc(player.x, player.y, player.auraRadius, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 100, 0, 0.15)'; ctx.fill(); ctx.strokeStyle = 'rgba(255, 100, 0, 0.5)'; ctx.lineWidth = 2; ctx.stroke(); }
+
+                for (let i = expGems.length - 1; i >= 0; i--) {
+                    let gem = expGems[i]; let isGold = gem.type === 'gold'; ctx.shadowBlur = 10; ctx.shadowColor = isGold ? '#ffcc00' : '#00ffcc'; ctx.beginPath(); ctx.arc(gem.x, gem.y, isGold ? 6 : 4, 0, Math.PI * 2); ctx.fillStyle = isGold ? '#ffcc00' : '#00ffcc'; ctx.fill(); ctx.shadowBlur = 0;
+                    if (Math.hypot(player.x - gem.x, player.y - gem.y) < player.radius + player.magnetRange) { 
+                        createBurst(gem.x, gem.y, isGold ? '#ffcc00' : '#00ffcc');
+                        if (isGold) { 
+                            let isCrit = Math.random() < 0.1; // 10% CRIT GOLD
+                            let finalGold = isCrit ? gem.value * 2 : gem.value;
+                            sessionGold += finalGold; 
+                            addFloatingText(gem.x, gem.y, isCrit ? `+${finalGold} ✦ CRIT!` : `+${finalGold}`, isCrit ? '#ffaa00' : '#ffcc00', isCrit ? 24 : 16); 
+                        } 
+                        else { let gainedExp = Math.floor(gem.value * player.expMultiplier); player.exp += gainedExp; addFloatingText(gem.x, gem.y, `+${gainedExp}`, '#00ffcc'); if (player.exp >= player.maxExp) { player.level++; player.exp -= player.maxExp; player.maxExp = Math.floor(player.maxExp * 1.5); switchScreen(STATES.LEVEL_UP); } }
+                        expGems.splice(i, 1); updateHUD();
+                    }
+                }
+
+                // Vẽ Particle Bursts
+                for (let i = particleBursts.length - 1; i >= 0; i--) {
+                    let pb = particleBursts[i]; pb.x += pb.vx; pb.y += pb.vy; pb.alpha -= 0.05;
+                    ctx.globalAlpha = Math.max(0, pb.alpha); ctx.beginPath(); ctx.arc(pb.x, pb.y, pb.radius, 0, Math.PI*2); ctx.fillStyle = pb.color; ctx.fill(); ctx.globalAlpha = 1.0;
+                    if(pb.alpha <= 0) particleBursts.splice(i, 1);
+                }
+
+                for (let i = projectiles.length - 1; i >= 0; i--) {
+                    let p = projectiles[i]; p.history.push({x: p.x, y: p.y}); if (p.history.length > 6) p.history.shift(); p.x += p.vx; p.y += p.vy;
+                    if(p.history.length > 1) { ctx.beginPath(); ctx.moveTo(p.history[0].x, p.history[0].y); for(let pos of p.history) ctx.lineTo(pos.x, pos.y); ctx.strokeStyle = p.color; ctx.globalAlpha=0.5; ctx.lineWidth = p.radius * 1.5; ctx.lineCap = 'round'; ctx.stroke(); ctx.globalAlpha=1.0;}
+                    ctx.shadowBlur = 15; ctx.shadowColor = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.shadowBlur = 0; 
+                    if (p.x < 0 || p.x > WORLD_WIDTH || p.y < 0 || p.y > WORLD_HEIGHT) { projectiles.splice(i, 1); continue; }
+                    for (let j = enemies.length - 1; j >= 0; j--) {
+                        let e = enemies[j];
+                        if (Math.hypot(p.x - e.x, p.y - e.y) < p.radius + e.radius) { 
+                            let finalDmg = p.isCrit ? p.damage * 2 : p.damage; e.hp -= finalDmg; projectiles.splice(i, 1); createBurst(e.x, e.y, p.color); addFloatingText(e.x, e.y, Math.floor(finalDmg), p.isCrit ? '#ff0044' : '#ffffff', p.isCrit ? 22 : 16); 
+                            if (e.hp <= 0) { expGems.push({ x: e.x, y: e.y, value: e.expReward, type: 'exp' }); handleEnemyKill(e); if(e.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); } break; 
+                        }
+                    }
+                }
+
+                for (let i = enemyProjectiles.length - 1; i >= 0; i--) { let ep = enemyProjectiles[i]; ep.x += ep.vx; ep.y += ep.vy; ctx.shadowBlur = 15; ctx.shadowColor = ep.color; ctx.beginPath(); ctx.arc(ep.x, ep.y, ep.radius, 0, Math.PI * 2); ctx.fillStyle = ep.color; ctx.fill(); ctx.shadowBlur = 0; if (ep.x < 0 || ep.x > WORLD_WIDTH || ep.y < 0 || ep.y > WORLD_HEIGHT) { enemyProjectiles.splice(i, 1); continue; } if (!player.isDashing && Math.hypot(ep.x - player.x, ep.y - player.y) < ep.radius + player.radius) { player.hp -= ep.damage; enemyProjectiles.splice(i, 1); triggerShake(); addFloatingText(player.x, player.y, `-${ep.damage}`, '#ff0044', 20); if (player.hp <= 0) switchScreen(STATES.GAME_OVER); } }
+
+                for (let j = enemies.length - 1; j >= 0; j--) {
+                    let enemy = enemies[j]; const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+                    if (player.hasAura && dist <= player.auraRadius) { enemy.hp -= player.auraDamage; if(frames % 10 === 0) addFloatingText(enemy.x, enemy.y, Math.floor(player.auraDamage*10), '#ff8800'); if (enemy.hp <= 0) { expGems.push({ x: enemy.x, y: enemy.y, value: enemy.expReward, type: 'exp' }); handleEnemyKill(enemy); if(enemy.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); continue; } }
+                    
+                    if (enemy.dodgeCooldown > 0) enemy.dodgeCooldown--;
+                    if (enemy.type === 'phantom') { if (enemy.dodgeCooldown <= 0) { let bulletNear = projectiles.find(p => Math.hypot(p.x - enemy.x, p.y - enemy.y) < 150); if (bulletNear) { let angleToBullet = Math.atan2(bulletNear.y - enemy.y, bulletNear.x - enemy.x); enemy.x += Math.cos(angleToBullet + Math.PI/2) * 100; enemy.y += Math.sin(angleToBullet + Math.PI/2) * 100; enemy.dodgeCooldown = 120; addFloatingText(enemy.x, enemy.y, "DODGE", '#0088ff'); } } if (dist > 0) { enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed; } }
+                    else if (enemy.type === 'berserker') { if (enemy.state === 'moving') { if (dist > 0) { enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed; } if (dist < 400 && frames % 180 === 0) { enemy.state = 'aiming'; enemy.stateTimer = 45; const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x); enemy.dashTargetX = Math.cos(angle); enemy.dashTargetY = Math.sin(angle); crosshairs.push({x: player.x, y: player.y, radius: 40, framesLeft: 45}); } } else if (enemy.state === 'aiming') { enemy.stateTimer--; if (enemy.stateTimer <= 0) { enemy.state = 'dashing'; enemy.stateTimer = 30; } } else if (enemy.state === 'dashing') { enemy.x += enemy.dashTargetX * (enemy.speed * 4); enemy.y += enemy.dashTargetY * (enemy.speed * 4); enemy.stateTimer--; if (enemy.stateTimer <= 0) enemy.state = 'moving'; } }
+                    else if (enemy.type === 'sniper') { if (enemy.state === 'moving') { if (dist > 500) { enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed; } else if (dist < 300) { enemy.x -= ((player.x - enemy.x) / dist) * enemy.speed; enemy.y -= ((player.y - enemy.y) / dist) * enemy.speed; } if (frames - enemy.stateTimer > 150) { enemy.state = 'aiming'; enemy.stateTimer = frames; enemy.targetX = player.x; enemy.targetY = player.y; crosshairs.push({x: player.x, y: player.y, radius: 30, framesLeft: 60}); } } else if (enemy.state === 'aiming' && frames - enemy.stateTimer > 60) { const angle = Math.atan2(enemy.targetY - enemy.y, enemy.targetX - enemy.x); enemyProjectiles.push({ x: enemy.x, y: enemy.y, vx: Math.cos(angle) * 8, vy: Math.sin(angle) * 8, radius: 5, color: '#00ff44', damage: enemy.damage }); enemy.state = 'moving'; enemy.stateTimer = frames; } } 
+                    else if (enemy.isBoss) {
+                        enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed;
+                        if (!enemy.isFiring && frames - enemy.stateTimer > 150) { enemy.stateTimer = frames; enemy.isFiring = true; enemy.fireDelay = 45; crosshairs.push({x: player.x, y: player.y, radius: 60, framesLeft: 45}); enemy.targetX = player.x; enemy.targetY = player.y; }
+                        if (enemy.isFiring && frames - enemy.stateTimer >= enemy.fireDelay) { enemy.isFiring = false; const angleToPlayer = Math.atan2(enemy.targetY - enemy.y, enemy.targetX - enemy.x); for(let i = -2; i <= 2; i++) { let spreadAngle = angleToPlayer + (i * 0.2); enemyProjectiles.push({ x: enemy.x, y: enemy.y, vx: Math.cos(spreadAngle) * 8, vy: Math.sin(spreadAngle) * 8, radius: 8, color: '#ff0044', damage: 30 }); } }
+                    } else { if (dist > 0) { enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed; } }
+                    
+                    ctx.shadowBlur = enemy.isElite ? (enemy.isBoss? 40: 25) : 15; ctx.shadowColor = enemy.color; ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2); ctx.fillStyle = enemy.color; ctx.fill(); ctx.shadowBlur = 0;
+                    if (!enemy.isBoss) { const hpBarWidth = enemy.isElite ? 40 : 30; ctx.fillStyle = '#333'; ctx.fillRect(enemy.x - hpBarWidth/2, enemy.y - enemy.radius - 10, hpBarWidth, 4); ctx.fillStyle = '#ff0000'; ctx.fillRect(enemy.x - hpBarWidth/2, enemy.y - enemy.radius - 10, hpBarWidth * (enemy.hp / enemy.maxHp), 4); }
+                    if (!player.isDashing && dist < player.radius + enemy.radius && frames - player.lastHitFrame > 60) { player.hp -= enemy.damage; player.lastHitFrame = frames; triggerShake(); updateHUD(); addFloatingText(player.x, player.y, `-${enemy.damage}`, '#ff0044', 20); if (player.hp <= 0) switchScreen(STATES.GAME_OVER); }
+                }
+
+                for (let i = floatingTexts.length - 1; i >= 0; i--) { let ft = floatingTexts[i]; ft.y += ft.dy; ft.alpha -= 0.025; ctx.globalAlpha = Math.max(0, ft.alpha); ctx.fillStyle = ft.color; ctx.font = `bold ${ft.size}px 'Rajdhani', sans-serif`; ctx.textAlign = "center"; ctx.fillText(ft.text, ft.x, ft.y); ctx.globalAlpha = 1.0; if (ft.alpha <= 0) floatingTexts.splice(i, 1); }
+                
+                if (frames - player.lastHitFrame > 60 || Math.floor(frames / 5) % 2 === 0) { 
+                    if (equippedWing) { let wingColor = ITEMS_DB.wings.find(w => w.id === equippedWing).color; ctx.fillStyle = wingColor; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.ellipse(player.x - 20, player.y, 25, 10, Math.PI/4 + Math.sin(frames/10)*0.2, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(player.x + 20, player.y, 25, 10, -Math.PI/4 - Math.sin(frames/10)*0.2, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1.0; }
+                    ctx.beginPath(); ctx.arc(player.x, player.y, player.radius + 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
+                    ctx.shadowBlur = 20; ctx.shadowColor = player.color; ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2); ctx.fillStyle = player.color; ctx.fill(); ctx.shadowBlur = 0; 
+                    if (equippedWeapon) { let wpnColor = ITEMS_DB.weapons.find(w => w.id === equippedWeapon).color; player.wpnAngle += 0.05; let wx = player.x + Math.cos(player.wpnAngle) * 35; let wy = player.y + Math.sin(player.wpnAngle) * 35; ctx.shadowBlur = 15; ctx.shadowColor = wpnColor; ctx.beginPath(); ctx.arc(wx, wy, 6, 0, Math.PI * 2); ctx.fillStyle = wpnColor; ctx.fill(); ctx.shadowBlur = 0; }
+                }
+
+                // VẼ PET
+                if (equippedPet) {
+                    let pet = ITEMS_DB.pets.find(p => p.id === equippedPet);
+                    // LERP bám theo người chơi mượt mà (có offset lên trên một chút)
+                    player.petX += (player.x - 40 - player.petX) * 0.05;
+                    player.petY += (player.y - 40 - player.petY) * 0.05;
+                    ctx.font = "24px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                    // Nhấp nhô nhẹ
+                    ctx.fillText(pet.icon, player.petX, player.petY + Math.sin(frames/15)*5);
+                }
+
+                ctx.restore();
+
+                if (waveBannerAlpha > 0) { ctx.fillStyle = `rgba(255, 204, 0, ${Math.min(1, waveBannerAlpha)})`; ctx.font = "bold 60px 'Cinzel', serif"; ctx.textAlign = "center"; ctx.shadowBlur = 20; ctx.shadowColor = '#ffcc00'; ctx.fillText(waveBannerText, gameCanvas.width / 2, gameCanvas.height / 3); ctx.shadowBlur = 0; waveBannerAlpha -= 0.015; }
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Bắt đầu game
+        animateParticles();
+        switchScreen(STATES.MENU);
+        gameLoop(); 
+    </script>
+</body>
+</html>
