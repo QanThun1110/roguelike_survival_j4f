@@ -159,6 +159,8 @@
         #hp-container { width: 100%; max-width: 250px; background: #222; border: 2px solid #555; height: 25px; position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff0044, #ff6600); transition: width 0.2s ease; }
         #hp-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; line-height: 25px; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 3px #000; font-family: 'Montserrat', sans-serif;}
+        #damage-overlay { position: absolute; top:0; left:0; width:100%; height:100%; box-shadow: inset 0 0 0px rgba(255,0,0,0); pointer-events: none; transition: box-shadow 0.2s ease; z-index: 15; }
+        .took-damage { box-shadow: inset 0 0 150px rgba(255,0,68,0.8) !important; }
         #mp-container { width: 100%; max-width: 250px; background: #222; border: 2px solid #555; height: 18px; position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.8); margin-top: 2px;}
         #mp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #0055ff, #00aaff); transition: width 0.2s ease; }
         #mp-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; line-height: 18px; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 3px #000; font-family: 'Montserrat', sans-serif;}
@@ -218,6 +220,10 @@
                 </div>
 
                 <div id="moba-mid-right" class="moba-element">
+                    <button class="side-menu-btn" onclick="claimDailyReward()">
+                        <div class="icon-bg" style="color: #ffea00; border-color: rgba(255,234,0,0.5); text-shadow: 0 0 10px #ffea00;">🎁</div>
+                        <span style="color: #ffea00;">Daily Reward</span>
+                    </button>
                     <button class="side-menu-btn" onclick="actShowBattlePass()">
                         <div class="icon-bg" style="color: #0088ff; border-color: rgba(0,136,255,0.5);">📜</div>
                         <span data-i18n="menu-pass" style="color: #0088ff;">Pass</span>
@@ -411,6 +417,7 @@
 
         <canvas id="game-canvas" class="hidden"></canvas>
         <div id="game-hud" class="hidden">
+            <div id="damage-overlay"></div>
             <div id="exp-container"><div id="exp-bar"></div></div>
             <div id="hud-top">
                 <div id="status-container">
@@ -608,8 +615,16 @@
                 { id: 'pet_none', name: 'No Pet', cost: 0, color: '#444', icon: '🚫', dmg: 0, fireRate: 0, text: 'No Pet' },
                 { id: 'pet_orb', name: 'Light Sprite', cost: 4000, color: '#00ffcc', icon: '🧚', dmg: 10, fireRate: 60, text: 'Shoots light bolts' },
                 { id: 'pet_dragon', name: 'Void Whelp', cost: 9000, color: '#aa00ff', icon: '🐉', dmg: 25, fireRate: 40, text: 'Shoots void bolts' }
+            ],
+            spells: [
+                { id: 'spell_aura', name: 'Aura Burst', cost: 0, color: '#aa00ff', icon: '🔮', text: 'AoE DMG & Knockback (Cost: 30 MP)' },
+                { id: 'spell_heal', name: 'Holy Light', cost: 3000, color: '#00ff44', icon: '✨', text: 'Heals 40% Max HP (Cost: 50 MP)' },
+                { id: 'spell_nuke', name: 'Hellfire', cost: 8000, color: '#ff0044', icon: '🔥', text: 'Massive Screen Wipe DMG (Cost: 80 MP)' }
             ]
         };
+
+        // KHỞI TẠO SPELL TRANG BỊ
+        let equippedSpell = localStorage.getItem('fightup_eq_spell') || 'spell_aura';
 
         let currentShopTab = 'skins'; let currentInvTab = 'skins';
 
@@ -810,6 +825,7 @@
             { id: 'pierce', icon: '🌠', weight: 35, name: 'Piercing Light', desc: 'Bullets pierce +1 enemy.', apply: () => { player.pierceCount += 1; } },
             { id: 'multi_shot', icon: '🐉', weight: 25, name: 'Twin Dragon', desc: 'Fire +1 projectile per shot.', apply: () => { player.multishot += 1; } },
             { id: 'aura_unlock', icon: '🔥', weight: 30, name: 'Hellfire Aura', desc: 'Emit a damaging energy ring.', apply: () => { player.hasAura = true; player.auraRadius += 30; player.auraDamage += 0.5; } },
+            { id: 'orbital_add', icon: '🪐', weight: 40, name: 'Cosmic Orbs', desc: 'Add an orbiting celestial body.', apply: () => { player.orbitals += 1; } },
             // KỸ NĂNG PET
             { id: 'pet_atk_speed', icon: '🐾', weight: 60, name: 'Pet Frenzy', desc: 'Increase Pet attack speed.', apply: () => { if(player.pet.active) player.pet.fireRate = Math.max(10, player.pet.fireRate - 8); } },
             { id: 'pet_atk_dmg', icon: '🐺', weight: 60, name: 'Pet Empower', desc: 'Increase Pet damage.', apply: () => { if(player.pet.active) player.pet.damage += 15; } }
@@ -868,15 +884,35 @@
             
             player.def = activeArm.def + activeBot.def + (playerRunes.def * 1);
             
-            // MANA VÀ SKILL BASE
+            // MANA VÀ SKILL BASE (Đã nâng cấp cộng hưởng)
+            const activeSpell = ITEMS_DB.spells.find(s => s.id === equippedSpell) || ITEMS_DB.spells[0];
+            player.spell = activeSpell.id;
+            player.skillColor = activeSpell.color;
+            player.skillName = activeSpell.name;
+            
             player.maxMp = 100 + (player.level * 10);
             player.mp = player.maxMp;
-            player.mpRegen = 0.05; // Tốc độ hồi Mana
+            player.mpRegen = 0.05; 
+            
             player.skillCost = 30;
-            player.skillDamage = 100; // Sát thương nổ
-            player.skillRadius = 250; // Phạm vi nổ
+            player.skillRadius = 250;
             player.skillCooldown = 0;
-            player.maxSkillCooldown = 180; // 3 giây
+            player.maxSkillCooldown = 180; 
+
+            // Cấu hình riêng cho từng loại phép
+            if (player.spell === 'spell_heal') { player.skillCost = 50; }
+            else if (player.spell === 'spell_nuke') { player.skillCost = 80; player.maxSkillCooldown = 300; }
+        }
+
+        // HÀM NHẬN THƯỞNG HÀNG NGÀY
+        function claimDailyReward() {
+            let lastClaim = localStorage.getItem('fightup_daily_claim');
+            let today = new Date().toDateString();
+            if (lastClaim === today) { alert("You have already claimed today's reward! Come back tomorrow."); } 
+            else {
+                globalGold += 1000; localStorage.setItem('fightup_daily_claim', today);
+                saveGameData(); triggerShake(); alert("Claimed 1000 🪙! Enjoy!");
+            }
         }
 
         // TẠO VẬT CẢN TRÊN BẢN ĐỒ
@@ -927,6 +963,8 @@
             player.attackRange = 400; player.bulletSpeed = 12; player.bulletSize = 4.5; 
             player.multishot = 1; player.pierceCount = 0; // Các chỉ số mới
             player.hasAura = false; player.auraRadius = 120; player.auraDamage = 0.5; 
+            player.orbitals = 0; player.orbitalAngle = 0; player.orbitalSpeed = 0.05; player.orbitalRadius = 80; // Vệ tinh
+            player.invulnFrames = 0; // Khung hình vô địch
             player.isDashing = false; player.dashSpeed = 16; player.dashFrames = 0; player.maxDashFrames = 12;
             player.dashCooldown = 0; player.maxDashCooldown = 90;
             player.dashDx = 0; player.dashDy = 0; player.trailHistory = []; player.skinParticles = [];
@@ -1058,10 +1096,11 @@
             sessionKills++;
             if (enemy.isBoss) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 150 }); } else if (enemy.isElite) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 10 }); } else if (Math.random() < 0.1) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 1 }); }
             
-            // TỈ LỆ RƠI MÁU VÀ MANA
+            // TỈ LỆ RƠI VẬT PHẨM
             let dropRoll = Math.random();
-            if (dropRoll < 0.03) { expGems.push({ x: enemy.x + 20, y: enemy.y, type: 'hp', value: 20 }); } // 3% rơi HP
-            else if (dropRoll < 0.08) { expGems.push({ x: enemy.x - 20, y: enemy.y, type: 'mp', value: 30 }); } // 5% rơi MP
+            if (dropRoll < 0.03) { expGems.push({ x: enemy.x + 20, y: enemy.y, type: 'hp', value: 20 }); } // 3% HP
+            else if (dropRoll < 0.08) { expGems.push({ x: enemy.x - 20, y: enemy.y, type: 'mp', value: 30 }); } // 5% MP
+            else if (dropRoll < 0.09) { expGems.push({ x: enemy.x, y: enemy.y + 20, type: 'magnet', value: 0 }); } // 1% NAM CHÂM
 
             if (!isBossActive && !enemy.isBoss) { enemiesKilled++; if (enemiesKilled >= killsNeededForNextWave) { if (currentWave < MAX_WAVE) { currentWave++; enemiesKilled = 0; killsNeededForNextWave = currentWave * 25; triggerWaveBanner(TRANSLATIONS[currentLang]["wave-start"] ? TRANSLATIONS[currentLang]["wave-start"].replace("{w}", currentWave) : `WAVE ${currentWave} START`); } else { spawnBoss(); triggerWaveBanner("WARNING: ABYSSAL OVERLORD"); } } }
         }
@@ -1084,7 +1123,7 @@
             }
         }
 
-        function addFloatingText(x, y, text, color, fontSize = 16) { floatingTexts.push({ x: x + (Math.random()*20-10), y: y - 20, text: text, color: color, alpha: 1.0, dy: -1.5, size: fontSize }); }
+        function addFloatingText(x, y, text, color, fontSize = 16) { floatingTexts.push({ x: x + (Math.random()*40-20), y: y - 20, text: text, color: color, alpha: 1.0, dy: -2, size: fontSize, life: 40, maxLife: 40 }); }
 
         function drawDiamond(ctx, x, y, size, color, isGold, frames) {
             ctx.save(); ctx.translate(x, y); ctx.rotate(frames * 0.05); ctx.shadowBlur = 10; ctx.shadowColor = color; ctx.beginPath();
@@ -1107,36 +1146,62 @@
                 if (player.skillCooldown > 0) player.skillCooldown--;
                 document.getElementById('skill-cd-overlay').style.height = `${(player.skillCooldown / player.maxSkillCooldown) * 100}%`;
 
-                // ACTIVE SKILL: AURA BURST (Phím E)
+                // HIỆU ỨNG CHỚP MÀN HÌNH KHI DÙNG SKILL
+                if (typeof window.screenFlash === 'undefined') window.screenFlash = 0;
+                if (window.screenFlash > 0) {
+                    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); 
+                    ctx.fillStyle = `rgba(255, 255, 255, ${window.screenFlash})`; ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+                    ctx.restore(); window.screenFlash -= 0.05;
+                }
+
+                // ACTIVE SKILL (Tối ưu logic & Mở rộng 3 Skill)
                 if ((keys['e'] || keys['E']) && player.skillCooldown <= 0 && player.mp >= player.skillCost) {
-                    player.mp -= player.skillCost;
-                    player.skillCooldown = player.maxSkillCooldown;
-                    triggerShake();
+                    player.mp -= player.skillCost; player.skillCooldown = player.maxSkillCooldown;
+                    triggerShake(); window.screenFlash = 0.6; // Chớp sáng uy lực
                     
-                    // Tạo sóng xung kích (Shockwave)
-                    shockwaves.push({ x: player.x, y: player.y, radius: player.radius, maxRadius: player.skillRadius, color: '#aa00ff', alpha: 1.0, width: 25 });
-                    
-                    // Tạo hiệu ứng nổ
-                    for(let i=0; i<30; i++) {
-                        let angle = Math.random() * Math.PI * 2;
-                        let speed = Math.random() * 8 + 5;
-                        particleBursts.push({ x: player.x, y: player.y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, radius: Math.random()*5+3, color: '#aa00ff', alpha: 1.0 });
-                    }
-                    
-                    // Sát thương và đẩy lùi quái
-                    enemies.forEach(e => {
-                        let dist = Math.hypot(player.x - e.x, player.y - e.y);
-                        if(dist <= player.skillRadius) {
-                            e.hp -= player.skillDamage;
-                            addFloatingText(e.x, e.y, Math.floor(player.skillDamage), '#aa00ff', 24);
-                            // Đẩy lùi
-                            if(!e.isBoss) {
-                                e.x += ((e.x - player.x) / dist) * 150;
-                                e.y += ((e.y - player.y) / dist) * 150;
+                    // DMG Kỹ năng = Sát thương vũ khí * 3 + Chỉ số phép
+                    let finalSkillDmg = (player.damage * 3) + 100;
+
+                    if (!player.spell || player.spell === 'spell_aura') {
+                        // 1. AURA BURST
+                        shockwaves.push({ x: player.x, y: player.y, radius: player.radius, maxRadius: player.skillRadius, color: player.skillColor, alpha: 1.0, width: 35 });
+                        for(let i=0; i<40; i++) { let angle = Math.random()*Math.PI*2; let speed = Math.random()*10+5; particleBursts.push({ x: player.x, y: player.y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, radius: Math.random()*6+3, color: player.skillColor, alpha: 1.0 }); }
+                        
+                        // Lặp NGƯỢC để xóa quái chết an toàn
+                        for(let j = enemies.length - 1; j >= 0; j--) {
+                            let e = enemies[j]; let dist = Math.hypot(player.x - e.x, player.y - e.y);
+                            if(dist <= player.skillRadius) {
+                                e.hp -= finalSkillDmg; addFloatingText(e.x, e.y, Math.floor(finalSkillDmg), player.skillColor, 28);
+                                if(!e.isBoss) { e.x += ((e.x - player.x) / dist) * 200; e.y += ((e.y - player.y) / dist) * 200; } // Đẩy văng cực mạnh
+                                // XỬ LÝ CHẾT NGAY LẬP TỨC KHÔNG ĐỂ MÁU ÂM
+                                if (e.hp <= 0) {
+                                    expGems.push({ x: e.x, y: e.y, value: e.expReward, type: 'exp' }); handleEnemyKill(e);
+                                    if(e.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); }
+                                    enemies.splice(j, 1);
+                                }
                             }
                         }
-                    });
-                    
+                    } else if (player.spell === 'spell_heal') {
+                        // 2. HOLY LIGHT
+                        shockwaves.push({ x: player.x, y: player.y, radius: player.radius, maxRadius: 150, color: player.skillColor, alpha: 1.0, width: 20 });
+                        let healAmount = Math.floor(player.maxHp * 0.4);
+                        player.hp = Math.min(player.maxHp, player.hp + healAmount);
+                        addFloatingText(player.x, player.y, `+${healAmount} HP`, player.skillColor, 30);
+                    } else if (player.spell === 'spell_nuke') {
+                        // 3. HELLFIRE (Xóa sổ toàn bản đồ)
+                        shockwaves.push({ x: player.x, y: player.y, radius: player.radius, maxRadius: 1500, color: player.skillColor, alpha: 1.0, width: 60 });
+                        window.screenFlash = 1.0; 
+                        let nukeDmg = finalSkillDmg * 3; // Sát thương khủng
+                        for(let j = enemies.length - 1; j >= 0; j--) {
+                            let e = enemies[j]; e.hp -= nukeDmg;
+                            addFloatingText(e.x, e.y, Math.floor(nukeDmg), player.skillColor, 32); createBurst(e.x, e.y, player.skillColor);
+                            if (e.hp <= 0) {
+                                expGems.push({ x: e.x, y: e.y, value: e.expReward, type: 'exp' }); handleEnemyKill(e);
+                                if(e.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); }
+                                enemies.splice(j, 1);
+                            }
+                        }
+                    }
                     updateHUD();
                 }
                 // CẬP NHẬT TỐC ĐỘ THEO BỤI CỎ (BUSHES)
@@ -1167,7 +1232,8 @@
 
                 ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); ctx.save(); ctx.translate(-camera.x, -camera.y);
 
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)'; ctx.lineWidth = 2; const gridSize = 100; const startX = Math.floor(camera.x / gridSize) * gridSize; const startY = Math.floor(camera.y / gridSize) * gridSize; for (let x = startX; x < camera.x + gameCanvas.width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, camera.y); ctx.lineTo(x, camera.y + gameCanvas.height); ctx.stroke(); } for (let y = startY; y < camera.y + gameCanvas.height; y += gridSize) { ctx.beginPath(); ctx.moveTo(camera.x, y); ctx.lineTo(camera.x + gameCanvas.width, y); ctx.stroke(); }
+                // NỀN LƯỚI CYBER PHÁT SÁNG THEO NHÂN VẬT
+                ctx.globalAlpha = 0.06; ctx.strokeStyle = player.color || '#00ffcc'; ctx.shadowBlur = 10; ctx.shadowColor = ctx.strokeStyle; ctx.lineWidth = 2; const gridSize = 100; const startX = Math.floor(camera.x / gridSize) * gridSize; const startY = Math.floor(camera.y / gridSize) * gridSize; for (let x = startX; x < camera.x + gameCanvas.width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, camera.y); ctx.lineTo(x, camera.y + gameCanvas.height); ctx.stroke(); } for (let y = startY; y < camera.y + gameCanvas.height; y += gridSize) { ctx.beginPath(); ctx.moveTo(camera.x, y); ctx.lineTo(camera.x + gameCanvas.width, y); ctx.stroke(); } ctx.globalAlpha = 1.0; ctx.shadowBlur = 0;
                 
                 // VẼ VẬT CẢN (OBSTACLES)
                 obstacles.forEach(obs => {
@@ -1224,13 +1290,23 @@
                     ctx.shadowBlur = 15; ctx.shadowColor = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fillStyle = p.color; ctx.fill(); ctx.shadowBlur = 0;
                 }
 
+                // ================= XỬ LÝ NGỌC EXP, MÁU, MANA VÀ NAM CHÂM =================
                 for (let i = expGems.length - 1; i >= 0; i--) {
                     let gem = expGems[i]; 
-                    let isGold = gem.type === 'gold'; let isHP = gem.type === 'hp'; let isMP = gem.type === 'mp';
-                    let size = isGold ? 8 : (isHP || isMP ? 10 : 6); 
-                    let color = isGold ? '#ffcc00' : (isHP ? '#ff0044' : (isMP ? '#00aaff' : '#00ffcc'));
+                    let isGold = gem.type === 'gold'; let isHP = gem.type === 'hp'; let isMP = gem.type === 'mp'; let isMagnet = gem.type === 'magnet';
+                    let size = isGold ? 8 : (isHP || isMP ? 10 : (isMagnet ? 12 : 6)); 
+                    let color = isGold ? '#ffcc00' : (isHP ? '#ff0044' : (isMP ? '#00aaff' : (isMagnet ? '#ff00ff' : '#00ffcc')));
                     
-                    if (isHP) {
+                    // Logic hút của Nam Châm
+                    if (window.isVacuuming && !isMagnet && !isGold && !isHP && !isMP) {
+                        let dx = player.x - gem.x; let dy = player.y - gem.y; let dist = Math.hypot(dx, dy);
+                        gem.x += (dx/dist) * 25; gem.y += (dy/dist) * 25;
+                    }
+
+                    // Vẽ vật phẩm
+                    if (isMagnet) {
+                        ctx.shadowBlur = 15; ctx.shadowColor = color; ctx.fillStyle = color; ctx.font = "20px sans-serif"; ctx.textAlign="center"; ctx.fillText("🧲", gem.x, gem.y+6); ctx.shadowBlur = 0;
+                    } else if (isHP) {
                         ctx.shadowBlur = 10; ctx.shadowColor = color; ctx.fillStyle = color;
                         ctx.fillRect(gem.x - size/2, gem.y - size/6, size, size/3);
                         ctx.fillRect(gem.x - size/6, gem.y - size/2, size/3, size);
@@ -1241,6 +1317,7 @@
                         drawDiamond(ctx, gem.x, gem.y, size, color, isGold, frames);
                     }
 
+                    // Logic Nhặt vật phẩm
                     if (Math.hypot(player.x - gem.x, player.y - gem.y) < player.radius + player.magnetRange) { 
                         createBurst(gem.x, gem.y, color);
                         if (isGold) { 
@@ -1252,11 +1329,42 @@
                         } else if (isMP) {
                             player.mp = Math.min(player.maxMp, player.mp + gem.value);
                             addFloatingText(gem.x, gem.y, `+${gem.value} MP`, '#00aaff', 18);
+                        } else if (isMagnet) {
+                            // Kích hoạt hút ngọc 4 giây
+                            window.isVacuuming = true;
+                            addFloatingText(player.x, player.y - 20, `MAGNET ACTIVE!`, '#ff00ff', 20);
+                            setTimeout(() => { window.isVacuuming = false; }, 4000); 
                         } else { 
                             let gainedExp = Math.floor(gem.value * player.expMultiplier); player.exp += gainedExp; addFloatingText(gem.x, gem.y, `+${gainedExp}`, '#00ffcc'); 
-                            if (player.exp >= player.maxExp) { player.level++; player.exp -= player.maxExp; player.maxExp = Math.floor(player.maxExp * 1.5); switchScreen(STATES.LEVEL_UP); } 
+                            if (player.exp >= player.maxExp) { 
+                                player.level++; player.exp -= player.maxExp; player.maxExp = Math.floor(player.maxExp * 1.5); 
+                                // Hiệu ứng lên cấp
+                                shockwaves.push({ x: player.x, y: player.y, radius: player.radius, maxRadius: 500, color: '#00ffcc', alpha: 1.0, width: 40 });
+                                addFloatingText(player.x, player.y, `LEVEL UP!`, '#00ffcc', 35);
+                                switchScreen(STATES.LEVEL_UP); 
+                            } 
                         }
                         expGems.splice(i, 1); updateHUD();
+                    }
+                }
+
+                // ================= VẼ VÀ XỬ LÝ VỆ TINH (ORBITALS) =================
+                if (player.orbitals > 0) {
+                    player.orbitalAngle += player.orbitalSpeed;
+                    for (let i = 0; i < player.orbitals; i++) {
+                        let angle = player.orbitalAngle + (Math.PI * 2 / player.orbitals) * i;
+                        let ox = player.x + Math.cos(angle) * player.orbitalRadius;
+                        let oy = player.y + Math.sin(angle) * player.orbitalRadius;
+                    
+                        ctx.shadowBlur = 15; ctx.shadowColor = player.particleColor;
+                        ctx.beginPath(); ctx.arc(ox, oy, 8, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.shadowBlur = 0;
+                    
+                        enemies.forEach(e => {
+                            if (Math.hypot(ox - e.x, oy - e.y) < 8 + e.radius && frames % 20 === 0) {
+                                e.hp -= player.damage; createBurst(e.x, e.y, player.particleColor);
+                                addFloatingText(e.x, e.y, Math.floor(player.damage), player.particleColor, 18);
+                            }
+                        });
                     }
                 }
 
@@ -1322,11 +1430,13 @@
                     }
                     if(hitWall) { enemyProjectiles.splice(i, 1); createBurst(ep.x, ep.y, '#ff0044'); continue; }
 
-                    if (!player.isDashing && Math.hypot(ep.x - player.x, ep.y - player.y) < ep.radius + player.radius) { 
+                    if (player.invulnFrames <= 0 && !player.isDashing && Math.hypot(ep.x - player.x, ep.y - player.y) < ep.radius + player.radius) { 
                         let dmgTaken = Math.max(1, ep.damage - player.def);
-                        player.hp -= dmgTaken; enemyProjectiles.splice(i, 1); triggerShake(); addFloatingText(player.x, player.y, `-${dmgTaken}`, '#ff0044', 20); 
+                        player.hp -= dmgTaken; player.invulnFrames = 60; enemyProjectiles.splice(i, 1); triggerShake(); 
+                        document.getElementById('damage-overlay').classList.add('took-damage'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('took-damage'), 200);
+                        addFloatingText(player.x, player.y, `-${dmgTaken}`, '#ff0044', 24); 
                         if (player.hp <= 0) switchScreen(STATES.GAME_OVER); 
-                    } 
+                    }
                 }
 
                 for (let j = enemies.length - 1; j >= 0; j--) {
@@ -1370,7 +1480,14 @@
                     let inBush = obstacles.some(obs => obs.type === 'bush' && Math.hypot(enemy.x - obs.x, enemy.y - obs.y) < obs.radius);
                     ctx.globalAlpha = inBush ? 0.3 : 1.0; // Làm mờ quái khi núp lùm
 
-                    ctx.shadowBlur = enemy.isElite ? (enemy.isBoss? 40: 25) : 15; ctx.shadowColor = enemy.color; ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2); ctx.fillStyle = enemy.color; ctx.fill(); ctx.shadowBlur = 0;
+                    // HIT FLASH & VẼ QUÁI
+                    if(enemy.displayHp === undefined) { enemy.displayHp = enemy.hp; enemy.hitFlash = 0; enemy.lastHp = enemy.hp; }
+                    if(enemy.hp < enemy.lastHp) enemy.hitFlash = 5; 
+                    enemy.lastHp = enemy.hp;
+                    
+                    if(enemy.hitFlash > 0) { enemy.hitFlash--; ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#ffffff'; } else { ctx.fillStyle = enemy.color; ctx.shadowColor = enemy.color; }
+                    ctx.shadowBlur = enemy.isElite ? (enemy.isBoss? 40: 25) : 15; ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+                    if(enemy.isElite) { ctx.lineWidth = enemy.isBoss ? 4 : 2; ctx.strokeStyle = '#fff'; ctx.stroke(); }
                     
                     // CẢI TIẾN: THANH MÁU TỤT TỪ TỪ VÀ BỌC VIỀN
                     if(enemy.displayHp === undefined) enemy.displayHp = enemy.hp;
@@ -1400,9 +1517,11 @@
                         ctx.lineWidth = 1;
                         ctx.strokeRect(barX, barY, hpBarWidth, barH);
                     }
-                    if (!player.isDashing && dist < player.radius + enemy.radius && frames - player.lastHitFrame > 60) { 
+                    if (player.invulnFrames <= 0 && !player.isDashing && dist < player.radius + enemy.radius) { 
                         let dmgTaken = Math.max(1, enemy.damage - player.def);
-                        player.hp -= dmgTaken; player.lastHitFrame = frames; triggerShake(); updateHUD(); addFloatingText(player.x, player.y, `-${dmgTaken}`, '#ff0044', 20); 
+                        player.hp -= dmgTaken; player.invulnFrames = 60; triggerShake(); updateHUD(); 
+                        document.getElementById('damage-overlay').classList.add('took-damage'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('took-damage'), 200);
+                        addFloatingText(player.x, player.y, `-${dmgTaken}`, '#ff0044', 24); 
                         if (player.hp <= 0) switchScreen(STATES.GAME_OVER); 
                     }
                 }
@@ -1414,13 +1533,28 @@
 
                 ctx.restore();
 
+                // GIẢM I-FRAMES CỦA PLAYER
+                if (player.invulnFrames > 0) {
+                    player.invulnFrames--;
+                    // Hiệu ứng chớp nháy (Blink) nhân vật khi bất tử
+                    if (Math.floor(player.invulnFrames / 5) % 2 === 0) { ctx.beginPath(); ctx.arc(player.x, player.y, player.radius + 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; ctx.fill(); }
+                }
+
                 for(let i=floatingTexts.length-1; i>=0; i--) {
-                    let ft = floatingTexts[i]; ctx.fillStyle = ft.color; ctx.globalAlpha = ft.alpha; ctx.font = `bold ${ft.size}px 'Rajdhani', sans-serif`; ctx.textAlign="center"; ctx.shadowBlur = 5; ctx.shadowColor = '#000'; ctx.fillText(ft.text, ft.x - camera.x, ft.y - camera.y); ctx.globalAlpha = 1.0; ctx.shadowBlur = 0; ft.y += ft.dy; ft.alpha -= 0.02; if(ft.alpha <= 0) floatingTexts.splice(i, 1);
+                    let ft = floatingTexts[i]; 
+                    let popScale = ft.life > ft.maxLife - 5 ? 1 + (ft.maxLife - ft.life)*0.1 : 1.5 - (ft.maxLife - 5 - ft.life)*0.02;
+                    ctx.save(); ctx.translate(ft.x - camera.x, ft.y - camera.y); ctx.scale(Math.max(1, popScale), Math.max(1, popScale));
+                    ctx.fillStyle = ft.color; ctx.globalAlpha = Math.max(0, ft.alpha); 
+                    ctx.font = `900 ${ft.size}px 'Montserrat', sans-serif`; ctx.textAlign="center"; 
+                    ctx.lineWidth = 3; ctx.strokeStyle = '#000'; ctx.strokeText(ft.text, 0, 0); 
+                    ctx.shadowBlur = 10; ctx.shadowColor = ft.color; ctx.fillText(ft.text, 0, 0); 
+                    ctx.restore(); ft.y += ft.dy; ft.alpha -= 0.02; ft.life--; 
+                    if(ft.alpha <= 0 || ft.life <= 0) floatingTexts.splice(i, 1);
                 }
                 if (waveBannerAlpha > 0) { ctx.fillStyle = `rgba(255, 204, 0, ${Math.min(1, waveBannerAlpha)})`; ctx.font = "bold 60px 'Montserrat', sans-serif"; ctx.textAlign = "center"; ctx.shadowBlur = 20; ctx.shadowColor = '#ffcc00'; ctx.fillText(waveBannerText, gameCanvas.width / 2, gameCanvas.height / 3); ctx.shadowBlur = 0; waveBannerAlpha -= 0.015; }
             }
             requestAnimationFrame(gameLoop);
-        } // <--- Thêm dấu ngoặc nhọn này để đóng hàm gameLoop()
+        }
 
         applyLanguage(); animateParticles(); switchScreen(STATES.MENU); gameLoop(); 
     </script>
