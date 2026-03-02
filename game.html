@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIGHT UP</title>
+    <title>FIGHT UP - AWAKENED</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         /* ================= CÀI ĐẶT CSS TỔNG THỂ ================= */
@@ -16,8 +16,12 @@
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(15,15,20,0.85) 0%, rgba(0,0,0,1) 100%); transition: opacity 0.3s ease; z-index: 10; }
         .hidden { display: none !important; }
         
-        /* HOẠT ẢNH */
-        @keyframes powerFlicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 10px #fff, 0 0 20px #00ffcc, 0 0 40px #fff; opacity: 1; transform: scale(1); } 20%, 24%, 55% { text-shadow: none; opacity: 0.8; transform: scale(0.99); } 50% { transform: scale(1.02); text-shadow: 0 0 20px #fff, 0 0 50px #fff, 0 0 80px #00ffff; } }
+        /* HOẠT ẢNH MỚI: BLINK BLINK HUYỀN BÍ */
+        @keyframes mysticalPulse {
+            0% { box-shadow: 0 0 10px rgba(0, 255, 204, 0.3), inset 0 0 5px rgba(0, 255, 204, 0.1); text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            50% { box-shadow: 0 0 25px rgba(0, 255, 204, 0.8), inset 0 0 15px rgba(0, 255, 204, 0.4); text-shadow: 0 0 15px rgba(255,255,255,1); }
+            100% { box-shadow: 0 0 10px rgba(0, 255, 204, 0.3), inset 0 0 5px rgba(0, 255, 204, 0.1); text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        }
         @keyframes popIn { 0% { transform: scale(0.8) translateY(50px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
         @keyframes slideInRight { 0% { transform: translateX(30px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
         .pop-animation { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
@@ -25,77 +29,89 @@
 
         /* ================= MOBA LOBBY UI ================= */
         #moba-lobby { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
-        
         .moba-element { pointer-events: auto; position: absolute; }
         
         /* Góc trên trái: Profile */
-        #moba-top-left { top: 30px; left: 40px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; padding: 10px; border-radius: 50px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); }
-        #moba-top-left:hover { background: rgba(0,255,204,0.1); border-color: #00ffcc; box-shadow: 0 0 15px rgba(0,255,204,0.2); }
-        .avatar-placeholder { width: 50px; height: 50px; border-radius: 50%; background: #222; border: 2px solid #00ffcc; display: flex; justify-content: center; align-items: center; font-size: 24px; }
-        .commander-name { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        #moba-top-left { top: 30px; left: 40px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; padding: 10px 20px 10px 10px; border-radius: 50px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,204,0.3); animation: mysticalPulse 4s infinite alternate; }
+        #moba-top-left:hover { background: rgba(0,255,204,0.15); transform: scale(1.02); }
+        .avatar-placeholder { width: 55px; height: 55px; border-radius: 50%; background: #111; border: 2px solid #00ffcc; display: flex; justify-content: center; align-items: center; font-size: 26px; box-shadow: inset 0 0 10px #000; transition: 0.3s;}
+        .avatar-placeholder:hover { transform: scale(1.1); border-color: #fff; cursor: pointer; }
+        .commander-name { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: bold; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
 
         /* Góc trên giữa: Vàng (Gold) */
         #moba-top-center { top: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); padding: 10px 30px; border-radius: 30px; border: 1px solid rgba(255,204,0,0.3); box-shadow: 0 0 15px rgba(255,204,0,0.1); }
         .gold-display { font-size: 1.8rem; color: #ffcc00; font-weight: bold; text-shadow: 0 0 10px #ffcc00; display: flex; align-items: center; gap: 10px; font-family: 'Rajdhani', sans-serif; }
         .gold-display::before { content: '✦'; font-size: 2rem; }
 
-        /* Góc trên phải: Cài đặt / Credits */
+        /* Góc trên phải: Cài đặt */
         #moba-top-right { top: 30px; right: 40px; display: flex; gap: 15px; }
-        .icon-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.5rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
-        .icon-btn:hover { background: rgba(255,255,255,0.1); border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.5); transform: scale(1.1); }
+        .icon-btn { width: 55px; height: 55px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; }
+        .icon-btn:hover { background: rgba(255,255,255,0.1); border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.6); transform: scale(1.1) rotate(45deg); }
 
         /* Giữa viền phải: Battle Pass & Shop */
-        #moba-mid-right { top: 50%; right: 40px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; }
-        .side-menu-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; transition: 0.2s; background: transparent; border: none; outline: none; color: #ccc; }
-        .side-menu-btn .icon-bg { width: 70px; height: 70px; border-radius: 15px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,204,0.3); display: flex; justify-content: center; align-items: center; font-size: 2rem; transition: 0.2s; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
-        .side-menu-btn span { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: 0.2s; }
-        .side-menu-btn:hover .icon-bg { background: rgba(0,255,204,0.2); border-color: #00ffcc; box-shadow: 0 0 20px rgba(0,255,204,0.4); transform: scale(1.05); color: #fff; }
-        .side-menu-btn:hover span { color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
+        #moba-mid-right { top: 50%; right: 40px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 25px; }
+        .side-menu-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; background: transparent; border: none; outline: none; color: #ccc; }
+        .side-menu-btn .icon-bg { width: 75px; height: 75px; border-radius: 20px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,204,0.3); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; transition: 0.3s; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
+        .side-menu-btn span { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; transition: 0.2s; }
+        .side-menu-btn:hover .icon-bg { background: rgba(0,255,204,0.2); border-color: #00ffcc; box-shadow: 0 0 25px rgba(0,255,204,0.5); transform: scale(1.1); color: #fff; animation: mysticalPulse 1.5s infinite alternate; }
+        .side-menu-btn:hover span { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; }
 
         /* Giữa viền dưới: Play Button */
-        #moba-bottom-center { bottom: 50px; left: 50%; transform: translateX(-50%); }
-        .play-btn { background: rgba(0, 0, 0, 0.7); border: 2px solid #00ffcc; color: #fff; font-family: 'Cinzel', serif; font-size: 2.5rem; padding: 20px 80px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 6px; border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,204,0.2), inset 0 0 20px rgba(0,255,204,0.1); }
-        .play-btn:hover { background: rgba(0, 255, 204, 0.2); text-shadow: 0 0 20px #fff; box-shadow: 0 0 50px rgba(0,255,204,0.6), inset 0 0 30px rgba(0,255,204,0.4); transform: scale(1.05) translateY(-5px); }
+        #moba-bottom-center { bottom: 60px; left: 50%; transform: translateX(-50%); }
+        .play-btn { background: rgba(0, 10, 5, 0.8); border: 2px solid #00ffcc; color: #fff; font-family: 'Cinzel', serif; font-size: 2.8rem; padding: 25px 90px; font-weight: bold; cursor: pointer; transition: 0.4s; text-transform: uppercase; letter-spacing: 8px; border-radius: 12px; animation: mysticalPulse 2s infinite alternate; }
+        .play-btn:hover { background: rgba(0, 255, 204, 0.3); transform: scale(1.08) translateY(-5px); letter-spacing: 12px; }
 
         /* ================= CÁC HỘP THOẠI (BOXES) ================= */
-        .menu-box { background: rgba(10, 10, 15, 0.85); border: 1px solid rgba(0, 255, 204, 0.3); padding: 40px 60px; border-radius: 12px; box-shadow: 0 0 40px rgba(0, 255, 204, 0.1), inset 0 0 20px rgba(0,0,0,0.8); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; position: relative; }
-        .menu-box::before, .menu-box::after { content: ''; position: absolute; width: 30px; height: 30px; border: 2px solid #00ffcc; opacity: 0.7; }
-        .menu-box::before { top: -10px; left: -10px; border-right: none; border-bottom: none; }
-        .menu-box::after { bottom: -10px; right: -10px; border-left: none; border-top: none; }
-        h2 { font-size: 2.2rem; text-shadow: 0 0 15px #fff; margin-bottom: 25px; letter-spacing: 4px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;}
+        .menu-box { background: rgba(10, 10, 15, 0.9); border: 1px solid rgba(0, 255, 204, 0.4); padding: 40px 60px; border-radius: 16px; box-shadow: 0 0 50px rgba(0, 255, 204, 0.15), inset 0 0 30px rgba(0,0,0,0.9); backdrop-filter: blur(25px); display: flex; flex-direction: column; align-items: center; position: relative; }
+        .menu-box::before, .menu-box::after { content: ''; position: absolute; width: 40px; height: 40px; border: 3px solid #00ffcc; opacity: 0.8; }
+        .menu-box::before { top: -12px; left: -12px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0;}
+        .menu-box::after { bottom: -12px; right: -12px; border-left: none; border-top: none; border-radius: 0 0 8px 0;}
+        h2 { font-size: 2.5rem; text-shadow: 0 0 20px #fff; margin-bottom: 30px; letter-spacing: 5px; text-transform: uppercase; border-bottom: 2px solid rgba(0,255,204,0.3); padding-bottom: 15px; color: #00ffcc;}
         
-        .btn-group { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; min-width: 350px; z-index: 20;}
-        .std-btn { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; font-family: 'Cinzel', serif; font-size: 1.3rem; padding: 12px 30px; width: 100%; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 3px; border-radius: 4px; pointer-events: auto;}
-        .std-btn:hover:not(:disabled) { border-color: #00ffcc; color: #fff; text-shadow: 0 0 10px #00ffcc; box-shadow: 0 0 15px rgba(0, 255, 204, 0.3) inset; transform: scale(1.02); background: rgba(0, 50, 40, 0.5); }
-        .std-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #333; color: #555;}
+        .btn-group { display: flex; flex-direction: column; gap: 18px; align-items: center; width: 100%; min-width: 350px; z-index: 20;}
+        .std-btn { background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.3); color: #ccc; font-family: 'Cinzel', serif; font-size: 1.3rem; padding: 14px 30px; width: 100%; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 3px; border-radius: 6px; pointer-events: auto;}
+        .std-btn:hover:not(:disabled) { border-color: #00ffcc; color: #fff; background: rgba(0, 60, 50, 0.6); animation: mysticalPulse 1s infinite alternate; transform: scale(1.03); }
+        .std-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #333; color: #666;}
         
-        /* SHOP GRID UI */
-        .shop-wrapper { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 850px; max-height: 55vh; overflow-y: auto; padding-right: 10px;}
-        .shop-section-title { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: #00ffcc; border-bottom: 1px dashed #00ffcc; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; font-weight: bold;}
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; width: 100%; }
-        .shop-card { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; transition: 0.2s; gap: 10px;}
-        .shop-card:hover { background: rgba(255,255,255,0.08); border-color: #00ffcc; transform: translateY(-3px);}
-        .skin-preview { width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 0 20px currentColor; margin-bottom: 5px;}
-        .item-icon { font-size: 2.8rem; text-shadow: 0 0 15px currentColor; margin-bottom: 5px;}
-        .item-name { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; text-align: center;}
-        .shop-btn { padding: 8px 15px; font-size: 1rem; width: 100%; border-color: #ffcc00; color: #ffcc00; }
-        .shop-btn.equipped { border-color: #00ffcc; color: #00ffcc; box-shadow: 0 0 10px #00ffcc inset; }
+        /* SHOP GRID UI NÂNG CẤP */
+        .shop-wrapper { display: flex; flex-direction: column; gap: 25px; width: 100%; max-width: 900px; max-height: 55vh; overflow-y: auto; padding-right: 15px;}
+        .shop-section-title { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; color: #00ffcc; border-bottom: 1px dashed #00ffcc; padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;}
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; width: 100%; }
+        .shop-card { display: flex; flex-direction: column; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15); padding: 25px 20px; border-radius: 12px; transition: 0.3s; gap: 15px; height: 100%; box-sizing: border-box;}
+        .shop-card:hover { background: rgba(0,255,204,0.08); border-color: #00ffcc; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0,255,204,0.2);}
+        .skin-preview { width: 55px; height: 55px; border-radius: 50%; box-shadow: 0 0 25px currentColor; margin-bottom: 10px;}
+        .item-name { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; text-align: center; flex-grow: 1; display: flex; align-items: center;}
+        .shop-btn { padding: 10px 15px; font-size: 1.1rem; width: 100%; border-color: #ffcc00; color: #ffcc00; margin-top: auto;}
+        .shop-btn.equipped { border-color: #00ffcc; color: #00ffcc; box-shadow: inset 0 0 15px rgba(0,255,204,0.3); background: rgba(0,255,204,0.1);}
         
-        /* BATTLE PASS CSS */
-        .bp-progress-header { width: 100%; display: flex; justify-content: space-between; font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; color: #00ffcc;}
-        .bp-bar-bg { width: 100%; height: 12px; background: #222; border-radius: 6px; margin-bottom: 20px; overflow: hidden; border: 1px solid #444;}
-        .bp-bar-fill { height: 100%; background: linear-gradient(90deg, #00ffcc, #0088ff); transition: width 0.3s; }
-        .bp-list { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 600px; max-height: 40vh; overflow-y: auto; padding-right: 10px; font-family: 'Rajdhani', sans-serif;}
-        .bp-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 5px; border-left: 4px solid #555;}
-        .bp-item.unlocked { border-left-color: #00ffcc; background: rgba(0, 255, 204, 0.05); }
-        .bp-tier { font-weight: bold; color: #fff; width: 80px; font-size: 1.2rem;}
-        .bp-reward { color: #ffcc00; font-size: 1.3rem; flex-grow: 1; font-weight: 600;}
+        /* BATTLE PASS CSS NÂNG CẤP */
+        .bp-progress-header { width: 100%; display: flex; justify-content: space-between; font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; color: #00ffcc;}
+        .bp-bar-bg { width: 100%; height: 16px; background: #1a1a1a; border-radius: 8px; margin-bottom: 25px; overflow: hidden; border: 1px solid #444; box-shadow: inset 0 0 10px #000;}
+        .bp-bar-fill { height: 100%; background: linear-gradient(90deg, #0088ff, #00ffcc, #ffffff); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 15px #00ffcc; }
+        .bp-list { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 650px; max-height: 40vh; overflow-y: auto; padding-right: 15px; font-family: 'Rajdhani', sans-serif;}
+        .bp-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.06); padding: 15px 25px; border-radius: 8px; border-left: 5px solid #555; transition: 0.2s;}
+        .bp-item:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
+        .bp-item.unlocked { border-left-color: #00ffcc; background: rgba(0, 255, 204, 0.08); }
+        .bp-item.milestone { border-left-color: #ff00ff; background: rgba(255, 0, 255, 0.08); box-shadow: inset 0 0 20px rgba(255,0,255,0.1);}
+        .bp-tier { font-weight: bold; color: #fff; width: 90px; font-size: 1.3rem;}
+        .bp-reward { color: #ffcc00; font-size: 1.4rem; flex-grow: 1; font-weight: 600; text-shadow: 0 0 5px rgba(255,204,0,0.5);}
         
-        /* PROFILE UI */
-        .profile-stats { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: #ddd; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;}
-        .stat-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        /* PROFILE UI NÂNG CẤP */
+        .profile-edit-row { display: flex; gap: 20px; align-items: center; margin-bottom: 30px; width: 100%; border-bottom: 1px solid rgba(0,255,204,0.3); padding-bottom: 20px;}
+        .profile-name-input { background: transparent; border: none; color: #00ffcc; font-size: 2rem; font-family: 'Cinzel', serif; font-weight: bold; width: 100%; text-transform: uppercase; outline: none; text-shadow: 0 0 10px rgba(0,255,204,0.5); letter-spacing: 2px;}
+        .profile-name-input::placeholder { color: rgba(255,255,255,0.2); }
+        
+        .profile-stats { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: #ddd; width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 18px; margin-bottom: 35px;}
+        .stat-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; transition: 0.2s;}
+        .stat-row:hover { background: rgba(255,255,255,0.05); padding-left: 10px; border-bottom-color: #00ffcc;}
         .stat-val { color: #00ffcc; font-weight: bold; text-shadow: 0 0 10px #00ffcc;}
 
+        /* SETTING UI */
+        .setting-slider { -webkit-appearance: none; width: 100%; height: 6px; background: #333; outline: none; border-radius: 3px; }
+        .setting-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #00ffcc; cursor: pointer; box-shadow: 0 0 10px #00ffcc; }
+        .setting-checkbox { transform: scale(1.5); cursor: pointer; accent-color: #00ffcc;}
+
+        /* HUD & IN-GAME RETAINED FROM ORIGINAL */
         .power-btn { padding: 15px 20px; text-transform: none; text-align: left; }
         .power-btn strong { display: block; font-size: 1.6rem; margin-bottom: 8px; color: #fff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px #fff;}
         .skill-desc { display: block; font-size: 1rem; color: #aaa; font-family: sans-serif; letter-spacing: 1px; line-height: 1.4;}
@@ -103,7 +119,6 @@
 
         #game-canvas { display: block; width: 100%; height: 100%; z-index: 1; }
         
-        /* HUD IN-GAME */
         #game-hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; display: flex; flex-direction: column; font-family: 'Rajdhani', sans-serif;}
         #exp-container { width: 100%; height: 8px; background-color: #111; position: absolute; top: 0; border-bottom: 1px solid #333;}
         #exp-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00ffcc, #0088ff); transition: width 0.3s ease; box-shadow: 0 0 15px #0088ff; }
@@ -124,8 +139,6 @@
 
         #right-hud { width: 30%; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .ingame-currency { font-size: 1.8rem; font-weight: bold; display: flex; align-items: center; gap: 5px;}
-        #ig-gold { color: #ffcc00; text-shadow: 0 0 10px #ffcc00; }
-        #ig-dia { color: #00ffff; text-shadow: 0 0 10px #00ffff; }
         #timer-display { font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 10px #fff; letter-spacing: 2px;}
         #pause-btn-hud { pointer-events: auto; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 20px; font-family: 'Cinzel', serif; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 4px; margin-top: 10px;}
         
@@ -146,8 +159,8 @@
         <div id="main-menu" class="screen" style="background: transparent;">
             <div id="moba-lobby">
                 <div id="moba-top-left" class="moba-element" onclick="actShowProfile()">
-                    <div class="avatar-placeholder">👤</div>
-                    <div class="commander-name">COMMANDER</div>
+                    <div class="avatar-placeholder" id="lobby-avatar">👤</div>
+                    <div class="commander-name" id="lobby-name">COMMANDER</div>
                 </div>
 
                 <div id="moba-top-center" class="moba-element">
@@ -155,7 +168,7 @@
                 </div>
 
                 <div id="moba-top-right" class="moba-element">
-                    <button class="icon-btn" onclick="actShowCredits()" title="Credits">⚙️</button>
+                    <button class="icon-btn" onclick="actShowSettings()" title="Settings">⚙️</button>
                 </div>
 
                 <div id="moba-mid-right" class="moba-element">
@@ -170,47 +183,72 @@
                 </div>
 
                 <div id="moba-bottom-center" class="moba-element">
-                    <button class="play-btn" onclick="actStartGame()">PLAY</button>
+                    <button class="play-btn" onclick="actStartGame()">AWAKEN</button>
                 </div>
             </div>
         </div>
 
         <div id="profile-screen" class="screen hidden">
-            <div class="menu-box" style="padding: 40px 60px; width: 400px;">
-                <h2>COMMANDER PROFILE</h2>
+            <div class="menu-box" style="padding: 40px 60px; width: 450px;">
+                <h2>PROFILE</h2>
+                <div class="profile-edit-row">
+                    <div class="avatar-placeholder" id="prof-avatar-edit" onclick="changeAvatar()" title="Click to change avatar" style="width: 70px; height: 70px; font-size: 35px;">👤</div>
+                    <input type="text" id="prof-name-edit" class="profile-name-input" onblur="saveProfileInfo()" placeholder="ENTER NAME">
+                </div>
                 <div class="profile-stats">
+                    <div class="stat-row"><span>Matches Played:</span> <span class="stat-val" id="prof-matches">0</span></div>
                     <div class="stat-row"><span>Highest Wave:</span> <span class="stat-val" id="prof-wave">0</span></div>
                     <div class="stat-row"><span>Enemies Slain:</span> <span class="stat-val" id="prof-kills">0</span></div>
                     <div class="stat-row"><span>Total Deaths:</span> <span class="stat-val" id="prof-deaths" style="color: #ff0044;">0</span></div>
                     <div class="stat-row"><span>Total Wealth:</span> <span class="stat-val" id="prof-gold" style="color: #ffcc00;">0 ✦</span></div>
                 </div>
-                <button class="std-btn" style="width: auto; padding: 10px 40px;" onclick="actQuitToMenu()">Back to Lobby</button>
+                <button class="std-btn" style="width: auto; padding: 12px 50px;" onclick="actQuitToMenu()">Save & Back</button>
             </div>
         </div>
 
         <div id="bp-screen" class="screen hidden">
-            <div class="menu-box" style="padding: 40px 60px; width: 600px;">
-                <h2>BATTLE PASS</h2>
+            <div class="menu-box" style="padding: 40px 60px; width: 700px;">
+                <h2>BATTLE PASS SEASON 1</h2>
                 <div class="bp-progress-header">
-                    <span id="bp-lvl-text">BP LEVEL: 1</span>
-                    <span id="bp-exp-text">EXP: 0 / 1000</span>
+                    <span id="bp-lvl-text">LEVEL: 1 / 100</span>
+                    <span id="bp-exp-text">EXP: 0</span>
                 </div>
                 <div class="bp-bar-bg"><div id="bp-bar-fill" class="bp-bar-fill"></div></div>
                 <div class="bp-list" id="bp-tiers-container"></div>
-                <button class="std-btn" style="width: auto; padding: 10px 40px; margin-top: 15px;" onclick="actQuitToMenu()">Back to Lobby</button>
+                <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()">Back to Lobby</button>
             </div>
         </div>
 
         <div id="shop-screen" class="screen hidden">
-            <div class="menu-box" style="padding: 30px 50px; max-width: 850px; width: 90%;">
-                <h2>ARMORY SHOP</h2>
+            <div class="menu-box" style="padding: 30px 50px; max-width: 900px; width: 90%;">
+                <h2>ARMORY VAULT</h2>
                 <div class="shop-wrapper" id="shop-items-container"></div>
-                <button class="std-btn" style="width: auto; padding: 10px 40px;" onclick="actQuitToMenu()">Back to Lobby</button>
+                <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()">Back to Lobby</button>
+            </div>
+        </div>
+
+        <div id="settings-screen" class="screen hidden">
+            <div class="menu-box" style="width: 450px;">
+                <h2>GAME SETTINGS</h2>
+                <div class="btn-group" style="margin-bottom: 40px; width: 100%;">
+                    <div class="stat-row" style="width: 100%; align-items: center; border: none;">
+                        <span>Music Volume</span>
+                        <input type="range" class="setting-slider" min="0" max="100" value="50" style="width: 50%;">
+                    </div>
+                    <div class="stat-row" style="width: 100%; align-items: center; border: none; margin-top: 15px;">
+                        <span>SFX Volume</span>
+                        <input type="range" class="setting-slider" min="0" max="100" value="80" style="width: 50%;">
+                    </div>
+                    <div class="stat-row" style="width: 100%; align-items: center; border: none; margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <span>Display Damage Numbers</span>
+                        <input type="checkbox" class="setting-checkbox" id="setting-dmg" checked>
+                    </div>
+                </div>
+                <button class="std-btn" style="width: auto; padding: 12px 50px;" onclick="actQuitToMenu()">Apply & Back</button>
             </div>
         </div>
 
         <canvas id="game-canvas" class="hidden"></canvas>
-
         <div id="game-hud" class="hidden">
             <div id="exp-container"><div id="exp-bar"></div></div>
             <div id="hud-top">
@@ -224,7 +262,7 @@
                     <div id="wave-progress-bg"><div id="wave-progress-bar"></div></div>
                 </div>
                 <div id="right-hud">
-                    <div id="ingame-gold-display">0</div>
+                    <div id="ingame-gold-display" style="font-size: 1.8rem; font-weight: bold; color: #ffcc00; text-shadow: 0 0 10px #ffcc00;">0 ✦</div>
                     <div id="timer-display">00:00</div>
                     <button id="pause-btn-hud" onclick="actPauseGame()">|| PAUSE</button>
                 </div>
@@ -236,8 +274,8 @@
             <div class="menu-box">
                 <h2>PAUSED</h2>
                 <div class="btn-group">
-                    <button class="std-btn" onclick="actResumeGame()">Resume</button>
-                    <button class="std-btn" onclick="actQuitToMenu()">Quit to Lobby</button>
+                    <button class="std-btn" onclick="actResumeGame()">Resume Fight</button>
+                    <button class="std-btn" onclick="actQuitToMenu()">Flee to Lobby</button>
                 </div>
             </div>
         </div>
@@ -251,8 +289,8 @@
         </div>
 
         <div id="game-over-screen" class="screen hidden">
-            <h1 class="title" id="end-title" style="color: #ff0044; animation: none;">YOU DIED</h1>
-            <div class="profile-stats" id="game-over-stats" style="margin-bottom: 40px; text-align: left;">
+            <h1 class="title" id="end-title" style="color: #ff0044; font-size: 4rem; text-shadow: 0 0 20px currentColor; margin-bottom: 20px;">YOU DIED</h1>
+            <div class="profile-stats" id="game-over-stats" style="margin-bottom: 40px; text-align: left; width: 400px; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
                 <div class="stat-row"><span>Level Reached:</span> <span class="stat-val" id="go-level">1</span></div>
                 <div class="stat-row"><span>Wave Reached:</span> <span class="stat-val" id="go-wave">Wave 1</span></div>
                 <div class="stat-row"><span>Enemies Defeated:</span> <span class="stat-val" id="go-kills">0</span></div>
@@ -260,19 +298,8 @@
                 <div class="stat-row"><span>BP EXP Earned:</span> <span class="stat-val" id="go-bp" style="color:#0088ff;">0</span></div>
             </div>
             <div class="btn-group" style="max-width: 400px;">
-                <button class="std-btn" onclick="actStartGame()">Try Again</button>
-                <button class="std-btn" onclick="actQuitToMenu()">Back to Lobby</button>
-            </div>
-        </div>
-
-        <div id="credits-screen" class="screen hidden">
-            <div class="menu-box">
-                <h2>CREDITS</h2>
-                <div style="font-size: 1.4rem; line-height: 2.5; text-align: center; margin-bottom: 40px; color: #ccc;">
-                    <p>Art Director & Game Design:<br><strong style="font-size: 2.5rem; color: #00ffcc; text-shadow: 0 0 10px #00ffcc; font-family: 'Cinzel', serif;">WANG</strong></p><br>
-                    <p>Coding Partner:<br><strong style="font-size: 1.5rem; color: #fff;">Gemini AI</strong></p>
-                </div>
-                <button class="std-btn" style="width: auto; padding: 10px 40px;" onclick="actQuitToMenu()">Back to Lobby</button>
+                <button class="std-btn" onclick="actStartGame()">Reincarnate (Try Again)</button>
+                <button class="std-btn" onclick="actQuitToMenu()">Return to Lobby</button>
             </div>
         </div>
     </div>
@@ -286,6 +313,7 @@
 
         function getLocalData(key, defaultValue) { try { let val = localStorage.getItem(key); return val ? JSON.parse(val) : defaultValue; } catch(e) { return defaultValue; } }
         
+        // HỆ THỐNG DỮ LIỆU & PROFILE
         let globalGold = parseInt(localStorage.getItem('fightup_gold')) || 0;
         let unlockedItems = getLocalData('fightup_unlocked_items', ['skin_default']);
         let equippedSkin = localStorage.getItem('fightup_eq_skin') || 'skin_default';
@@ -293,12 +321,18 @@
         let statKills = parseInt(localStorage.getItem('fightup_stat_kills')) || 0;
         let statMaxWave = parseInt(localStorage.getItem('fightup_stat_wave')) || 1;
         let statDeaths = parseInt(localStorage.getItem('fightup_stat_deaths')) || 0;
-
-        let bpExp = parseInt(localStorage.getItem('fightup_bp_exp')) || 0;
-        let bpClaimedTiers = getLocalData('fightup_bp_claimed', []);
-        const EXP_PER_BP_LEVEL = 1000; 
+        let statMatches = parseInt(localStorage.getItem('fightup_stat_matches')) || 0; // Thông số mới
         
+        let playerName = localStorage.getItem('fightup_player_name') || 'COMMANDER';
+        let playerAvatar = localStorage.getItem('fightup_player_avatar') || '👤';
+
+        let bpTotalExp = parseInt(localStorage.getItem('fightup_bp_exp')) || 0;
+        let bpClaimedTiers = getLocalData('fightup_bp_claimed', []);
+        
+        // Update UI ban đầu
         document.getElementById('global-gold').innerText = globalGold;
+        document.getElementById('lobby-name').innerText = playerName;
+        document.getElementById('lobby-avatar').innerText = playerAvatar;
 
         const ITEMS_DB = {
             skins: [
@@ -307,55 +341,111 @@
                 { id: 'skin_blood', name: 'Crimson Assassin', cost: 3000, color: '#ff0044', pColor: '#ff0000', isBp: false },
                 { id: 'skin_golden', name: 'Golden King', cost: 6000, color: '#ffcc00', pColor: '#ffff00', isBp: false },
                 { id: 'skin_abyssal', name: 'Void Walker', cost: 10000, color: '#aa00ff', pColor: '#5500ff', isBp: false },
-                { id: 'skin_cosmic', name: 'Cosmic Deity', cost: 0, color: '#ff00ff', pColor: '#ffccff', isBp: true }
+                // Milestone BP Skins
+                { id: 'skin_bp_20', name: 'Rookie Vanguard', cost: 0, color: '#00ff88', pColor: '#00cc66', isBp: true },
+                { id: 'skin_bp_50', name: 'Phantom Knight', cost: 0, color: '#8800ff', pColor: '#6600cc', isBp: true },
+                { id: 'skin_bp_100', name: 'Cosmic Deity', cost: 0, color: '#ff00ff', pColor: '#ffccff', isBp: true }
             ]
         };
 
+        // HỆ THỐNG BATTLE PASS TỊNH TIẾN MỚI
         const BP_TIERS = [];
-        for(let i = 1; i <= 80; i++) {
-            if (i === 80) BP_TIERS.push({ level: 80, type: 'item', itemId: 'skin_cosmic', name: 'Skin: Cosmic Deity' });
-            else BP_TIERS.push({ level: i, type: 'gold', amount: 200 + (i * 50), name: `${200 + (i * 50)} Gold` }); 
+        function getExpForBpLevel(lvl) { return 500 + (lvl * 150); } // Yêu cầu EXP tăng dần
+        for(let i = 1; i <= 100; i++) {
+            let reqExp = getExpForBpLevel(i);
+            if (i === 20 || i === 50 || i === 100) {
+                BP_TIERS.push({ level: i, expReq: reqExp, type: 'item', itemId: `skin_bp_${i}`, name: `Milestone: ${ITEMS_DB.skins.find(s=>s.id===`skin_bp_${i}`).name}`, isMilestone: true });
+            } else {
+                BP_TIERS.push({ level: i, expReq: reqExp, type: 'gold', amount: 100 + (i * 20), name: `${100 + (i * 20)} Gold`, isMilestone: false }); 
+            }
+        }
+
+        function calculateBpProgress() {
+            let tempExp = bpTotalExp;
+            let currentLvl = 1;
+            let currentTierExpReq = getExpForBpLevel(currentLvl);
+            while(tempExp >= currentTierExpReq && currentLvl < 100) {
+                tempExp -= currentTierExpReq;
+                currentLvl++;
+                currentTierExpReq = getExpForBpLevel(currentLvl);
+            }
+            if(currentLvl >= 100) { currentLvl = 100; tempExp = currentTierExpReq; }
+            return { level: currentLvl, currentExp: tempExp, maxExp: currentTierExpReq };
         }
 
         function saveGameData() {
-            localStorage.setItem('fightup_gold', globalGold); localStorage.setItem('fightup_unlocked_items', JSON.stringify(unlockedItems));
+            localStorage.setItem('fightup_gold', globalGold); 
+            localStorage.setItem('fightup_unlocked_items', JSON.stringify(unlockedItems));
             localStorage.setItem('fightup_eq_skin', equippedSkin);
-            localStorage.setItem('fightup_bp_exp', bpExp); localStorage.setItem('fightup_bp_claimed', JSON.stringify(bpClaimedTiers));
-            localStorage.setItem('fightup_stat_kills', statKills); localStorage.setItem('fightup_stat_wave', statMaxWave); localStorage.setItem('fightup_stat_deaths', statDeaths);
+            localStorage.setItem('fightup_bp_exp', bpTotalExp); 
+            localStorage.setItem('fightup_bp_claimed', JSON.stringify(bpClaimedTiers));
+            localStorage.setItem('fightup_stat_kills', statKills); 
+            localStorage.setItem('fightup_stat_wave', statMaxWave); 
+            localStorage.setItem('fightup_stat_deaths', statDeaths);
+            localStorage.setItem('fightup_stat_matches', statMatches);
+            
             document.getElementById('global-gold').innerText = globalGold;
+            document.getElementById('lobby-name').innerText = playerName;
+            document.getElementById('lobby-avatar').innerText = playerAvatar;
         }
 
-        const STATES = { MENU: 'MENU', SHOP: 'SHOP', BP: 'BP', PROFILE: 'PROFILE', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', CREDITS: 'CREDITS', GAME_OVER: 'GAME_OVER' };
+        const STATES = { MENU: 'MENU', SHOP: 'SHOP', BP: 'BP', PROFILE: 'PROFILE', SETTINGS: 'SETTINGS', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER' };
         let currentState = STATES.MENU;
-        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.CREDITS]: document.getElementById('credits-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
+        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.SETTINGS]: document.getElementById('settings-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
 
         function switchScreen(state) {
             currentState = state; Object.values(screens).forEach(screen => { if(screen) screen.classList.add('hidden'); });
             if (state === STATES.PLAYING || state === STATES.PAUSED || state === STATES.LEVEL_UP) { gameCanvas.classList.remove('hidden'); document.getElementById('game-hud').classList.remove('hidden'); glowEl.style.display = 'none'; } else { gameCanvas.classList.add('hidden'); document.getElementById('game-hud').classList.add('hidden'); glowEl.style.display = 'block'; }
             if (state === STATES.LEVEL_UP) { rerollsLeft = 1; generateRandomPowerUps(); }
-            if (state === STATES.SHOP) renderShop(); if (state === STATES.BP) renderBattlePass(); if (state === STATES.PROFILE) renderProfile();
+            if (state === STATES.SHOP) renderShop(); 
+            if (state === STATES.BP) renderBattlePass(); 
+            if (state === STATES.PROFILE) {
+                document.getElementById('prof-name-edit').value = playerName;
+                document.getElementById('prof-avatar-edit').innerText = playerAvatar;
+                renderProfile();
+            }
             
             if (state === STATES.GAME_OVER) { 
-                statDeaths++; statKills += sessionKills; if(currentWave > statMaxWave) statMaxWave = currentWave;
-                sessionBPExp = sessionKills * 2; bpExp += sessionBPExp; globalGold += sessionGold; saveGameData();
+                statDeaths++; statMatches++; statKills += sessionKills; if(currentWave > statMaxWave) statMaxWave = currentWave;
+                // Thay đổi Logic tăng EXP
+                sessionBPExp = Math.floor(sessionKills * 5 + (currentWave * 50) + (isBossActive ? 500 : 0)); 
+                bpTotalExp += sessionBPExp; globalGold += sessionGold; saveGameData();
                 document.getElementById('go-level').innerText = player.level; document.getElementById('go-wave').innerText = isBossActive ? "BOSS STAGE" : `Wave ${currentWave}`; 
                 document.getElementById('go-kills').innerText = sessionKills; document.getElementById('go-gold').innerText = `+${sessionGold} ✦`; document.getElementById('go-bp').innerText = `+${sessionBPExp}`;
             }
             if(screens[state]) screens[state].classList.remove('hidden');
         }
 
-        function renderProfile() { document.getElementById('prof-wave').innerText = statMaxWave; document.getElementById('prof-kills').innerText = statKills; document.getElementById('prof-deaths').innerText = statDeaths; document.getElementById('prof-gold').innerText = `${globalGold} ✦`; }
+        // LOGIC CHỈNH SỬA PROFILE
+        function changeAvatar() {
+            const avatars = ['👤', '💀', '🤖', '👽', '👾', '🦊', '🔥', '⚡', '👑'];
+            let idx = avatars.indexOf(playerAvatar);
+            playerAvatar = avatars[(idx + 1) % avatars.length];
+            document.getElementById('prof-avatar-edit').innerText = playerAvatar;
+        }
+        function saveProfileInfo() {
+            let newName = document.getElementById('prof-name-edit').value.trim();
+            if(newName) playerName = newName.toUpperCase();
+            localStorage.setItem('fightup_player_name', playerName);
+            localStorage.setItem('fightup_player_avatar', playerAvatar);
+            saveGameData();
+        }
+
+        function renderProfile() { document.getElementById('prof-matches').innerText = statMatches; document.getElementById('prof-wave').innerText = statMaxWave; document.getElementById('prof-kills').innerText = statKills; document.getElementById('prof-deaths').innerText = statDeaths; document.getElementById('prof-gold').innerText = `${globalGold} ✦`; }
 
         function renderBattlePass() {
-            let currentLevel = Math.floor(bpExp / EXP_PER_BP_LEVEL) + 1; let currentExp = bpExp % EXP_PER_BP_LEVEL;
-            if(currentLevel > 80) { currentLevel = 80; currentExp = EXP_PER_BP_LEVEL; } 
-            document.getElementById('bp-lvl-text').innerText = `BP LEVEL: ${currentLevel} / 80`; document.getElementById('bp-exp-text').innerText = `EXP: ${currentExp} / ${EXP_PER_BP_LEVEL}`; document.getElementById('bp-bar-fill').style.width = `${(currentExp / EXP_PER_BP_LEVEL) * 100}%`;
+            let progress = calculateBpProgress();
+            document.getElementById('bp-lvl-text').innerText = `LEVEL: ${progress.level} / 100`; 
+            document.getElementById('bp-exp-text').innerText = `EXP: ${progress.currentExp} / ${progress.maxExp}`; 
+            document.getElementById('bp-bar-fill').style.width = `${(progress.currentExp / progress.maxExp) * 100}%`;
+            
             const container = document.getElementById('bp-tiers-container'); container.innerHTML = '';
             BP_TIERS.forEach(tier => {
-                let isUnlocked = currentLevel >= tier.level; let isClaimed = bpClaimedTiers.includes(tier.level);
-                let btnHtml = isClaimed ? `<button class="std-btn shop-btn" disabled>Claimed</button>` : isUnlocked ? `<button class="std-btn shop-btn" onclick="claimBPReward(${tier.level})">Claim</button>` : `<button class="std-btn shop-btn" disabled>Locked</button>`;
-                let textColor = tier.type === 'item' ? '#00ffcc' : '#ffcc00';
-                container.innerHTML += `<div class="bp-item ${isUnlocked ? 'unlocked' : ''}" style="opacity: ${isUnlocked ? 1 : 0.5}"><div class="bp-tier">LVL ${tier.level}</div><div class="bp-reward" style="color: ${textColor}; font-weight: bold;">${tier.name}</div>${btnHtml}</div>`;
+                let isUnlocked = progress.level >= tier.level; let isClaimed = bpClaimedTiers.includes(tier.level);
+                let btnHtml = isClaimed ? `<button class="std-btn shop-btn" disabled>Claimed</button>` : isUnlocked ? `<button class="std-btn shop-btn" onclick="claimBPReward(${tier.level})">Claim Reward</button>` : `<button class="std-btn shop-btn" disabled>Locked</button>`;
+                let textColor = tier.type === 'item' ? '#ff00ff' : '#ffcc00';
+                let milestoneClass = tier.isMilestone ? 'milestone' : '';
+                container.innerHTML += `<div class="bp-item ${isUnlocked ? 'unlocked' : ''} ${milestoneClass}" style="opacity: ${isUnlocked ? 1 : 0.6}"><div class="bp-tier">LVL ${tier.level}</div><div class="bp-reward" style="color: ${textColor};">${tier.name}</div>${btnHtml}</div>`;
             });
         }
         function claimBPReward(level) { let tier = BP_TIERS.find(t => t.level === level); if (!tier || bpClaimedTiers.includes(level)) return; if (tier.type === 'gold') { globalGold += tier.amount; } else if (tier.type === 'item') { unlockedItems.push(tier.itemId); } bpClaimedTiers.push(level); saveGameData(); renderBattlePass(); triggerShake(); }
@@ -374,8 +464,8 @@
                 html += `<div class="shop-card">${visual}<div class="item-name">${item.name}</div>${btnHtml}</div>`;
             }); return html + `</div>`;
         }
-        function renderShop() { document.getElementById('shop-items-container').innerHTML = renderShopGrid(ITEMS_DB.skins, 'Body Cores', 'skin'); }
-        function buyItem(id, cost) { if (globalGold >= cost) { globalGold -= cost; unlockedItems.push(id); saveGameData(); renderShop(); triggerShake(); } else { alert("Not enough Gold!"); } }
+        function renderShop() { document.getElementById('shop-items-container').innerHTML = renderShopGrid(ITEMS_DB.skins, 'Core Essences', 'skin'); }
+        function buyItem(id, cost) { if (globalGold >= cost) { globalGold -= cost; unlockedItems.push(id); saveGameData(); renderShop(); triggerShake(); } else { alert("Insufficient Gold!"); } }
         function equipItem(type, id) { if(type === 'skin') equippedSkin = id; saveGameData(); renderShop(); triggerShake(); }
         function unequipItem(type) { if(type === 'skin') return; saveGameData(); renderShop(); triggerShake(); }
 
@@ -429,7 +519,7 @@
         }
 
         function updateHUD() {
-            document.getElementById('level-display').innerText = `LV. ${player.level}`; document.getElementById('hp-bar').style.width = Math.max(0, (player.hp / player.maxHp) * 100) + '%'; document.getElementById('hp-text').innerText = `${Math.floor(player.hp)} / ${player.maxHp}`; document.getElementById('exp-bar').style.width = Math.min(100, (player.exp / player.maxExp) * 100) + '%'; document.getElementById('timer-display').innerText = `${Math.floor(gameSeconds / 60).toString().padStart(2, '0')}:${(gameSeconds % 60).toString().padStart(2, '0')}`; document.getElementById('ingame-gold-display').innerText = sessionGold;
+            document.getElementById('level-display').innerText = `LV. ${player.level}`; document.getElementById('hp-bar').style.width = Math.max(0, (player.hp / player.maxHp) * 100) + '%'; document.getElementById('hp-text').innerText = `${Math.floor(player.hp)} / ${player.maxHp}`; document.getElementById('exp-bar').style.width = Math.min(100, (player.exp / player.maxExp) * 100) + '%'; document.getElementById('timer-display').innerText = `${Math.floor(gameSeconds / 60).toString().padStart(2, '0')}:${(gameSeconds % 60).toString().padStart(2, '0')}`; document.getElementById('ingame-gold-display').innerText = `${sessionGold} ✦`;
             if (isBossActive) { document.getElementById('wave-text').innerText = "BOSS FIGHT"; document.getElementById('wave-text').style.color = "#ff0044"; document.getElementById('wave-progress-bar').style.width = "100%"; document.getElementById('wave-progress-bar').style.background = "#ff0044"; if(bossEntity) document.getElementById('boss-hp-bar').style.width = Math.max(0, (bossEntity.hp / bossEntity.maxHp) * 100) + '%'; } else { document.getElementById('wave-text').innerText = `WAVE ${currentWave}`; document.getElementById('wave-text').style.color = "#fff"; document.getElementById('wave-progress-bar').style.width = Math.min(100, (enemiesKilled / killsNeededForNextWave) * 100) + '%'; document.getElementById('wave-progress-bar').style.background = "#fff"; }
         }
 
@@ -437,10 +527,10 @@
         function actShowShop() { triggerShake(); switchScreen(STATES.SHOP); }
         function actShowBattlePass() { triggerShake(); switchScreen(STATES.BP); }
         function actShowProfile() { triggerShake(); switchScreen(STATES.PROFILE); }
-        function actShowCredits() { triggerShake(); switchScreen(STATES.CREDITS); }
+        function actShowSettings() { triggerShake(); switchScreen(STATES.SETTINGS); }
         function actPauseGame() { triggerShake(); if(currentState === STATES.PLAYING) switchScreen(STATES.PAUSED); }
         function actResumeGame() { triggerShake(); switchScreen(STATES.PLAYING); }
-        function actQuitToMenu() { triggerShake(); switchScreen(STATES.MENU); }
+        function actQuitToMenu() { triggerShake(); saveProfileInfo(); switchScreen(STATES.MENU); }
         function actReroll() { if(rerollsLeft > 0) { rerollsLeft--; triggerShake(); generateRandomPowerUps(); } }
 
         let mouseXBg = window.innerWidth / 2; let mouseYBg = window.innerHeight / 2;
@@ -469,7 +559,6 @@
             }); bgCtx.restore(); requestAnimationFrame(animateParticles); 
         }
 
-        // TẠO HIỆU ỨNG NỔ HẠT (BURST)
         function createBurst(x, y, color) {
             for(let i=0; i<8; i++) {
                 let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 3 + 2;
@@ -536,7 +625,7 @@
                     if (Math.hypot(player.x - gem.x, player.y - gem.y) < player.radius + player.magnetRange) { 
                         createBurst(gem.x, gem.y, isGold ? '#ffcc00' : '#00ffcc');
                         if (isGold) { 
-                            let isCrit = Math.random() < 0.1; // 10% CRIT GOLD
+                            let isCrit = Math.random() < 0.1;
                             let finalGold = isCrit ? gem.value * 2 : gem.value;
                             sessionGold += finalGold; 
                             addFloatingText(gem.x, gem.y, isCrit ? `+${finalGold} ✦ CRIT!` : `+${finalGold}`, isCrit ? '#ffaa00' : '#ffcc00', isCrit ? 24 : 16); 
@@ -546,7 +635,6 @@
                     }
                 }
 
-                // Vẽ Particle Bursts
                 for (let i = particleBursts.length - 1; i >= 0; i--) {
                     let pb = particleBursts[i]; pb.x += pb.vx; pb.y += pb.vy; pb.alpha -= 0.05;
                     ctx.globalAlpha = Math.max(0, pb.alpha); ctx.beginPath(); ctx.arc(pb.x, pb.y, pb.radius, 0, Math.PI*2); ctx.fillStyle = pb.color; ctx.fill(); ctx.globalAlpha = 1.0;
@@ -558,10 +646,13 @@
                     if(p.history.length > 1) { ctx.beginPath(); ctx.moveTo(p.history[0].x, p.history[0].y); for(let pos of p.history) ctx.lineTo(pos.x, pos.y); ctx.strokeStyle = p.color; ctx.globalAlpha=0.5; ctx.lineWidth = p.radius * 1.5; ctx.lineCap = 'round'; ctx.stroke(); ctx.globalAlpha=1.0;}
                     ctx.shadowBlur = 15; ctx.shadowColor = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.shadowBlur = 0; 
                     if (p.x < 0 || p.x > WORLD_WIDTH || p.y < 0 || p.y > WORLD_HEIGHT) { projectiles.splice(i, 1); continue; }
+                    
+                    let showDmgSetting = document.getElementById('setting-dmg').checked;
                     for (let j = enemies.length - 1; j >= 0; j--) {
                         let e = enemies[j];
                         if (Math.hypot(p.x - e.x, p.y - e.y) < p.radius + e.radius) { 
-                            let finalDmg = p.isCrit ? p.damage * 2 : p.damage; e.hp -= finalDmg; projectiles.splice(i, 1); createBurst(e.x, e.y, p.color); addFloatingText(e.x, e.y, Math.floor(finalDmg), p.isCrit ? '#ff0044' : '#ffffff', p.isCrit ? 22 : 16); 
+                            let finalDmg = p.isCrit ? p.damage * 2 : p.damage; e.hp -= finalDmg; projectiles.splice(i, 1); createBurst(e.x, e.y, p.color); 
+                            if(showDmgSetting) addFloatingText(e.x, e.y, Math.floor(finalDmg), p.isCrit ? '#ff0044' : '#ffffff', p.isCrit ? 22 : 16); 
                             if (e.hp <= 0) { expGems.push({ x: e.x, y: e.y, value: e.expReward, type: 'exp' }); handleEnemyKill(e); if(e.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); } break; 
                         }
                     }
@@ -571,7 +662,7 @@
 
                 for (let j = enemies.length - 1; j >= 0; j--) {
                     let enemy = enemies[j]; const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
-                    if (player.hasAura && dist <= player.auraRadius) { enemy.hp -= player.auraDamage; if(frames % 10 === 0) addFloatingText(enemy.x, enemy.y, Math.floor(player.auraDamage*10), '#ff8800'); if (enemy.hp <= 0) { expGems.push({ x: enemy.x, y: enemy.y, value: enemy.expReward, type: 'exp' }); handleEnemyKill(enemy); if(enemy.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); continue; } }
+                    if (player.hasAura && dist <= player.auraRadius) { enemy.hp -= player.auraDamage; if(frames % 10 === 0 && document.getElementById('setting-dmg').checked) addFloatingText(enemy.x, enemy.y, Math.floor(player.auraDamage*10), '#ff8800'); if (enemy.hp <= 0) { expGems.push({ x: enemy.x, y: enemy.y, value: enemy.expReward, type: 'exp' }); handleEnemyKill(enemy); if(enemy.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); continue; } }
                     
                     if (enemy.dodgeCooldown > 0) enemy.dodgeCooldown--;
                     if (enemy.type === 'phantom') { if (enemy.dodgeCooldown <= 0) { let bulletNear = projectiles.find(p => Math.hypot(p.x - enemy.x, p.y - enemy.y) < 150); if (bulletNear) { let angleToBullet = Math.atan2(bulletNear.y - enemy.y, bulletNear.x - enemy.x); enemy.x += Math.cos(angleToBullet + Math.PI/2) * 100; enemy.y += Math.sin(angleToBullet + Math.PI/2) * 100; enemy.dodgeCooldown = 120; addFloatingText(enemy.x, enemy.y, "DODGE", '#0088ff'); } } if (dist > 0) { enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed; } }
@@ -595,12 +686,21 @@
 
                 ctx.restore();
 
+                for(let i=floatingTexts.length-1; i>=0; i--) {
+                    let ft = floatingTexts[i];
+                    ctx.fillStyle = ft.color; ctx.globalAlpha = ft.alpha; ctx.font = `bold ${ft.size}px 'Rajdhani', sans-serif`; ctx.textAlign="center"; ctx.shadowBlur = 5; ctx.shadowColor = '#000';
+                    ctx.fillText(ft.text, ft.x - camera.x, ft.y - camera.y);
+                    ctx.globalAlpha = 1.0; ctx.shadowBlur = 0;
+                    ft.y += ft.dy; ft.alpha -= 0.02;
+                    if(ft.alpha <= 0) floatingTexts.splice(i, 1);
+                }
+
                 if (waveBannerAlpha > 0) { ctx.fillStyle = `rgba(255, 204, 0, ${Math.min(1, waveBannerAlpha)})`; ctx.font = "bold 60px 'Cinzel', serif"; ctx.textAlign = "center"; ctx.shadowBlur = 20; ctx.shadowColor = '#ffcc00'; ctx.fillText(waveBannerText, gameCanvas.width / 2, gameCanvas.height / 3); ctx.shadowBlur = 0; waveBannerAlpha -= 0.015; }
             }
             requestAnimationFrame(gameLoop);
         }
 
-        // Bắt đầu game
+        // Khởi chạy
         animateParticles();
         switchScreen(STATES.MENU);
         gameLoop(); 
