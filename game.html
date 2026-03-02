@@ -100,6 +100,17 @@
         
         .rune-stats { font-family: 'Rajdhani', sans-serif; color: #00ffcc; font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
         .rune-lvl { font-family: 'Rajdhani', sans-serif; color: #fff; font-size: 1rem; background: #222; padding: 3px 10px; border-radius: 20px; border: 1px solid #555; }
+/* GACHA CSS TIER */
+        .gacha-item-show { font-size: 5rem; margin-bottom: 10px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .gacha-item-name { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; animation: popIn 0.6s ease forwards;}
+        .gacha-item-stats { font-size: 1.1rem; color: #ddd; margin-top: 10px; animation: popIn 0.7s ease forwards;}
+        .gacha-rarity-text { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; margin-top: 5px; animation: popIn 0.8s ease forwards;}
+        
+        .rarity-uncommon { color: #00ff00; text-shadow: 0 0 15px #00ff00; }
+        .rarity-rare { color: #00aaff; text-shadow: 0 0 15px #00aaff; }
+        .rarity-epic { color: #aa00ff; text-shadow: 0 0 15px #aa00ff; }
+        .rarity-legend { color: #ffcc00; text-shadow: 0 0 15px #ffcc00; }
+        .rarity-mythic { color: #ff0044; text-shadow: 0 0 25px #ff0044; animation: mysticalPulse 1s infinite alternate; }
 
         .bp-progress-header { width: 100%; display: flex; justify-content: space-between; font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; color: #00ffcc;}
         .bp-bar-bg { width: 100%; height: 16px; background: #1a1a1a; border-radius: 8px; margin-bottom: 25px; overflow: hidden; border: 1px solid #444; box-shadow: inset 0 0 10px #000;}
@@ -213,6 +224,10 @@
                         <div class="icon-bg" style="color: #ffaa00; border-color: rgba(255,170,0,0.5);">🛒</div>
                         <span data-i18n="menu-shop" style="color: #ffaa00;">Shop</span>
                     </button>
+                    <button class="side-menu-btn" onclick="actShowGacha()">
+                        <div class="icon-bg" style="color: #ff0044; border-color: rgba(255,0,68,0.5); text-shadow: 0 0 10px #ff0044;">🔮</div>
+                        <span data-i18n="menu-gacha" style="color: #ff0044;">Gacha</span>
+                    </button>
                 </div>
 
                 <div id="moba-bottom-left" class="moba-element">
@@ -281,7 +296,21 @@
                 <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()" data-i18n="bp-btn">Back to Lobby</button>
             </div>
         </div>
-
+        <div id="gacha-screen" class="screen hidden">
+            <div class="menu-box" style="padding: 30px 50px; width: 600px; border-color: #aa00ff; box-shadow: 0 0 50px rgba(170,0,255,0.2), inset 0 0 30px rgba(0,0,0,0.9);">
+                <h2 data-i18n="gacha-title" style="color: #aa00ff; border-color: #aa00ff; text-shadow: 0 0 15px #aa00ff;">MYSTIC SUMMON</h2>
+                <div style="text-align: center; color: #ccc; margin-bottom: 10px; font-family: 'Montserrat', sans-serif;">Cost: <span style="color:#ffcc00; font-weight:bold;">1000 🪙</span> per Summon</div>
+                
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 20px 0; min-height: 250px; border: 2px dashed #555; border-radius: 10px; width: 100%; background: rgba(0,0,0,0.5);" id="gacha-result">
+                    <div style="color: #777; font-size: 1.1rem; font-family: 'Montserrat', sans-serif;">Press SUMMON to try your luck</div>
+                </div>
+                
+                <div class="btn-group" style="flex-direction: row; gap: 20px;">
+                    <button class="std-btn" style="border-color: #aa00ff; color: #aa00ff; text-shadow: 0 0 10px #aa00ff;" onclick="rollGacha()">SUMMON (1000 🪙)</button>
+                    <button class="std-btn" onclick="actQuitToMenu()" data-i18n="shop-btn">Back to Lobby</button>
+                </div>
+            </div>
+        </div>
         <div id="shop-screen" class="screen hidden">
             <div class="menu-box" style="padding: 30px 50px; max-width: 900px; width: 90%;">
                 <h2 data-i18n="shop-title">ARMORY VAULT</h2>
@@ -525,15 +554,27 @@
                 { id: 'skin_bp_100', name: 'Cosmic Deity', cost: 0, color: '#ff00ff', pColor: '#ffccff', isBp: true }
             ],
             weapons: [
-                { id: 'wpn_basic', name: 'Dagger', cost: 0, color: '#fff', icon: '🗡️', dmg: 2, spd: 0, text: '+2 DMG' },
-                { id: 'wpn_sword', name: 'Broadsword', cost: 2000, color: '#ffaa00', icon: '⚔️', dmg: 10, spd: -2, text: '+10 DMG, -2 ATK SPD' },
-                { id: 'wpn_bow', name: 'Elven Bow', cost: 3500, color: '#00ff44', icon: '🏹', dmg: 5, spd: 10, text: '+5 DMG, +10 ATK SPD' },
-                { id: 'wpn_staff', name: 'Void Staff', cost: 6000, color: '#aa00ff', icon: '🪄', dmg: 20, spd: -10, text: '+20 DMG, -10 ATK SPD' }
+                { id: 'wpn_basic', name: 'Dagger', cost: 0, color: '#fff', icon: '🗡️', dmg: 2, spd: 0, text: '+2 DMG', isGacha: false },
+                { id: 'wpn_sword', name: 'Broadsword', cost: 2000, color: '#ffaa00', icon: '⚔️', dmg: 10, spd: -2, text: '+10 DMG, -2 ATK SPD', isGacha: false },
+                { id: 'wpn_bow', name: 'Elven Bow', cost: 3500, color: '#00ff44', icon: '🏹', dmg: 5, spd: 10, text: '+5 DMG, +10 ATK SPD', isGacha: false },
+                { id: 'wpn_staff', name: 'Void Staff', cost: 6000, color: '#aa00ff', icon: '🪄', dmg: 20, spd: -10, text: '+20 DMG, -10 ATK SPD', isGacha: false },
+                // === GACHA WEAPONS ===
+                { id: 'gacha_w_unc', name: 'Emerald Blade', color: '#00ff00', icon: '🗡️', dmg: 15, spd: 5, text: '+15 DMG, +5 SPD', isGacha: true, rType: 'Uncommon', rClass: 'rarity-uncommon' },
+                { id: 'gacha_w_rar', name: 'Sapphire Trident', color: '#00aaff', icon: '🔱', dmg: 25, spd: 0, text: '+25 DMG', isGacha: true, rType: 'Rare', rClass: 'rarity-rare' },
+                { id: 'gacha_w_epi', name: 'Amethyst Scythe', color: '#aa00ff', icon: '🪓', dmg: 40, spd: -5, text: '+40 DMG, -5 SPD', isGacha: true, rType: 'Epic', rClass: 'rarity-epic' },
+                { id: 'gacha_w_leg', name: 'Radiant Sunbow', color: '#ffcc00', icon: '🏹', dmg: 35, spd: 20, text: '+35 DMG, +20 SPD', isGacha: true, rType: 'Legendary', rClass: 'rarity-legend' },
+                { id: 'gacha_w_myt', name: 'Demonic Greatsword', color: '#ff0044', icon: '🗡️', dmg: 90, spd: -15, text: '+90 DMG, -15 SPD', isGacha: true, rType: 'Mythic', rClass: 'rarity-mythic' }
             ],
             armors: [
-                { id: 'arm_basic', name: 'Cloth Shirt', cost: 0, color: '#fff', icon: '👕', hp: 0, def: 0, text: 'No Stats' },
-                { id: 'arm_leather', name: 'Leather Vest', cost: 2000, color: '#ffaa00', icon: '🦺', hp: 20, def: 2, text: '+20 HP, +2 DEF' },
-                { id: 'arm_iron', name: 'Iron Plate', cost: 4500, color: '#888', icon: '🛡️', hp: 50, def: 5, text: '+50 HP, +5 DEF' }
+                { id: 'arm_basic', name: 'Cloth Shirt', cost: 0, color: '#fff', icon: '👕', hp: 0, def: 0, text: 'No Stats', isGacha: false },
+                { id: 'arm_leather', name: 'Leather Vest', cost: 2000, color: '#ffaa00', icon: '🦺', hp: 20, def: 2, text: '+20 HP, +2 DEF', isGacha: false },
+                { id: 'arm_iron', name: 'Iron Plate', cost: 4500, color: '#888', icon: '🛡️', hp: 50, def: 5, text: '+50 HP, +5 DEF', isGacha: false },
+                // === GACHA ARMORS ===
+                { id: 'gacha_a_unc', name: 'Nature Tunic', color: '#00ff00', icon: '👕', hp: 80, def: 8, text: '+80 HP, +8 DEF', isGacha: true, rType: 'Uncommon', rClass: 'rarity-uncommon' },
+                { id: 'gacha_a_rar', name: 'Oceanic Shell', color: '#00aaff', icon: '🦪', hp: 120, def: 12, text: '+120 HP, +12 DEF', isGacha: true, rType: 'Rare', rClass: 'rarity-rare' },
+                { id: 'gacha_a_epi', name: 'Phantom Cloak', color: '#aa00ff', icon: '🧥', hp: 150, def: 18, text: '+150 HP, +18 DEF', isGacha: true, rType: 'Epic', rClass: 'rarity-epic' },
+                { id: 'gacha_a_leg', name: 'Aegis Armor', color: '#ffcc00', icon: '🛡️', hp: 300, def: 25, text: '+300 HP, +25 DEF', isGacha: true, rType: 'Legendary', rClass: 'rarity-legend' },
+                { id: 'gacha_a_myt', name: 'Dragon Soul Plate', color: '#ff0044', icon: '🐉', hp: 600, def: 45, text: '+600 HP, +45 DEF', isGacha: true, rType: 'Mythic', rClass: 'rarity-mythic' }
             ],
             boots: [
                 { id: 'bot_basic', name: 'Worn Shoes', cost: 0, color: '#fff', icon: '🥾', spd: 0, def: 0, text: 'No Stats' },
@@ -590,9 +631,9 @@
             updateAccountLevelUI();
         }
 
-        const STATES = { MENU: 'MENU', SHOP: 'SHOP', INVENTORY: 'INVENTORY', BP: 'BP', RUNES: 'RUNES', PROFILE: 'PROFILE', SETTINGS: 'SETTINGS', CREDITS: 'CREDITS', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER' };
+       const STATES = { MENU: 'MENU', SHOP: 'SHOP', INVENTORY: 'INVENTORY', GACHA: 'GACHA', BP: 'BP', RUNES: 'RUNES', PROFILE: 'PROFILE', SETTINGS: 'SETTINGS', CREDITS: 'CREDITS', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER' };
         let currentState = STATES.MENU;
-        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.INVENTORY]: document.getElementById('inventory-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.RUNES]: document.getElementById('runes-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.SETTINGS]: document.getElementById('settings-screen'), [STATES.CREDITS]: document.getElementById('credits-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
+        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.INVENTORY]: document.getElementById('inventory-screen'), [STATES.GACHA]: document.getElementById('gacha-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.RUNES]: document.getElementById('runes-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.SETTINGS]: document.getElementById('settings-screen'), [STATES.CREDITS]: document.getElementById('credits-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
 
         function switchScreen(state) {
             currentState = state; Object.values(screens).forEach(screen => { if(screen) screen.classList.add('hidden'); });
@@ -882,7 +923,35 @@
             document.getElementById('level-display').innerText = `LV. ${player.level}`; document.getElementById('hp-bar').style.width = Math.max(0, (player.hp / player.maxHp) * 100) + '%'; document.getElementById('hp-text').innerText = `${Math.floor(player.hp)} / ${player.maxHp}`; document.getElementById('exp-bar').style.width = Math.min(100, (player.exp / player.maxExp) * 100) + '%'; document.getElementById('timer-display').innerText = `${Math.floor(gameSeconds / 60).toString().padStart(2, '0')}:${(gameSeconds % 60).toString().padStart(2, '0')}`; document.getElementById('ingame-gold-display').innerText = `${sessionGold} 🪙`;
             if (isBossActive) { document.getElementById('wave-text').innerText = "BOSS FIGHT"; document.getElementById('wave-text').style.color = "#ff0044"; document.getElementById('wave-progress-bar').style.width = "100%"; document.getElementById('wave-progress-bar').style.background = "#ff0044"; if(bossEntity) document.getElementById('boss-hp-bar').style.width = Math.max(0, (bossEntity.hp / bossEntity.maxHp) * 100) + '%'; } else { document.getElementById('wave-text').innerText = `WAVE ${currentWave}`; document.getElementById('wave-text').style.color = "#fff"; document.getElementById('wave-progress-bar').style.width = Math.min(100, (enemiesKilled / killsNeededForNextWave) * 100) + '%'; document.getElementById('wave-progress-bar').style.background = "#fff"; }
         }
-
+        
+        function actShowGacha() { triggerShake(); switchScreen(STATES.GACHA); }
+        function rollGacha() {
+            if (globalGold < 1000) { alert("Not enough Gold! You need 1000 🪙 to summon."); return; }
+            globalGold -= 1000; triggerShake();
+            
+            // Gacha Logic - Tỉ lệ: Xanh 45% - Xanh dương 30% - Tím 15% - Vàng 8% - Đỏ 2%
+            let rand = Math.random() * 100; let pool = []; let pullRarity = '';
+            if(rand <= 2) pullRarity = 'Mythic'; else if(rand <= 10) pullRarity = 'Legendary'; else if(rand <= 25) pullRarity = 'Epic'; else if(rand <= 55) pullRarity = 'Rare'; else pullRarity = 'Uncommon';
+            
+            // Lấy ngẫu nhiên Vũ khí hoặc Giáp
+            let typeRand = Math.random() > 0.5 ? ITEMS_DB.weapons : ITEMS_DB.armors;
+            pool = typeRand.filter(i => i.isGacha && i.rType === pullRarity);
+            
+            let wonItem = pool[Math.floor(Math.random() * pool.length)];
+            
+            if(!unlockedItems.includes(wonItem.id)) unlockedItems.push(wonItem.id);
+            saveGameData();
+            
+            // Animation Show UI
+            const resBox = document.getElementById('gacha-result');
+            resBox.innerHTML = ''; void resBox.offsetWidth; // reset animation
+            resBox.innerHTML = `
+                <div class="gacha-item-show" style="color: ${wonItem.color}; text-shadow: 0 0 20px ${wonItem.color};">${wonItem.icon}</div>
+                <div class="gacha-item-name ${wonItem.rClass}">${wonItem.name}</div>
+                <div class="gacha-rarity-text ${wonItem.rClass}">[ ${wonItem.rType} ]</div>
+                <div class="gacha-item-stats">${wonItem.text}</div>
+            `;
+        }
         function actStartGame() { triggerShake(); resetGame(); switchScreen(STATES.PLAYING); }
         function actShowShop() { triggerShake(); switchScreen(STATES.SHOP); }
         function actShowInventory() { triggerShake(); switchScreen(STATES.INVENTORY); }
@@ -1164,12 +1233,30 @@
                         if (enemy.isFiring && frames - enemy.stateTimer >= enemy.fireDelay) { enemy.isFiring = false; const angleToPlayer = Math.atan2(enemy.targetY - enemy.y, enemy.targetX - enemy.x); for(let i = -3; i <= 3; i++) { let spreadAngle = angleToPlayer + (i * 0.2); enemyProjectiles.push({ x: enemy.x, y: enemy.y, vx: Math.cos(spreadAngle) * 9, vy: Math.sin(spreadAngle) * 9, radius: 8, color: '#ff0044', damage: 35 }); } }
                     } else { if (dist > 0) { enemy.x += ((player.x - enemy.x) / dist) * actualEnemySpeed; enemy.y += ((player.y - enemy.y) / dist) * actualEnemySpeed; } }
                     
-                    // QUÁI CŨNG BỊ KẸT BỞI TƯỜNG
+                    // CẢI TIẾN: QUÁI TRƯỢT TƯỜNG THAY VÌ KẸT CỨNG
+                    let oldX = enemy.x; let oldY = enemy.y;
+                    
                     obstacles.forEach(obs => {
-                        if(obs.type === 'wall') resolveCircleRectCollision(enemy, obs);
+                        if(obs.type === 'wall') {
+                            if(resolveCircleRectCollision(enemy, obs)) {
+                                // Nếu đụng tường, cố gắng trượt dọc theo hướng tới player
+                                let dirX = Math.sign(player.x - enemy.x);
+                                let dirY = Math.sign(player.y - enemy.y);
+                                let dx = enemy.x - oldX; let dy = enemy.y - oldY;
+                                
+                                // Tuỳ theo việc bị chặn trục nào, trượt trục còn lại
+                                if (Math.abs(dx) > Math.abs(dy)) { enemy.y += dirY * actualEnemySpeed * 0.8; } 
+                                else { enemy.x += dirX * actualEnemySpeed * 0.8; }
+                            }
+                        }
                     });
 
+                    // CẢI TIẾN: QUÁI BỊ MỜ ĐI KHI Ở TRONG BỤI CỎ
+                    let inBush = obstacles.some(obs => obs.type === 'bush' && Math.hypot(enemy.x - obs.x, enemy.y - obs.y) < obs.radius);
+                    ctx.globalAlpha = inBush ? 0.3 : 1.0; // Làm mờ quái khi núp lùm
+
                     ctx.shadowBlur = enemy.isElite ? (enemy.isBoss? 40: 25) : 15; ctx.shadowColor = enemy.color; ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2); ctx.fillStyle = enemy.color; ctx.fill(); ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1.0; // Reset Alpha
                     if (!enemy.isBoss) { const hpBarWidth = enemy.isElite ? 40 : 30; ctx.fillStyle = '#333'; ctx.fillRect(enemy.x - hpBarWidth/2, enemy.y - enemy.radius - 10, hpBarWidth, 4); ctx.fillStyle = '#ff0000'; ctx.fillRect(enemy.x - hpBarWidth/2, enemy.y - enemy.radius - 10, hpBarWidth * (enemy.hp / enemy.maxHp), 4); }
                     if (!player.isDashing && dist < player.radius + enemy.radius && frames - player.lastHitFrame > 60) { 
                         let dmgTaken = Math.max(1, enemy.damage - player.def);
