@@ -141,7 +141,7 @@
         .prof-hero-core { width: 120px; height: 120px; border-radius: 50%; background: #fff; transition: 0.5s; position: relative; }
         .prof-hero-core::after { content: ''; position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%); width: 80px; height: 15px; background: rgba(0,0,0,0.5); border-radius: 50%; filter: blur(5px); }
 
-        .setting-slider { -webkit-appearance: none; width: 100%; height: 6px; background: #333; outline: none; border-radius: 3px; }
+        .setting-slider { appearance: none; -webkit-appearance: none; width: 100%; height: 6px; background: #333; outline: none; border-radius: 3px; }
         .setting-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #00ffcc; cursor: pointer; box-shadow: 0 0 10px #00ffcc; }
         .setting-checkbox { transform: scale(1.5); cursor: pointer; accent-color: #00ffcc;}
         .stat-row-setting { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; color: #ddd; font-weight: 600;}
@@ -159,8 +159,18 @@
         #hp-container { width: 100%; max-width: 250px; background: #222; border: 2px solid #555; height: 25px; position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff0044, #ff6600); transition: width 0.2s ease; }
         #hp-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; line-height: 25px; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 3px #000; font-family: 'Montserrat', sans-serif;}
-        #dash-container { width: 100%; max-width: 250px; height: 5px; background: #222; border-radius: 2px; overflow: hidden; border: 1px solid #444;}
+        #mp-container { width: 100%; max-width: 250px; background: #222; border: 2px solid #555; height: 18px; position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.8); margin-top: 2px;}
+        #mp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #0055ff, #00aaff); transition: width 0.2s ease; }
+        #mp-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; line-height: 18px; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 3px #000; font-family: 'Montserrat', sans-serif;}
+        #dash-container { width: 100%; max-width: 250px; height: 5px; background: #222; border-radius: 2px; overflow: hidden; border: 1px solid #444; margin-top: 5px;}
         #dash-bar { width: 100%; height: 100%; background: #00ffff; box-shadow: 0 0 5px #00ffff; }
+        #skill-ui { display: flex; align-items: center; gap: 10px; margin-top: 10px; background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); width: fit-content;}
+        .skill-icon { width: 40px; height: 40px; background: #111; border: 2px solid #aa00ff; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 20px; box-shadow: 0 0 10px rgba(170,0,255,0.5); position: relative; overflow: hidden; }
+        .skill-cd-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); height: 0%; transition: height 0.1s linear; }
+        .skill-info { display: flex; flex-direction: column; font-family: 'Rajdhani', sans-serif; }
+        .skill-name { font-weight: bold; color: #aa00ff; text-shadow: 0 0 5px #aa00ff; font-size: 14px; text-transform: uppercase;}
+        .skill-cost { font-size: 12px; color: #00aaff; }
+        .skill-key { position: absolute; top: -5px; right: -5px; background: #fff; color: #000; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; z-index: 2;}
 
         #wave-container { display: flex; flex-direction: column; align-items: center; width: 40%; }
         #wave-text { font-size: 1.8rem; font-weight: 800; letter-spacing: 4px; text-shadow: 0 0 10px #fff; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; text-transform: uppercase;}
@@ -406,7 +416,15 @@
                 <div id="status-container">
                     <div id="level-display">LV. 1</div>
                     <div id="hp-container"><div id="hp-bar"></div><div id="hp-text">100 / 100</div></div>
+                    <div id="mp-container"><div id="mp-bar"></div><div id="mp-text">100 / 100</div></div>
                     <div id="dash-container"><div id="dash-bar"></div></div>
+                    <div id="skill-ui">
+                        <div class="skill-icon">🔮<div class="skill-cd-overlay" id="skill-cd-overlay"></div><div class="skill-key">E</div></div>
+                        <div class="skill-info">
+                            <span class="skill-name">Aura Burst</span>
+                            <span class="skill-cost" id="skill-cost-txt">Cost: 30 MP</span>
+                        </div>
+                    </div>
                 </div>
                 <div id="wave-container">
                     <div id="wave-text">WAVE 1</div>
@@ -769,10 +787,10 @@
         let currentWave = 1; const MAX_WAVE = 5; let enemiesKilled = 0; let killsNeededForNextWave = 25; let sessionKills = 0; let isBossActive = false; let bossEntity = null;
         let sessionGold = 0; let sessionBPExp = 0; let rerollsLeft = 1; let waveBannerText = ""; let waveBannerAlpha = 0;
 
-        // TÍNH TOÁN TỈ LỆ POWER-UPS (Rebalanced)
+        // TÍNH TOÁN TỈ LỆ POWER-UPS (Rebalanced & Thêm MP)
         const POWER_UP_POOL = [
             { id: 'atk_dmg', weight: 100, name: 'Astral Power', desc: 'Increase bullet damage by 15.', apply: () => { player.damage += 15; player.bulletSize += 1; } },
-            { id: 'atk_speed', weight: 100, name: 'Frenzy Fire', desc: 'Increase attack speed.', apply: () => { player.fireRate = Math.max(10, player.fireRate - 5); } },
+            { id: 'atk_speed', weight: 100, name: 'Frenzy Fire', desc: 'Increase attack speed.', apply: () => { player.fireRate = Math.max(8, player.fireRate - 5); } },
             { id: 'move_speed', weight: 80, name: 'Void Walker', desc: 'Increase movement speed.', apply: () => { player.speed += 0.8; } },
             { id: 'crit_chance', weight: 70, name: 'Fatal Strike', desc: 'Increase Crit Rate by 5%.', apply: () => { player.critRate += 0.05; } },
             { id: 'crit_dmg', weight: 70, name: 'Brutal Force', desc: 'Increase Crit Damage by 30%.', apply: () => { player.critMult += 0.3; } },
@@ -780,10 +798,17 @@
             { id: 'magnet', weight: 70, name: 'Magnetic Field', desc: 'Increase EXP pickup radius.', apply: () => { player.magnetRange += 60; } },
             { id: 'heal', weight: 50, name: 'Vitality Surge', desc: 'Instantly recover 50% HP.', apply: () => { player.hp = Math.min(player.maxHp, player.hp + player.maxHp * 0.5); } },
             { id: 'exp_boost', weight: 60, name: 'Enlightenment', desc: 'Gain 30% more EXP.', apply: () => { player.expMultiplier += 0.3; } },
-            { id: 'dash_cd', weight: 60, name: 'Phantom Wind', desc: 'Reduce Dash cooldown.', apply: () => { player.maxDashCooldown = Math.max(30, player.maxDashCooldown - 15); } },
+            { id: 'dash_cd', weight: 60, name: 'Phantom Wind', desc: 'Reduce Dash cooldown.', apply: () => { player.maxDashCooldown = Math.max(20, player.maxDashCooldown - 15); } },
+            
+            // SKILL & MANA POWER-UPS
+            { id: 'mp_max', weight: 80, name: 'Mana Core', desc: 'Increase Max MP by 50.', apply: () => { player.maxMp += 50; player.mp += 50; } },
+            { id: 'mp_regen', weight: 70, name: 'Aether Flow', desc: 'Increase Mana Regen rate.', apply: () => { player.mpRegen += 0.05; } },
+            { id: 'skill_dmg', weight: 60, name: 'Aura Mastery', desc: 'Increase Skill Damage.', apply: () => { player.skillDamage += 60; player.skillRadius += 40; } },
+            { id: 'skill_cd', weight: 50, name: 'Timeless Mind', desc: 'Reduce Skill Cooldown.', apply: () => { player.maxSkillCooldown = Math.max(60, player.maxSkillCooldown - 30); } },
+
             // CÁC KỸ NĂNG HIẾM (Cực mạnh)
-            { id: 'pierce', weight: 40, name: 'Piercing Light', desc: 'Bullets pierce +1 enemy.', apply: () => { player.pierceCount += 1; } },
-            { id: 'multi_shot', weight: 30, name: 'Twin Dragon', desc: 'Fire +1 projectile per shot.', apply: () => { player.multishot += 1; } },
+            { id: 'pierce', weight: 35, name: 'Piercing Light', desc: 'Bullets pierce +1 enemy.', apply: () => { player.pierceCount += 1; } },
+            { id: 'multi_shot', weight: 25, name: 'Twin Dragon', desc: 'Fire +1 projectile per shot.', apply: () => { player.multishot += 1; } },
             { id: 'aura_unlock', weight: 30, name: 'Hellfire Aura', desc: 'Emit a damaging energy ring.', apply: () => { player.hasAura = true; player.auraRadius += 30; player.auraDamage += 0.5; } },
             // KỸ NĂNG PET
             { id: 'pet_atk_speed', weight: 60, name: 'Pet Frenzy', desc: 'Increase Pet attack speed.', apply: () => { if(player.pet.active) player.pet.fireRate = Math.max(10, player.pet.fireRate - 8); } },
@@ -843,10 +868,15 @@
             
             player.def = activeArm.def + activeBot.def + (playerRunes.def * 1);
             
-            player.critRate = 0.05 + (playerRunes.critRate * 0.015);
-            player.critMult = 1.5 + (playerRunes.critDmg * 0.15); 
-            
-            player.acc = equippedPlayerAcc;
+            // MANA VÀ SKILL BASE
+            player.maxMp = 100 + (player.level * 10);
+            player.mp = player.maxMp;
+            player.mpRegen = 0.05; // Tốc độ hồi Mana
+            player.skillCost = 30;
+            player.skillDamage = 100; // Sát thương nổ
+            player.skillRadius = 250; // Phạm vi nổ
+            player.skillCooldown = 0;
+            player.maxSkillCooldown = 180; // 3 giây
         }
 
         // TẠO VẬT CẢN TRÊN BẢN ĐỒ
@@ -920,7 +950,11 @@
         }
 
         function updateHUD() {
-            document.getElementById('level-display').innerText = `LV. ${player.level}`; document.getElementById('hp-bar').style.width = Math.max(0, (player.hp / player.maxHp) * 100) + '%'; document.getElementById('hp-text').innerText = `${Math.floor(player.hp)} / ${player.maxHp}`; document.getElementById('exp-bar').style.width = Math.min(100, (player.exp / player.maxExp) * 100) + '%'; document.getElementById('timer-display').innerText = `${Math.floor(gameSeconds / 60).toString().padStart(2, '0')}:${(gameSeconds % 60).toString().padStart(2, '0')}`; document.getElementById('ingame-gold-display').innerText = `${sessionGold} 🪙`;
+            document.getElementById('level-display').innerText = `LV. ${player.level}`; 
+            document.getElementById('hp-bar').style.width = Math.max(0, (player.hp / player.maxHp) * 100) + '%'; document.getElementById('hp-text').innerText = `${Math.floor(player.hp)} / ${Math.floor(player.maxHp)}`; 
+            document.getElementById('mp-bar').style.width = Math.max(0, (player.mp / player.maxMp) * 100) + '%'; document.getElementById('mp-text').innerText = `${Math.floor(player.mp)} / ${Math.floor(player.maxMp)}`;
+            document.getElementById('exp-bar').style.width = Math.min(100, (player.exp / player.maxExp) * 100) + '%'; document.getElementById('timer-display').innerText = `${Math.floor(gameSeconds / 60).toString().padStart(2, '0')}:${(gameSeconds % 60).toString().padStart(2, '0')}`; document.getElementById('ingame-gold-display').innerText = `${sessionGold} 🪙`;
+            document.getElementById('skill-cost-txt').innerText = `Cost: ${Math.floor(player.skillCost)} MP`;
             if (isBossActive) { document.getElementById('wave-text').innerText = "BOSS FIGHT"; document.getElementById('wave-text').style.color = "#ff0044"; document.getElementById('wave-progress-bar').style.width = "100%"; document.getElementById('wave-progress-bar').style.background = "#ff0044"; if(bossEntity) document.getElementById('boss-hp-bar').style.width = Math.max(0, (bossEntity.hp / bossEntity.maxHp) * 100) + '%'; } else { document.getElementById('wave-text').innerText = `WAVE ${currentWave}`; document.getElementById('wave-text').style.color = "#fff"; document.getElementById('wave-progress-bar').style.width = Math.min(100, (enemiesKilled / killsNeededForNextWave) * 100) + '%'; document.getElementById('wave-progress-bar').style.background = "#fff"; }
         }
         
@@ -971,7 +1005,7 @@
 
         let mouseXBg = window.innerWidth / 2; let mouseYBg = window.innerHeight / 2;
         window.addEventListener('mousemove', (e) => { mouseXBg = e.clientX; mouseYBg = e.clientY; if(currentState !== STATES.PLAYING) { glowEl.style.left = mouseXBg + 'px'; glowEl.style.top = mouseYBg + 'px'; }});
-        const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowLeft: false, ArrowDown: false, ArrowRight: false, ' ': false };
+        const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowLeft: false, ArrowDown: false, ArrowRight: false, ' ': false, 'e': false, 'E': false };
         window.addEventListener('keydown', (e) => { const key = e.key; if (keys.hasOwnProperty(key)) keys[key] = true; if (currentState === STATES.PLAYING && (key === 'Escape' || key === 'p' || key === 'P')) actPauseGame(); else if (currentState === STATES.PAUSED && (key === 'Escape' || key === 'p' || key === 'P')) actResumeGame(); else if ((currentState !== STATES.MENU && currentState !== STATES.PLAYING && currentState !== STATES.LEVEL_UP) && key === 'Escape') actQuitToMenu(); });
         window.addEventListener('keyup', (e) => { const key = e.key; if (keys.hasOwnProperty(key)) keys[key] = false; });
 
@@ -1023,6 +1057,12 @@
         function handleEnemyKill(enemy) {
             sessionKills++;
             if (enemy.isBoss) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 150 }); } else if (enemy.isElite) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 10 }); } else if (Math.random() < 0.1) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 1 }); }
+            
+            // TỈ LỆ RƠI MÁU VÀ MANA
+            let dropRoll = Math.random();
+            if (dropRoll < 0.03) { expGems.push({ x: enemy.x + 20, y: enemy.y, type: 'hp', value: 20 }); } // 3% rơi HP
+            else if (dropRoll < 0.08) { expGems.push({ x: enemy.x - 20, y: enemy.y, type: 'mp', value: 30 }); } // 5% rơi MP
+
             if (!isBossActive && !enemy.isBoss) { enemiesKilled++; if (enemiesKilled >= killsNeededForNextWave) { if (currentWave < MAX_WAVE) { currentWave++; enemiesKilled = 0; killsNeededForNextWave = currentWave * 25; triggerWaveBanner(TRANSLATIONS[currentLang]["wave-start"] ? TRANSLATIONS[currentLang]["wave-start"].replace("{w}", currentWave) : `WAVE ${currentWave} START`); } else { spawnBoss(); triggerWaveBanner("WARNING: ABYSSAL OVERLORD"); } } }
         }
 
@@ -1059,7 +1099,43 @@
                 camera.x = player.x - gameCanvas.width / 2; camera.y = player.y - gameCanvas.height / 2; camera.x = Math.max(0, Math.min(camera.x, WORLD_WIDTH - gameCanvas.width)); camera.y = Math.max(0, Math.min(camera.y, WORLD_HEIGHT - gameCanvas.height));
                 if (!isBossActive) { let spawnRate = Math.max(10, 45 - (currentWave * 5)); if (frames % spawnRate === 0) spawnEnemy(); } else { if (frames % 90 === 0) spawnEnemy(); }
                 autoFire();
+                
+                // HỒI MANA
+                if (player.mp < player.maxMp) { player.mp = Math.min(player.maxMp, player.mp + player.mpRegen); if (frames % 30 === 0) updateHUD(); }
+                
+                // SKILL COOLDOWN UI
+                if (player.skillCooldown > 0) player.skillCooldown--;
+                document.getElementById('skill-cd-overlay').style.height = `${(player.skillCooldown / player.maxSkillCooldown) * 100}%`;
 
+                // ACTIVE SKILL: AURA BURST (Phím E)
+                if ((keys['e'] || keys['E']) && player.skillCooldown <= 0 && player.mp >= player.skillCost) {
+                    player.mp -= player.skillCost;
+                    player.skillCooldown = player.maxSkillCooldown;
+                    triggerShake();
+                    
+                    // Tạo hiệu ứng nổ
+                    for(let i=0; i<30; i++) {
+                        let angle = Math.random() * Math.PI * 2;
+                        let speed = Math.random() * 8 + 5;
+                        particleBursts.push({ x: player.x, y: player.y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, radius: Math.random()*5+3, color: '#aa00ff', alpha: 1.0 });
+                    }
+                    
+                    // Sát thương và đẩy lùi quái
+                    enemies.forEach(e => {
+                        let dist = Math.hypot(player.x - e.x, player.y - e.y);
+                        if(dist <= player.skillRadius) {
+                            e.hp -= player.skillDamage;
+                            addFloatingText(e.x, e.y, Math.floor(player.skillDamage), '#aa00ff', 24);
+                            // Đẩy lùi
+                            if(!e.isBoss) {
+                                e.x += ((e.x - player.x) / dist) * 150;
+                                e.y += ((e.y - player.y) / dist) * 150;
+                            }
+                        }
+                    });
+                    
+                    updateHUD();
+                }
                 // CẬP NHẬT TỐC ĐỘ THEO BỤI CỎ (BUSHES)
                 let currentSpeedMulti = 1.0;
                 obstacles.forEach(obs => {
@@ -1146,13 +1222,33 @@
                 }
 
                 for (let i = expGems.length - 1; i >= 0; i--) {
-                    let gem = expGems[i]; let isGold = gem.type === 'gold'; let size = isGold ? 8 : 6; let color = isGold ? '#ffcc00' : '#00ffcc';
-                    drawDiamond(ctx, gem.x, gem.y, size, color, isGold, frames);
+                    let gem = expGems[i]; 
+                    let isGold = gem.type === 'gold'; let isHP = gem.type === 'hp'; let isMP = gem.type === 'mp';
+                    let size = isGold ? 8 : (isHP || isMP ? 10 : 6); 
+                    let color = isGold ? '#ffcc00' : (isHP ? '#ff0044' : (isMP ? '#00aaff' : '#00ffcc'));
+                    
+                    if (isHP) {
+                        ctx.shadowBlur = 10; ctx.shadowColor = color; ctx.fillStyle = color;
+                        ctx.fillRect(gem.x - size/2, gem.y - size/6, size, size/3);
+                        ctx.fillRect(gem.x - size/6, gem.y - size/2, size/3, size);
+                        ctx.shadowBlur = 0;
+                    } else if (isMP) {
+                        ctx.shadowBlur = 10; ctx.shadowColor = color; ctx.beginPath(); ctx.arc(gem.x, gem.y, size/1.5, 0, Math.PI*2); ctx.fillStyle = color; ctx.fill(); ctx.shadowBlur = 0;
+                    } else {
+                        drawDiamond(ctx, gem.x, gem.y, size, color, isGold, frames);
+                    }
+
                     if (Math.hypot(player.x - gem.x, player.y - gem.y) < player.radius + player.magnetRange) { 
                         createBurst(gem.x, gem.y, color);
                         if (isGold) { 
                             let isCrit = Math.random() < 0.1; let finalGold = isCrit ? gem.value * 2 : gem.value; sessionGold += finalGold; 
                             addFloatingText(gem.x, gem.y, isCrit ? `+${finalGold} 🪙 CRIT!` : `+${finalGold}`, isCrit ? '#ffaa00' : '#ffcc00', isCrit ? 24 : 16); 
+                        } else if (isHP) {
+                            player.hp = Math.min(player.maxHp, player.hp + gem.value);
+                            addFloatingText(gem.x, gem.y, `+${gem.value} HP`, '#ff0044', 18);
+                        } else if (isMP) {
+                            player.mp = Math.min(player.maxMp, player.mp + gem.value);
+                            addFloatingText(gem.x, gem.y, `+${gem.value} MP`, '#00aaff', 18);
                         } else { 
                             let gainedExp = Math.floor(gem.value * player.expMultiplier); player.exp += gainedExp; addFloatingText(gem.x, gem.y, `+${gainedExp}`, '#00ffcc'); 
                             if (player.exp >= player.maxExp) { player.level++; player.exp -= player.maxExp; player.maxExp = Math.floor(player.maxExp * 1.5); switchScreen(STATES.LEVEL_UP); } 
