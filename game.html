@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FIGHT UP - AWAKENED</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@400;600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* ================= CÀI ĐẶT CSS TỔNG THỂ ================= */
         body { margin: 0; padding: 0; background-color: #020202; color: #ffffff; font-family: 'Cinzel', serif; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; user-select: none; }
@@ -16,7 +16,7 @@
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(15,15,20,0.85) 0%, rgba(0,0,0,1) 100%); transition: opacity 0.3s ease; z-index: 10; }
         .hidden { display: none !important; }
         
-        /* HOẠT ẢNH MỚI: BLINK BLINK HUYỀN BÍ */
+        /* HOẠT ẢNH BLINK BLINK */
         @keyframes mysticalPulse {
             0% { box-shadow: 0 0 10px rgba(0, 255, 204, 0.3), inset 0 0 5px rgba(0, 255, 204, 0.1); text-shadow: 0 0 5px rgba(255,255,255,0.5); }
             50% { box-shadow: 0 0 25px rgba(0, 255, 204, 0.8), inset 0 0 15px rgba(0, 255, 204, 0.4); text-shadow: 0 0 15px rgba(255,255,255,1); }
@@ -31,61 +31,63 @@
         #moba-lobby { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
         .moba-element { pointer-events: auto; position: absolute; }
         
-        /* Góc trên trái: Profile */
         #moba-top-left { top: 30px; left: 40px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; padding: 10px 20px 10px 10px; border-radius: 50px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,204,0.3); animation: mysticalPulse 4s infinite alternate; }
         #moba-top-left:hover { background: rgba(0,255,204,0.15); transform: scale(1.02); }
         .avatar-placeholder { width: 55px; height: 55px; border-radius: 50%; background: #111; border: 2px solid #00ffcc; display: flex; justify-content: center; align-items: center; font-size: 26px; box-shadow: inset 0 0 10px #000; transition: 0.3s;}
-        .avatar-placeholder:hover { transform: scale(1.1); border-color: #fff; cursor: pointer; }
-        .commander-name { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: bold; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+        .commander-name { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 800; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
 
-        /* Góc trên giữa: Vàng (Gold) */
         #moba-top-center { top: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); padding: 10px 30px; border-radius: 30px; border: 1px solid rgba(255,204,0,0.3); box-shadow: 0 0 15px rgba(255,204,0,0.1); }
         .gold-display { font-size: 1.8rem; color: #ffcc00; font-weight: bold; text-shadow: 0 0 10px #ffcc00; display: flex; align-items: center; gap: 10px; font-family: 'Rajdhani', sans-serif; }
         .gold-display::before { content: '✦'; font-size: 2rem; }
 
-        /* Góc trên phải: Cài đặt */
         #moba-top-right { top: 30px; right: 40px; display: flex; gap: 15px; }
         .icon-btn { width: 55px; height: 55px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; }
         .icon-btn:hover { background: rgba(255,255,255,0.1); border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.6); transform: scale(1.1) rotate(45deg); }
 
-        /* Giữa viền phải: Battle Pass & Shop */
-        #moba-mid-right { top: 50%; right: 40px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 25px; }
+        #moba-mid-right { top: 50%; right: 40px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; }
         .side-menu-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; background: transparent; border: none; outline: none; color: #ccc; }
-        .side-menu-btn .icon-bg { width: 75px; height: 75px; border-radius: 20px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,204,0.3); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; transition: 0.3s; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
-        .side-menu-btn span { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; transition: 0.2s; }
-        .side-menu-btn:hover .icon-bg { background: rgba(0,255,204,0.2); border-color: #00ffcc; box-shadow: 0 0 25px rgba(0,255,204,0.5); transform: scale(1.1); color: #fff; animation: mysticalPulse 1.5s infinite alternate; }
-        .side-menu-btn:hover span { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; }
+        .side-menu-btn .icon-bg { width: 70px; height: 70px; border-radius: 20px; background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,204,0.3); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; transition: 0.3s; box-shadow: inset 0 0 15px rgba(0,0,0,0.9); }
+        .side-menu-btn span { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; transition: 0.2s; }
+        .side-menu-btn:hover .icon-bg { transform: scale(1.1); animation: mysticalPulse 1.5s infinite alternate; }
+        .side-menu-btn:hover span { color: #fff; text-shadow: 0 0 10px #fff; }
 
-        /* Giữa viền dưới: Play Button */
         #moba-bottom-center { bottom: 60px; left: 50%; transform: translateX(-50%); }
-        .play-btn { background: rgba(0, 10, 5, 0.8); border: 2px solid #00ffcc; color: #fff; font-family: 'Cinzel', serif; font-size: 2.8rem; padding: 25px 90px; font-weight: bold; cursor: pointer; transition: 0.4s; text-transform: uppercase; letter-spacing: 8px; border-radius: 12px; animation: mysticalPulse 2s infinite alternate; }
-        .play-btn:hover { background: rgba(0, 255, 204, 0.3); transform: scale(1.08) translateY(-5px); letter-spacing: 12px; }
+        .play-btn { background: rgba(0, 10, 5, 0.8); border: 2px solid #00ffcc; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 2.2rem; padding: 20px 80px; font-weight: 800; cursor: pointer; transition: 0.4s; text-transform: uppercase; letter-spacing: 6px; border-radius: 12px; animation: mysticalPulse 2s infinite alternate; }
+        .play-btn:hover { background: rgba(0, 255, 204, 0.3); transform: scale(1.08) translateY(-5px); letter-spacing: 10px; }
+
+        #moba-bottom-left { bottom: 40px; left: 40px; }
 
         /* ================= CÁC HỘP THOẠI CHUNG ================= */
         .menu-box { background: rgba(10, 10, 15, 0.9); border: 1px solid rgba(0, 255, 204, 0.4); padding: 40px 60px; border-radius: 16px; box-shadow: 0 0 50px rgba(0, 255, 204, 0.15), inset 0 0 30px rgba(0,0,0,0.9); backdrop-filter: blur(25px); display: flex; flex-direction: column; align-items: center; position: relative; }
         .menu-box::before, .menu-box::after { content: ''; position: absolute; width: 40px; height: 40px; border: 3px solid #00ffcc; opacity: 0.8; }
         .menu-box::before { top: -12px; left: -12px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0;}
         .menu-box::after { bottom: -12px; right: -12px; border-left: none; border-top: none; border-radius: 0 0 8px 0;}
-        h2 { font-size: 2.5rem; text-shadow: 0 0 20px #fff; margin-bottom: 30px; letter-spacing: 5px; text-transform: uppercase; border-bottom: 2px solid rgba(0,255,204,0.3); padding-bottom: 15px; color: #00ffcc;}
+        h2 { font-size: 2.2rem; text-shadow: 0 0 20px #fff; margin-bottom: 30px; letter-spacing: 3px; text-transform: uppercase; border-bottom: 2px solid rgba(0,255,204,0.3); padding-bottom: 15px; color: #00ffcc; font-family: 'Montserrat', sans-serif; font-weight: 800;}
         
         .btn-group { display: flex; flex-direction: column; gap: 18px; align-items: center; width: 100%; min-width: 350px; z-index: 20;}
-        .std-btn { background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.3); color: #ccc; font-family: 'Cinzel', serif; font-size: 1.3rem; padding: 14px 30px; width: 100%; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 3px; border-radius: 6px; pointer-events: auto;}
-        .std-btn:hover:not(:disabled) { border-color: #00ffcc; color: #fff; background: rgba(0, 60, 50, 0.6); animation: mysticalPulse 1s infinite alternate; transform: scale(1.03); }
+        .std-btn { background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.3); color: #ccc; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.1rem; padding: 14px 30px; width: 100%; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; border-radius: 6px; pointer-events: auto;}
+        
+        /* FIX HOVER TRÊN CÁC NÚT: Đã thêm !important để khóa animation cũ */
+        .std-btn:hover:not(:disabled) { border-color: #00ffcc !important; color: #fff !important; background: rgba(0, 60, 50, 0.6) !important; transform: scale(1.03) !important; animation: mysticalPulse 1s infinite alternate !important;}
         .std-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #333; color: #666;}
         
-        /* SHOP GRID UI NÂNG CẤP */
+        /* SHOP & RUNES GRID UI */
         .shop-wrapper { display: flex; flex-direction: column; gap: 25px; width: 100%; max-width: 900px; max-height: 55vh; overflow-y: auto; padding-right: 15px;}
-        .shop-section-title { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; color: #00ffcc; border-bottom: 1px dashed #00ffcc; padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;}
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; width: 100%; }
+        .shop-section-title { font-family: 'Montserrat', sans-serif; font-size: 1.3rem; color: #00ffcc; border-bottom: 1px dashed #00ffcc; padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;}
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; }
         .shop-card { display: flex; flex-direction: column; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15); padding: 25px 20px; border-radius: 12px; transition: 0.3s; gap: 15px; height: 100%; box-sizing: border-box;}
         .shop-card:hover { background: rgba(0,255,204,0.08); border-color: #00ffcc; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0,255,204,0.2);}
         .skin-preview { width: 55px; height: 55px; border-radius: 50%; box-shadow: 0 0 25px currentColor; margin-bottom: 10px;}
-        .item-name { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; text-align: center; flex-grow: 1; display: flex; align-items: center;}
-        .shop-btn { padding: 10px 15px; font-size: 1.1rem; width: 100%; border-color: #ffcc00; color: #ffcc00; margin-top: auto;}
+        .item-icon { font-size: 2.8rem; text-shadow: 0 0 15px currentColor; margin-bottom: 5px;}
+        .item-name { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-align: center; flex-grow: 1; display: flex; align-items: center;}
+        .shop-btn { padding: 10px 15px; font-size: 1rem; width: 100%; border-color: #ffcc00; color: #ffcc00; margin-top: auto;}
         .shop-btn.equipped { border-color: #00ffcc; color: #00ffcc; box-shadow: inset 0 0 15px rgba(0,255,204,0.3); background: rgba(0,255,204,0.1);}
         
-        /* BATTLE PASS CSS NÂNG CẤP */
-        .bp-progress-header { width: 100%; display: flex; justify-content: space-between; font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; color: #00ffcc;}
+        .rune-stats { font-family: 'Rajdhani', sans-serif; color: #00ffcc; font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
+        .rune-lvl { font-family: 'Rajdhani', sans-serif; color: #fff; font-size: 1rem; background: #222; padding: 3px 10px; border-radius: 20px; border: 1px solid #555; }
+
+        /* BATTLE PASS CSS */
+        .bp-progress-header { width: 100%; display: flex; justify-content: space-between; font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; color: #00ffcc;}
         .bp-bar-bg { width: 100%; height: 16px; background: #1a1a1a; border-radius: 8px; margin-bottom: 25px; overflow: hidden; border: 1px solid #444; box-shadow: inset 0 0 10px #000;}
         .bp-bar-fill { height: 100%; background: linear-gradient(90deg, #0088ff, #00ffcc, #ffffff); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 15px #00ffcc; }
         .bp-list { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 650px; max-height: 40vh; overflow-y: auto; padding-right: 15px; font-family: 'Rajdhani', sans-serif;}
@@ -96,52 +98,38 @@
         .bp-tier { font-weight: bold; color: #fff; width: 90px; font-size: 1.3rem;}
         .bp-reward { color: #ffcc00; font-size: 1.4rem; flex-grow: 1; font-weight: 600; text-shadow: 0 0 5px rgba(255,204,0,0.5);}
 
-        /* ================= BỐ CỤC PROFILE MỚI WIDESCREEN ================= */
-        .profile-container-wide {
-            display: flex; width: 85vw; max-width: 1100px; height: 75vh;
-            background: linear-gradient(135deg, rgba(15,20,30,0.85) 0%, rgba(5,5,10,0.95) 100%);
-            border: 1px solid rgba(0,255,204,0.3); border-radius: 20px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,255,204,0.1);
-            backdrop-filter: blur(20px); overflow: hidden; position: relative;
-        }
-        
+        /* PROFILE WIDESCREEN */
+        .profile-container-wide { display: flex; width: 85vw; max-width: 1100px; height: 75vh; background: linear-gradient(135deg, rgba(15,20,30,0.85) 0%, rgba(5,5,10,0.95) 100%); border: 1px solid rgba(0,255,204,0.3); border-radius: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,255,204,0.1); backdrop-filter: blur(20px); overflow: hidden; position: relative; }
         .prof-left { flex: 1.2; padding: 50px; display: flex; flex-direction: column; gap: 30px; z-index: 2; border-right: 1px solid rgba(255,255,255,0.05); }
         .prof-right { flex: 0.8; background: radial-gradient(circle at center, rgba(0,255,204,0.05) 0%, transparent 70%); display: flex; justify-content: center; align-items: center; position: relative; z-index: 1;}
-        
-        /* Cột trái: Thông tin */
         .prof-header-flex { display: flex; align-items: center; gap: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,255,204,0.3); }
         .prof-avatar-wrap { position: relative; width: 100px; height: 100px; border-radius: 50%; border: 3px solid #ffcc00; display: flex; justify-content: center; align-items: center; font-size: 50px; background: #111; box-shadow: 0 0 20px rgba(255,204,0,0.3); cursor: pointer; transition: 0.3s; }
         .prof-avatar-wrap:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,204,0,0.6); }
         .prof-name-area { display: flex; flex-direction: column; width: 100%; }
-        .prof-title { color: #00ffcc; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; font-weight: bold;}
-        .profile-name-input { background: transparent; border: none; color: #00ffcc; font-family: 'Cinzel', serif; font-weight: bold; width: 100%; text-transform: uppercase; outline: none; letter-spacing: 2px;}
-        .profile-name-input::placeholder { color: rgba(255,255,255,0.2); }
-        
-        /* Cột trái: Lưới chỉ số */
+        .prof-title { color: #00ffcc; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; font-weight: bold;}
+        .profile-name-input { background: transparent; border: none; color: #00ffcc; font-family: 'Montserrat', sans-serif; font-weight: 800; width: 100%; text-transform: uppercase; outline: none; letter-spacing: 2px;}
         .prof-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
         .prof-stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; }
-        .prof-stat-card:hover { border-color: #00ffcc; background: rgba(0,255,204,0.05); transform: translateY(-3px); }
         .prof-stat-icon { font-size: 2rem; margin-bottom: 10px; text-shadow: 0 0 10px currentColor; }
-        .prof-stat-value { font-size: 1.8rem; font-weight: bold; color: #fff; font-family: 'Cinzel', serif; }
-        .prof-stat-label { font-size: 0.85rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; text-align: center; }
-        
-        /* Cột phải: Trưng bày Skin */
+        .prof-stat-value { font-size: 1.8rem; font-weight: bold; color: #fff; font-family: 'Rajdhani', sans-serif; }
+        .prof-stat-label { font-size: 0.8rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 600;}
         .prof-hero-display { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; animation: floatCore 4s ease-in-out infinite; }
         .prof-hero-core { width: 120px; height: 120px; border-radius: 50%; background: #fff; transition: 0.5s; position: relative; }
         .prof-hero-core::after { content: ''; position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%); width: 80px; height: 15px; background: rgba(0,0,0,0.5); border-radius: 50%; filter: blur(5px); }
-        @keyframes floatCore { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
         /* SETTING UI */
         .setting-slider { -webkit-appearance: none; width: 100%; height: 6px; background: #333; outline: none; border-radius: 3px; }
         .setting-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #00ffcc; cursor: pointer; box-shadow: 0 0 10px #00ffcc; }
         .setting-checkbox { transform: scale(1.5); cursor: pointer; accent-color: #00ffcc;}
-        .stat-row-setting { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: #ddd; }
+        .stat-row-setting { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; color: #ddd; font-weight: 600;}
+        .lang-select { background: rgba(0,0,0,0.8); border: 1px solid #00ffcc; color: #00ffcc; padding: 5px 10px; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-weight: bold; cursor: pointer; outline: none;}
 
-        /* HUD & IN-GAME RETAINED FROM ORIGINAL */
+        /* HUD & IN-GAME */
         .power-btn { padding: 15px 20px; text-transform: none; text-align: left; }
-        .power-btn strong { display: block; font-size: 1.6rem; margin-bottom: 8px; color: #fff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px #fff;}
-        .skill-desc { display: block; font-size: 1rem; color: #aaa; font-family: sans-serif; letter-spacing: 1px; line-height: 1.4;}
-        .reroll-btn { margin-top: 10px; border-color: rgba(255, 170, 0, 0.4); color: #ffaa00; width: auto; font-size: 1.2rem; }
+        .power-btn:hover:not(:disabled) { box-shadow: 0 0 25px rgba(0, 255, 204, 0.4) inset !important; }
+        .power-btn strong { display: block; font-size: 1.4rem; margin-bottom: 8px; color: #fff; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 5px #fff; font-family: 'Montserrat', sans-serif;}
+        .skill-desc { display: block; font-size: 0.9rem; color: #aaa; font-family: 'Montserrat', sans-serif; font-weight: 600; line-height: 1.4;}
+        .reroll-btn { margin-top: 10px; border-color: rgba(255, 170, 0, 0.4); color: #ffaa00; width: auto; font-size: 1rem; }
 
         #game-canvas { display: block; width: 100%; height: 100%; z-index: 1; }
         
@@ -151,25 +139,25 @@
         #hud-top { display: flex; justify-content: space-between; align-items: flex-start; padding: 20px; width: 100%; box-sizing: border-box; margin-top: 10px; }
         
         #status-container { display: flex; flex-direction: column; gap: 5px; width: 30%; }
-        #level-display { font-size: 1.8rem; font-weight: bold; color: #00ffcc; text-shadow: 0 0 10px #00ffcc; letter-spacing: 2px; margin-bottom: 0px; font-family: 'Cinzel', serif;}
+        #level-display { font-size: 1.8rem; font-weight: bold; color: #00ffcc; text-shadow: 0 0 10px #00ffcc; letter-spacing: 2px; margin-bottom: 0px; font-family: 'Montserrat', sans-serif; font-weight: 800;}
         #hp-container { width: 100%; max-width: 250px; background: #222; border: 2px solid #555; height: 25px; position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff0044, #ff6600); transition: width 0.2s ease; }
-        #hp-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; line-height: 25px; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 3px #000; }
+        #hp-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align: center; line-height: 25px; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 3px #000; font-family: 'Montserrat', sans-serif;}
         #dash-container { width: 100%; max-width: 250px; height: 5px; background: #222; border-radius: 2px; overflow: hidden; border: 1px solid #444;}
         #dash-bar { width: 100%; height: 100%; background: #00ffff; box-shadow: 0 0 5px #00ffff; }
 
         #wave-container { display: flex; flex-direction: column; align-items: center; width: 40%; }
-        #wave-text { font-size: 2rem; font-weight: bold; letter-spacing: 4px; text-shadow: 0 0 10px #fff; margin-bottom: 5px; font-family: 'Cinzel', serif;}
+        #wave-text { font-size: 1.8rem; font-weight: 800; letter-spacing: 4px; text-shadow: 0 0 10px #fff; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; text-transform: uppercase;}
         #wave-progress-bg { width: 100%; height: 8px; background: rgba(0,0,0,0.8); border: 1px solid #555; border-radius: 4px; overflow: hidden; }
         #wave-progress-bar { width: 0%; height: 100%; background: #fff; transition: width 0.3s ease-out; box-shadow: 0 0 10px #fff;}
 
         #right-hud { width: 30%; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .ingame-currency { font-size: 1.8rem; font-weight: bold; display: flex; align-items: center; gap: 5px;}
         #timer-display { font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 10px #fff; letter-spacing: 2px;}
-        #pause-btn-hud { pointer-events: auto; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 20px; font-family: 'Cinzel', serif; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 4px; margin-top: 10px;}
+        #pause-btn-hud { pointer-events: auto; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 20px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s; border-radius: 4px; margin-top: 10px; text-transform: uppercase;}
         
         #boss-ui { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 70%; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s; opacity: 0; }
-        #boss-name { font-size: 2rem; color: #ff0044; text-shadow: 0 0 15px #ff0044; margin-bottom: 10px; letter-spacing: 5px; font-family: 'Cinzel', serif;}
+        #boss-name { font-size: 2rem; color: #ff0044; text-shadow: 0 0 15px #ff0044; margin-bottom: 10px; letter-spacing: 5px; font-family: 'Montserrat', sans-serif; font-weight: 800; text-transform: uppercase;}
         #boss-hp-bg { width: 100%; height: 20px; background: #111; border: 2px solid #550000; }
         #boss-hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #aa0000, #ff0044); box-shadow: 0 0 20px #ff0044; transition: width 0.1s linear;}
         
@@ -200,16 +188,24 @@
                 <div id="moba-mid-right" class="moba-element">
                     <button class="side-menu-btn" onclick="actShowBattlePass()">
                         <div class="icon-bg" style="color: #0088ff; border-color: rgba(0,136,255,0.5);">📜</div>
-                        <span style="color: #0088ff;">Pass</span>
+                        <span data-i18n="menu-pass" style="color: #0088ff;">Pass</span>
+                    </button>
+                    <button class="side-menu-btn" onclick="actShowRunes()">
+                        <div class="icon-bg" style="color: #ff00ff; border-color: rgba(255,0,255,0.5);">💎</div>
+                        <span data-i18n="menu-runes" style="color: #ff00ff;">Runes</span>
                     </button>
                     <button class="side-menu-btn" onclick="actShowShop()">
                         <div class="icon-bg" style="color: #ffaa00; border-color: rgba(255,170,0,0.5);">🛒</div>
-                        <span style="color: #ffaa00;">Shop</span>
+                        <span data-i18n="menu-shop" style="color: #ffaa00;">Shop</span>
                     </button>
                 </div>
 
+                <div id="moba-bottom-left" class="moba-element">
+                    <button class="std-btn" style="width: auto; padding: 10px 20px; font-size: 0.9rem; background: rgba(0,0,0,0.5);" onclick="actShowCredits()" data-i18n="menu-credits">CREDITS</button>
+                </div>
+
                 <div id="moba-bottom-center" class="moba-element">
-                    <button class="play-btn" onclick="actStartGame()">AWAKEN</button>
+                    <button class="play-btn" onclick="actStartGame()" data-i18n="menu-play">AWAKEN</button>
                 </div>
             </div>
         </div>
@@ -220,89 +216,111 @@
                     <div class="prof-header-flex">
                         <div class="prof-avatar-wrap" id="prof-avatar-edit" onclick="changeAvatar()" title="Click to change avatar">👤</div>
                         <div class="prof-name-area">
-                            <span class="prof-title">Awakened Commander</span>
-                            <input type="text" id="prof-name-edit" class="profile-name-input" style="font-size: 2.2rem; text-shadow: 0 0 15px #00ffcc; margin:0;" onblur="saveProfileInfo()" placeholder="ENTER NAME">
+                            <span class="prof-title" data-i18n="prof-title">PROFILE</span>
+                            <input type="text" id="prof-name-edit" class="profile-name-input" style="font-size: 2rem; text-shadow: 0 0 15px #00ffcc; margin:0;" onblur="saveProfileInfo()" placeholder="...">
                         </div>
                     </div>
 
                     <div class="prof-stats-grid">
-                        <div class="prof-stat-card">
-                            <div class="prof-stat-icon" style="color: #fff;">⚔️</div>
-                            <div class="prof-stat-value" id="prof-matches">0</div>
-                            <div class="prof-stat-label">Matches</div>
-                        </div>
-                        <div class="prof-stat-card">
-                            <div class="prof-stat-icon" style="color: #0088ff;">🛡️</div>
-                            <div class="prof-stat-value" id="prof-wave" style="color: #0088ff;">0</div>
-                            <div class="prof-stat-label">Max Wave</div>
-                        </div>
-                        <div class="prof-stat-card">
-                            <div class="prof-stat-icon" style="color: #ff0044;">🔥</div>
-                            <div class="prof-stat-value" id="prof-kills" style="color: #ff0044;">0</div>
-                            <div class="prof-stat-label">Kills</div>
-                        </div>
-                        <div class="prof-stat-card" style="grid-column: span 1;">
-                            <div class="prof-stat-icon" style="color: #aa00ff;">💀</div>
-                            <div class="prof-stat-value" id="prof-deaths" style="color: #aa00ff;">0</div>
-                            <div class="prof-stat-label">Deaths</div>
-                        </div>
-                        <div class="prof-stat-card" style="grid-column: span 2; border-color: rgba(255,204,0,0.3); background: rgba(255,204,0,0.05);">
-                            <div class="prof-stat-icon" style="color: #ffcc00;">✦</div>
-                            <div class="prof-stat-value" id="prof-gold" style="color: #ffcc00;">0</div>
-                            <div class="prof-stat-label">Total Wealth</div>
-                        </div>
+                        <div class="prof-stat-card"><div class="prof-stat-icon" style="color: #fff;">⚔️</div><div class="prof-stat-value" id="prof-matches">0</div><div class="prof-stat-label" data-i18n="prof-matches">Matches</div></div>
+                        <div class="prof-stat-card"><div class="prof-stat-icon" style="color: #0088ff;">🛡️</div><div class="prof-stat-value" id="prof-wave" style="color: #0088ff;">0</div><div class="prof-stat-label" data-i18n="prof-wave">Max Wave</div></div>
+                        <div class="prof-stat-card"><div class="prof-stat-icon" style="color: #ff0044;">🔥</div><div class="prof-stat-value" id="prof-kills" style="color: #ff0044;">0</div><div class="prof-stat-label" data-i18n="prof-kills">Kills</div></div>
+                        <div class="prof-stat-card" style="grid-column: span 1;"><div class="prof-stat-icon" style="color: #aa00ff;">💀</div><div class="prof-stat-value" id="prof-deaths" style="color: #aa00ff;">0</div><div class="prof-stat-label" data-i18n="prof-deaths">Deaths</div></div>
+                        <div class="prof-stat-card" style="grid-column: span 2; border-color: rgba(255,204,0,0.3); background: rgba(255,204,0,0.05);"><div class="prof-stat-icon" style="color: #ffcc00;">✦</div><div class="prof-stat-value" id="prof-gold" style="color: #ffcc00;">0</div><div class="prof-stat-label" data-i18n="prof-gold">Total Wealth</div></div>
                     </div>
-
-                    <button class="std-btn" style="width: 250px; margin-top: auto;" onclick="actQuitToMenu()">Save & Back</button>
+                    <button class="std-btn" style="width: 250px; margin-top: auto;" onclick="actQuitToMenu()" data-i18n="prof-btn">Save & Back</button>
                 </div>
-
                 <div class="prof-right">
-                    <div class="prof-hero-display">
-                        <div class="prof-hero-core" id="prof-equipped-core"></div>
-                    </div>
+                    <div class="prof-hero-display"><div class="prof-hero-core" id="prof-equipped-core"></div></div>
                 </div>
             </div>
         </div>
 
         <div id="bp-screen" class="screen hidden">
             <div class="menu-box" style="padding: 40px 60px; width: 700px;">
-                <h2>BATTLE PASS SEASON 1</h2>
-                <div class="bp-progress-header">
-                    <span id="bp-lvl-text">LEVEL: 1 / 100</span>
-                    <span id="bp-exp-text">EXP: 0</span>
-                </div>
+                <h2 data-i18n="bp-title">BATTLE PASS SEASON 1</h2>
+                <div class="bp-progress-header"><span id="bp-lvl-text">LEVEL: 1 / 100</span><span id="bp-exp-text">EXP: 0</span></div>
                 <div class="bp-bar-bg"><div id="bp-bar-fill" class="bp-bar-fill"></div></div>
                 <div class="bp-list" id="bp-tiers-container"></div>
-                <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()">Back to Lobby</button>
+                <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()" data-i18n="bp-btn">Back to Lobby</button>
             </div>
         </div>
 
         <div id="shop-screen" class="screen hidden">
             <div class="menu-box" style="padding: 30px 50px; max-width: 900px; width: 90%;">
-                <h2>ARMORY VAULT</h2>
+                <h2 data-i18n="shop-title">ARMORY VAULT</h2>
                 <div class="shop-wrapper" id="shop-items-container"></div>
-                <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()">Back to Lobby</button>
+                <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()" data-i18n="shop-btn">Back to Lobby</button>
+            </div>
+        </div>
+
+        <div id="runes-screen" class="screen hidden">
+            <div class="menu-box" style="padding: 30px 50px; max-width: 900px; width: 90%;">
+                <h2 data-i18n="runes-title">ANCIENT RUNES</h2>
+                <div class="shop-wrapper">
+                    <div class="shop-grid" id="runes-items-container"></div>
+                </div>
+                <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()" data-i18n="runes-btn">Back to Lobby</button>
             </div>
         </div>
 
         <div id="settings-screen" class="screen hidden">
             <div class="menu-box" style="width: 450px;">
-                <h2>GAME SETTINGS</h2>
-                <div class="btn-group" style="margin-bottom: 40px; width: 100%;">
+                <h2 data-i18n="set-title">GAME SETTINGS</h2>
+                <div class="btn-group" style="margin-bottom: 30px; width: 100%;">
                     <div class="stat-row-setting" style="width: 100%; align-items: center; border: none;">
-                        <span>Music Volume</span>
-                        <input type="range" class="setting-slider" min="0" max="100" value="50" style="width: 50%;">
+                        <span data-i18n="set-music">Music Volume</span>
+                        <input type="range" class="setting-slider" min="0" max="100" value="50" style="width: 40%;">
                     </div>
                     <div class="stat-row-setting" style="width: 100%; align-items: center; border: none; margin-top: 15px;">
-                        <span>SFX Volume</span>
-                        <input type="range" class="setting-slider" min="0" max="100" value="80" style="width: 50%;">
+                        <span data-i18n="set-sfx">SFX Volume</span>
+                        <input type="range" class="setting-slider" min="0" max="100" value="80" style="width: 40%;">
                     </div>
-                    <div class="stat-row-setting" style="width: 100%; align-items: center; border: none; margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-                        <span>Display Damage Numbers</span>
+                    <div class="stat-row-setting" style="width: 100%; align-items: center; border: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <span data-i18n="set-lang">Language</span>
+                        <select id="lang-select" class="lang-select" onchange="changeLanguage(this.value)">
+                            <option value="en">English</option>
+                            <option value="vi">Tiếng Việt</option>
+                        </select>
+                    </div>
+                    <div class="stat-row-setting" style="width: 100%; align-items: center; border: none; margin-top: 15px;">
+                        <span data-i18n="set-dmg">Display Damage Numbers</span>
                         <input type="checkbox" class="setting-checkbox" id="setting-dmg" checked>
                     </div>
+                    <div class="stat-row-setting" style="width: 100%; align-items: center; border: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <span data-i18n="set-reset" style="color: #ff0044;">Reset Account Data</span>
+                        <button class="std-btn" style="width: auto; padding: 5px 15px; font-size: 0.9rem; border-color: #ff0044; color: #ff0044; box-shadow: 0 0 10px rgba(255,0,68,0.2) inset;" onclick="actShowConfirmReset()" data-i18n="set-reset-btn">RESET</button>
+                    </div>
                 </div>
-                <button class="std-btn" style="width: auto; padding: 12px 50px;" onclick="actQuitToMenu()">Apply & Back</button>
+                <button class="std-btn" style="width: auto; padding: 12px 50px;" onclick="actQuitToMenu()" data-i18n="set-btn">Apply & Back</button>
+            </div>
+        </div>
+
+        <div id="confirm-reset-screen" class="screen hidden" style="z-index: 50; background: rgba(0,0,0,0.95);">
+            <div class="menu-box" style="width: 400px; border-color: #ff0044; box-shadow: 0 0 50px rgba(255,0,68,0.2);">
+                <h2 style="color: #ff0044; border-bottom: none;" data-i18n="warn-reset-title">WARNING</h2>
+                <p style="text-align: center; line-height: 1.6; margin-bottom: 30px; font-family: 'Montserrat', sans-serif;" data-i18n="warn-reset-msg">Are you sure you want to delete all progress? This action cannot be undone!</p>
+                <div class="btn-group" style="flex-direction: row; justify-content: space-between; gap: 10px;">
+                    <button class="std-btn" onclick="actCancelReset()" data-i18n="warn-reset-cancel">Cancel</button>
+                    <button class="std-btn" style="border-color: #ff0044; color: #ff0044;" onclick="executeResetData()" data-i18n="warn-reset-confirm">Confirm Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="credits-screen" class="screen hidden">
+            <div class="menu-box" style="width: 500px;">
+                <h2 data-i18n="cred-title">CREDITS</h2>
+                <div style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; color: #ddd; text-align: center; margin-bottom: 30px; line-height: 2;">
+                    <div style="margin-bottom: 20px;">
+                        <div style="color: #aaa; font-size: 0.9rem; letter-spacing: 2px;">GAME DESIGN & ART DIRECTION</div>
+                        <div style="color: #00ffcc; font-size: 2.2rem; font-weight: 800; text-shadow: 0 0 15px #00ffcc;">WANG</div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <div style="color: #aaa; font-size: 0.9rem; letter-spacing: 2px;">CODE & LOGIC PARTNER</div>
+                        <div style="color: #fff; font-size: 1.5rem; font-weight: 700;">GEMINI AI</div>
+                    </div>
+                </div>
+                <button class="std-btn" style="width: auto; padding: 12px 50px;" onclick="actQuitToMenu()" data-i18n="cred-btn">Back to Lobby</button>
             </div>
         </div>
 
@@ -322,7 +340,7 @@
                 <div id="right-hud">
                     <div id="ingame-gold-display" style="font-size: 1.8rem; font-weight: bold; color: #ffcc00; text-shadow: 0 0 10px #ffcc00;">0 ✦</div>
                     <div id="timer-display">00:00</div>
-                    <button id="pause-btn-hud" onclick="actPauseGame()">|| PAUSE</button>
+                    <button id="pause-btn-hud" onclick="actPauseGame()" data-i18n="pause-title">|| PAUSE</button>
                 </div>
             </div>
             <div id="boss-ui"><div id="boss-name">ABYSSAL OVERLORD</div><div id="boss-hp-bg"><div id="boss-hp-bar"></div></div></div>
@@ -330,34 +348,33 @@
 
         <div id="pause-menu" class="screen hidden">
             <div class="menu-box">
-                <h2>PAUSED</h2>
+                <h2 data-i18n="pause-title">PAUSED</h2>
                 <div class="btn-group">
-                    <button class="std-btn" onclick="actResumeGame()">Resume Fight</button>
-                    <button class="std-btn" onclick="actQuitToMenu()">Flee to Lobby</button>
+                    <button class="std-btn" onclick="actResumeGame()" data-i18n="pause-resume">Resume Fight</button>
+                    <button class="std-btn" onclick="actQuitToMenu()" data-i18n="pause-quit">Flee to Lobby</button>
                 </div>
             </div>
         </div>
 
         <div id="level-up-menu" class="screen hidden" style="background: rgba(0,0,0,0.85);">
             <div class="menu-box" id="level-up-box" style="border-color: #00ffcc; box-shadow: 0 0 50px rgba(0,255,204,0.2);">
-                <h2 style="border-bottom: none; color: #00ffcc; text-shadow: 0 0 20px #00ffcc;">POWER AWAKENED</h2>
+                <h2 style="border-bottom: none; color: #00ffcc; text-shadow: 0 0 20px #00ffcc;" data-i18n="lvl-title">POWER AWAKENED</h2>
                 <div class="btn-group" id="dynamic-power-list" style="margin-bottom: 20px;"></div>
-                <button id="btn-reroll" class="std-btn reroll-btn" onclick="actReroll()">✦ Reroll (1 Left) ✦</button>
+                <button id="btn-reroll" class="std-btn reroll-btn" onclick="actReroll()">✦ Reroll ✦</button>
             </div>
         </div>
 
         <div id="game-over-screen" class="screen hidden">
-            <h1 class="title" id="end-title" style="color: #ff0044; font-size: 4rem; text-shadow: 0 0 20px currentColor; margin-bottom: 20px;">YOU DIED</h1>
+            <h1 class="title" id="end-title" style="color: #ff0044; font-size: 4rem; text-shadow: 0 0 20px currentColor; margin-bottom: 20px; font-family: 'Cinzel', serif;" data-i18n="go-title">YOU DIED</h1>
             <div class="profile-stats" id="game-over-stats" style="margin-bottom: 40px; text-align: left; width: 400px; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
-                <div class="stat-row-setting"><span>Level Reached:</span> <span class="stat-val" id="go-level">1</span></div>
-                <div class="stat-row-setting"><span>Wave Reached:</span> <span class="stat-val" id="go-wave">Wave 1</span></div>
-                <div class="stat-row-setting"><span>Enemies Defeated:</span> <span class="stat-val" id="go-kills">0</span></div>
-                <div class="stat-row-setting"><span>Gold Earned:</span> <span class="stat-val" id="go-gold" style="color:#ffcc00;">0 ✦</span></div>
-                <div class="stat-row-setting"><span>BP EXP Earned:</span> <span class="stat-val" id="go-bp" style="color:#0088ff;">0</span></div>
+                <div class="stat-row-setting"><span data-i18n="prof-matches">Level Reached:</span> <span class="stat-val" id="go-level">1</span></div>
+                <div class="stat-row-setting"><span data-i18n="prof-wave">Wave Reached:</span> <span class="stat-val" id="go-wave">Wave 1</span></div>
+                <div class="stat-row-setting"><span data-i18n="prof-kills">Enemies Defeated:</span> <span class="stat-val" id="go-kills">0</span></div>
+                <div class="stat-row-setting"><span data-i18n="prof-gold">Gold Earned:</span> <span class="stat-val" id="go-gold" style="color:#ffcc00;">0 ✦</span></div>
             </div>
             <div class="btn-group" style="max-width: 400px;">
-                <button class="std-btn" onclick="actStartGame()">Reincarnate (Try Again)</button>
-                <button class="std-btn" onclick="actQuitToMenu()">Return to Lobby</button>
+                <button class="std-btn" onclick="actStartGame()" data-i18n="go-retry">Reincarnate (Try Again)</button>
+                <button class="std-btn" onclick="actQuitToMenu()" data-i18n="go-quit">Return to Lobby</button>
             </div>
         </div>
     </div>
@@ -371,23 +388,51 @@
 
         function getLocalData(key, defaultValue) { try { let val = localStorage.getItem(key); return val ? JSON.parse(val) : defaultValue; } catch(e) { return defaultValue; } }
         
-        // HỆ THỐNG DỮ LIỆU & PROFILE
+        // ================= I18N SYSTEM MỞ RỘNG =================
+        const TRANSLATIONS = {
+            en: { "menu-play": "AWAKEN", "menu-pass": "Pass", "menu-shop": "Shop", "menu-runes": "Runes", "menu-credits": "CREDITS", "prof-title": "COMMANDER PROFILE", "prof-matches": "Matches Played", "prof-wave": "Max Wave", "prof-kills": "Enemies Slain", "prof-deaths": "Total Deaths", "prof-gold": "Total Wealth", "prof-btn": "Save & Back", "bp-title": "BATTLE PASS SEASON 1", "bp-btn": "Back to Lobby", "shop-title": "ARMORY VAULT", "shop-btn": "Back to Lobby", "runes-title": "ANCIENT RUNES", "runes-btn": "Back to Lobby", "set-title": "GAME SETTINGS", "set-music": "Music Volume", "set-sfx": "SFX Volume", "set-dmg": "Display Damage Numbers", "set-lang": "Language", "set-btn": "Apply & Back", "set-reset": "Reset Account Data", "set-reset-btn": "RESET", "warn-reset-title": "WARNING", "warn-reset-msg": "Are you sure you want to wipe all your progress? This action cannot be undone!", "warn-reset-cancel": "Cancel", "warn-reset-confirm": "Confirm Reset", "pause-title": "PAUSED", "pause-resume": "Resume Fight", "pause-quit": "Flee to Lobby", "lvl-title": "POWER AWAKENED", "go-title": "YOU DIED", "go-retry": "Reincarnate", "go-quit": "Return to Lobby", "cred-title": "CREDITS", "cred-btn": "Back to Lobby", "rune-atk": "Base ATK", "rune-spd": "ATK Speed", "rune-critR": "Crit Chance", "rune-critD": "Crit Damage", "rune-def": "Defense", "rune-mov": "Move Speed", "btn-upgrade": "UPGRADE", "btn-max": "MAX LEVEL", "wave-start": "WAVE {w} START" },
+            vi: { "menu-play": "THỨC TỈNH", "menu-pass": "Thẻ Vé", "menu-shop": "Vũ Khí", "menu-runes": "Ngọc", "menu-credits": "TÁC GIẢ", "prof-title": "HỒ SƠ CHỈ HUY", "prof-matches": "Số Trận", "prof-wave": "Wave Kỷ Lục", "prof-kills": "Đã Tiêu Diệt", "prof-deaths": "Số Lần Chết", "prof-gold": "Tổng Tài Sản", "prof-btn": "Lưu & Thoát", "bp-title": "THẺ VÉ MÙA 1", "bp-btn": "Về Sảnh", "shop-title": "KHO VŨ KHÍ", "shop-btn": "Về Sảnh", "runes-title": "BẢNG NGỌC CỔ ĐẠI", "runes-btn": "Về Sảnh", "set-title": "CÀI ĐẶT", "set-music": "Âm Nhạc", "set-sfx": "Hiệu Ứng", "set-dmg": "Hiện Số Sát Thương", "set-lang": "Ngôn Ngữ", "set-btn": "Áp Dụng", "set-reset": "Xóa Dữ Liệu Chơi", "set-reset-btn": "XÓA", "warn-reset-title": "CẢNH BÁO", "warn-reset-msg": "Bạn có chắc chắn muốn xóa toàn bộ tiến trình không? Hành động này không thể hoàn tác!", "warn-reset-cancel": "Hủy", "warn-reset-confirm": "Xác Nhận Xóa", "pause-title": "TẠM DỪNG", "pause-resume": "Tiếp Tục", "pause-quit": "Bỏ Trốn", "lvl-title": "THỨC TỈNH SỨC MẠNH", "go-title": "TỬ TRẬN", "go-retry": "Đầu Thai", "go-quit": "Về Sảnh", "cred-title": "TÁC GIẢ", "cred-btn": "Về Sảnh", "rune-atk": "Sát Thương", "rune-spd": "Tốc Độ Đánh", "rune-critR": "Tỷ Lệ Chí Mạng", "rune-critD": "Sát Thương Chí Mạng", "rune-def": "Phòng Thủ", "rune-mov": "Tốc Chạy", "btn-upgrade": "NÂNG CẤP", "btn-max": "TỐI ĐA", "wave-start": "BẮT ĐẦU WAVE {w}" }
+        };
+        let currentLang = localStorage.getItem('fightup_lang') || 'en';
+        document.getElementById('lang-select').value = currentLang;
+
+        function applyLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                let key = el.getAttribute('data-i18n');
+                if (TRANSLATIONS[currentLang][key]) el.innerText = TRANSLATIONS[currentLang][key];
+            });
+            if(currentState === STATES.SHOP) renderShop();
+            if(currentState === STATES.BP) renderBattlePass();
+            if(currentState === STATES.RUNES) renderRunes();
+        }
+        function changeLanguage(lang) { currentLang = lang; localStorage.setItem('fightup_lang', lang); applyLanguage(); }
+
+        // ================= DATA & PROFILE =================
         let globalGold = parseInt(localStorage.getItem('fightup_gold')) || 0;
         let unlockedItems = getLocalData('fightup_unlocked_items', ['skin_default']);
         let equippedSkin = localStorage.getItem('fightup_eq_skin') || 'skin_default';
-
         let statKills = parseInt(localStorage.getItem('fightup_stat_kills')) || 0;
         let statMaxWave = parseInt(localStorage.getItem('fightup_stat_wave')) || 1;
         let statDeaths = parseInt(localStorage.getItem('fightup_stat_deaths')) || 0;
         let statMatches = parseInt(localStorage.getItem('fightup_stat_matches')) || 0;
-        
         let playerName = localStorage.getItem('fightup_player_name') || 'COMMANDER';
         let playerAvatar = localStorage.getItem('fightup_player_avatar') || '👤';
-
         let bpTotalExp = parseInt(localStorage.getItem('fightup_bp_exp')) || 0;
         let bpClaimedTiers = getLocalData('fightup_bp_claimed', []);
         
-        // Update UI ban đầu
+        let playerRunes = getLocalData('fightup_runes', { atk: 0, atkSpeed: 0, critRate: 0, critDmg: 0, def: 0, speed: 0 });
+        const RUNE_MAX = 10;
+        const RUNE_DEFS = {
+            atk: { id: 'atk', icon: '⚔️', color: '#ff4444', stepStr: '+3', baseCost: 100 },
+            atkSpeed: { id: 'atkSpeed', icon: '⚡', color: '#ffcc00', stepStr: '+1.5', baseCost: 150 },
+            critRate: { id: 'critRate', icon: '🎯', color: '#00ffcc', stepStr: '+2%', baseCost: 200 },
+            critDmg: { id: 'critDmg', icon: '💥', color: '#ff00ff', stepStr: '+20%', baseCost: 250 },
+            def: { id: 'def', icon: '🛡️', color: '#0088ff', stepStr: '+1', baseCost: 150 },
+            speed: { id: 'speed', icon: '👟', color: '#ffffff', stepStr: '+0.2', baseCost: 100 }
+        };
+
+        function getRuneCost(lvl, base) { return base + (lvl * 100); }
+
         document.getElementById('global-gold').innerText = globalGold;
         document.getElementById('lobby-name').innerText = playerName;
         document.getElementById('lobby-avatar').innerText = playerAvatar;
@@ -399,142 +444,105 @@
                 { id: 'skin_blood', name: 'Crimson Assassin', cost: 3000, color: '#ff0044', pColor: '#ff0000', isBp: false },
                 { id: 'skin_golden', name: 'Golden King', cost: 6000, color: '#ffcc00', pColor: '#ffff00', isBp: false },
                 { id: 'skin_abyssal', name: 'Void Walker', cost: 10000, color: '#aa00ff', pColor: '#5500ff', isBp: false },
-                // Milestone BP Skins
                 { id: 'skin_bp_20', name: 'Rookie Vanguard', cost: 0, color: '#00ff88', pColor: '#00cc66', isBp: true },
                 { id: 'skin_bp_50', name: 'Phantom Knight', cost: 0, color: '#8800ff', pColor: '#6600cc', isBp: true },
                 { id: 'skin_bp_100', name: 'Cosmic Deity', cost: 0, color: '#ff00ff', pColor: '#ffccff', isBp: true }
             ]
         };
 
-        // HỆ THỐNG BATTLE PASS TỊNH TIẾN MỚI
         const BP_TIERS = [];
-        function getExpForBpLevel(lvl) { return 500 + (lvl * 150); } // Yêu cầu EXP tăng dần
+        function getExpForBpLevel(lvl) { return 500 + (lvl * 150); }
         for(let i = 1; i <= 100; i++) {
             let reqExp = getExpForBpLevel(i);
-            if (i === 20 || i === 50 || i === 100) {
-                BP_TIERS.push({ level: i, expReq: reqExp, type: 'item', itemId: `skin_bp_${i}`, name: `Milestone: ${ITEMS_DB.skins.find(s=>s.id===`skin_bp_${i}`).name}`, isMilestone: true });
-            } else {
-                BP_TIERS.push({ level: i, expReq: reqExp, type: 'gold', amount: 100 + (i * 20), name: `${100 + (i * 20)} Gold`, isMilestone: false }); 
-            }
+            if (i === 20 || i === 50 || i === 100) { BP_TIERS.push({ level: i, expReq: reqExp, type: 'item', itemId: `skin_bp_${i}`, name: `Milestone: ${ITEMS_DB.skins.find(s=>s.id===`skin_bp_${i}`).name}`, isMilestone: true });
+            } else { BP_TIERS.push({ level: i, expReq: reqExp, type: 'gold', amount: 100 + (i * 20), name: `${100 + (i * 20)} Gold`, isMilestone: false }); }
         }
 
         function calculateBpProgress() {
-            let tempExp = bpTotalExp;
-            let currentLvl = 1;
-            let currentTierExpReq = getExpForBpLevel(currentLvl);
-            while(tempExp >= currentTierExpReq && currentLvl < 100) {
-                tempExp -= currentTierExpReq;
-                currentLvl++;
-                currentTierExpReq = getExpForBpLevel(currentLvl);
-            }
+            let tempExp = bpTotalExp; let currentLvl = 1; let currentTierExpReq = getExpForBpLevel(currentLvl);
+            while(tempExp >= currentTierExpReq && currentLvl < 100) { tempExp -= currentTierExpReq; currentLvl++; currentTierExpReq = getExpForBpLevel(currentLvl); }
             if(currentLvl >= 100) { currentLvl = 100; tempExp = currentTierExpReq; }
             return { level: currentLvl, currentExp: tempExp, maxExp: currentTierExpReq };
         }
 
         function saveGameData() {
-            localStorage.setItem('fightup_gold', globalGold); 
-            localStorage.setItem('fightup_unlocked_items', JSON.stringify(unlockedItems));
-            localStorage.setItem('fightup_eq_skin', equippedSkin);
-            localStorage.setItem('fightup_bp_exp', bpTotalExp); 
-            localStorage.setItem('fightup_bp_claimed', JSON.stringify(bpClaimedTiers));
-            localStorage.setItem('fightup_stat_kills', statKills); 
-            localStorage.setItem('fightup_stat_wave', statMaxWave); 
-            localStorage.setItem('fightup_stat_deaths', statDeaths);
-            localStorage.setItem('fightup_stat_matches', statMatches);
-            
-            document.getElementById('global-gold').innerText = globalGold;
-            document.getElementById('lobby-name').innerText = playerName;
-            document.getElementById('lobby-avatar').innerText = playerAvatar;
+            localStorage.setItem('fightup_gold', globalGold); localStorage.setItem('fightup_unlocked_items', JSON.stringify(unlockedItems));
+            localStorage.setItem('fightup_eq_skin', equippedSkin); localStorage.setItem('fightup_bp_exp', bpTotalExp); 
+            localStorage.setItem('fightup_bp_claimed', JSON.stringify(bpClaimedTiers)); localStorage.setItem('fightup_stat_kills', statKills); 
+            localStorage.setItem('fightup_stat_wave', statMaxWave); localStorage.setItem('fightup_stat_deaths', statDeaths);
+            localStorage.setItem('fightup_stat_matches', statMatches); localStorage.setItem('fightup_runes', JSON.stringify(playerRunes));
+            document.getElementById('global-gold').innerText = globalGold; document.getElementById('lobby-name').innerText = playerName; document.getElementById('lobby-avatar').innerText = playerAvatar;
         }
 
-        const STATES = { MENU: 'MENU', SHOP: 'SHOP', BP: 'BP', PROFILE: 'PROFILE', SETTINGS: 'SETTINGS', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER' };
+        const STATES = { MENU: 'MENU', SHOP: 'SHOP', BP: 'BP', RUNES: 'RUNES', PROFILE: 'PROFILE', SETTINGS: 'SETTINGS', CREDITS: 'CREDITS', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER' };
         let currentState = STATES.MENU;
-        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.SETTINGS]: document.getElementById('settings-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
+        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.RUNES]: document.getElementById('runes-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.SETTINGS]: document.getElementById('settings-screen'), [STATES.CREDITS]: document.getElementById('credits-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
 
         function switchScreen(state) {
             currentState = state; Object.values(screens).forEach(screen => { if(screen) screen.classList.add('hidden'); });
             if (state === STATES.PLAYING || state === STATES.PAUSED || state === STATES.LEVEL_UP) { gameCanvas.classList.remove('hidden'); document.getElementById('game-hud').classList.remove('hidden'); glowEl.style.display = 'none'; } else { gameCanvas.classList.add('hidden'); document.getElementById('game-hud').classList.add('hidden'); glowEl.style.display = 'block'; }
             if (state === STATES.LEVEL_UP) { rerollsLeft = 1; generateRandomPowerUps(); }
-            if (state === STATES.SHOP) renderShop(); 
-            if (state === STATES.BP) renderBattlePass(); 
-            if (state === STATES.PROFILE) {
-                document.getElementById('prof-name-edit').value = playerName;
-                document.getElementById('prof-avatar-edit').innerText = playerAvatar;
-                renderProfile();
-            }
-            
+            if (state === STATES.SHOP) renderShop(); if (state === STATES.BP) renderBattlePass(); if (state === STATES.RUNES) renderRunes();
+            if (state === STATES.PROFILE) { document.getElementById('prof-name-edit').value = playerName; document.getElementById('prof-avatar-edit').innerText = playerAvatar; renderProfile(); }
             if (state === STATES.GAME_OVER) { 
                 statDeaths++; statMatches++; statKills += sessionKills; if(currentWave > statMaxWave) statMaxWave = currentWave;
                 sessionBPExp = Math.floor(sessionKills * 5 + (currentWave * 50) + (isBossActive ? 500 : 0)); 
                 bpTotalExp += sessionBPExp; globalGold += sessionGold; saveGameData();
                 document.getElementById('go-level').innerText = player.level; document.getElementById('go-wave').innerText = isBossActive ? "BOSS STAGE" : `Wave ${currentWave}`; 
-                document.getElementById('go-kills').innerText = sessionKills; document.getElementById('go-gold').innerText = `+${sessionGold} ✦`; document.getElementById('go-bp').innerText = `+${sessionBPExp}`;
+                document.getElementById('go-kills').innerText = sessionKills; document.getElementById('go-gold').innerText = `+${sessionGold} ✦`; 
             }
             if(screens[state]) screens[state].classList.remove('hidden');
         }
 
-        // LOGIC CHỈNH SỬA PROFILE
-        function changeAvatar() {
-            const avatars = ['👤', '💀', '🤖', '👽', '👾', '🦊', '🔥', '⚡', '👑'];
-            let idx = avatars.indexOf(playerAvatar);
-            playerAvatar = avatars[(idx + 1) % avatars.length];
-            document.getElementById('prof-avatar-edit').innerText = playerAvatar;
-        }
-        function saveProfileInfo() {
-            let newName = document.getElementById('prof-name-edit').value.trim();
-            if(newName) playerName = newName.toUpperCase();
-            localStorage.setItem('fightup_player_name', playerName);
-            localStorage.setItem('fightup_player_avatar', playerAvatar);
-            saveGameData();
-        }
+        function changeAvatar() { const avatars = ['👤', '💀', '🤖', '👽', '👾', '🦊', '🔥', '⚡', '👑']; let idx = avatars.indexOf(playerAvatar); playerAvatar = avatars[(idx + 1) % avatars.length]; document.getElementById('prof-avatar-edit').innerText = playerAvatar; }
+        function saveProfileInfo() { let newName = document.getElementById('prof-name-edit').value.trim(); if(newName) playerName = newName.toUpperCase(); localStorage.setItem('fightup_player_name', playerName); localStorage.setItem('fightup_player_avatar', playerAvatar); saveGameData(); }
 
         function renderProfile() { 
-            // Gắn số liệu vào lưới
-            document.getElementById('prof-matches').innerText = statMatches; 
-            document.getElementById('prof-wave').innerText = statMaxWave; 
-            document.getElementById('prof-kills').innerText = statKills; 
-            document.getElementById('prof-deaths').innerText = statDeaths; 
-            document.getElementById('prof-gold').innerText = `${globalGold}`; 
-
-            // Cập nhật màu sắc nhân vật trưng bày (Core) dựa trên Skin đang dùng
+            document.getElementById('prof-matches').innerText = statMatches; document.getElementById('prof-wave').innerText = statMaxWave; document.getElementById('prof-kills').innerText = statKills; document.getElementById('prof-deaths').innerText = statDeaths; document.getElementById('prof-gold').innerText = `${globalGold}`; 
             const activeSkin = ITEMS_DB.skins.find(s => s.id === equippedSkin) || ITEMS_DB.skins[0];
-            const coreEl = document.getElementById('prof-equipped-core');
-            coreEl.style.background = activeSkin.color;
-            coreEl.style.boxShadow = `0 0 40px ${activeSkin.color}, 0 0 100px ${activeSkin.pColor}`;
-            
-            // Cập nhật ánh sáng môi trường ở cột phải trùng màu skin
-            const rightCol = document.querySelector('.prof-right');
-            rightCol.style.background = `radial-gradient(circle at center, ${activeSkin.color}22 0%, transparent 70%)`;
+            const coreEl = document.getElementById('prof-equipped-core'); coreEl.style.background = activeSkin.color; coreEl.style.boxShadow = `0 0 40px ${activeSkin.color}, 0 0 100px ${activeSkin.pColor}`;
+            document.querySelector('.prof-right').style.background = `radial-gradient(circle at center, ${activeSkin.color}22 0%, transparent 70%)`;
+        }
+
+        function renderRunes() {
+            let html = '';
+            for(let key in RUNE_DEFS) {
+                let r = RUNE_DEFS[key]; let lvl = playerRunes[key]; let isMax = lvl >= RUNE_MAX; let cost = getRuneCost(lvl, r.baseCost);
+                let btnTxt = isMax ? TRANSLATIONS[currentLang]['btn-max'] : `${TRANSLATIONS[currentLang]['btn-upgrade']} (${cost} ✦)`;
+                let btnHtml = `<button class="std-btn shop-btn ${isMax ? 'equipped' : ''}" onclick="upgradeRune('${key}')" ${isMax ? 'disabled' : ''}>${btnTxt}</button>`;
+                let nameStr = TRANSLATIONS[currentLang][`rune-${key}`] || r.id;
+                html += `<div class="shop-card">
+                    <div class="item-icon" style="color: ${r.color}">${r.icon}</div>
+                    <div class="item-name" style="color: ${r.color}; flex-direction:column; gap:5px;">
+                        <span>${nameStr}</span><span class="rune-lvl">Lv. ${lvl}/${RUNE_MAX}</span>
+                        <span style="font-size:0.85rem; color:#aaa; font-weight:normal;">Effect: ${r.stepStr}/Lv</span>
+                    </div>${btnHtml}</div>`;
+            }
+            document.getElementById('runes-items-container').innerHTML = html;
+        }
+        function upgradeRune(key) {
+            let lvl = playerRunes[key]; if(lvl >= RUNE_MAX) return; let cost = getRuneCost(lvl, RUNE_DEFS[key].baseCost);
+            if(globalGold >= cost) { globalGold -= cost; playerRunes[key]++; saveGameData(); renderRunes(); triggerShake(); } else { alert("Insufficient Gold!"); }
         }
 
         function renderBattlePass() {
-            let progress = calculateBpProgress();
-            document.getElementById('bp-lvl-text').innerText = `LEVEL: ${progress.level} / 100`; 
-            document.getElementById('bp-exp-text').innerText = `EXP: ${progress.currentExp} / ${progress.maxExp}`; 
-            document.getElementById('bp-bar-fill').style.width = `${(progress.currentExp / progress.maxExp) * 100}%`;
-            
+            let progress = calculateBpProgress(); document.getElementById('bp-lvl-text').innerText = `LEVEL: ${progress.level} / 100`; document.getElementById('bp-exp-text').innerText = `EXP: ${progress.currentExp} / ${progress.maxExp}`; document.getElementById('bp-bar-fill').style.width = `${(progress.currentExp / progress.maxExp) * 100}%`;
             const container = document.getElementById('bp-tiers-container'); container.innerHTML = '';
             BP_TIERS.forEach(tier => {
                 let isUnlocked = progress.level >= tier.level; let isClaimed = bpClaimedTiers.includes(tier.level);
                 let btnHtml = isClaimed ? `<button class="std-btn shop-btn" disabled>Claimed</button>` : isUnlocked ? `<button class="std-btn shop-btn" onclick="claimBPReward(${tier.level})">Claim Reward</button>` : `<button class="std-btn shop-btn" disabled>Locked</button>`;
-                let textColor = tier.type === 'item' ? '#ff00ff' : '#ffcc00';
-                let milestoneClass = tier.isMilestone ? 'milestone' : '';
+                let textColor = tier.type === 'item' ? '#ff00ff' : '#ffcc00'; let milestoneClass = tier.isMilestone ? 'milestone' : '';
                 container.innerHTML += `<div class="bp-item ${isUnlocked ? 'unlocked' : ''} ${milestoneClass}" style="opacity: ${isUnlocked ? 1 : 0.6}"><div class="bp-tier">LVL ${tier.level}</div><div class="bp-reward" style="color: ${textColor};">${tier.name}</div>${btnHtml}</div>`;
             });
         }
         function claimBPReward(level) { let tier = BP_TIERS.find(t => t.level === level); if (!tier || bpClaimedTiers.includes(level)) return; if (tier.type === 'gold') { globalGold += tier.amount; } else if (tier.type === 'item') { unlockedItems.push(tier.itemId); } bpClaimedTiers.push(level); saveGameData(); renderBattlePass(); triggerShake(); }
 
         function renderShopGrid(items, typeLabel, equipVarType) {
-            let html = `<div class="shop-section-title">${typeLabel}</div><div class="shop-grid">`;
+            let html = `<div class="shop-grid">`;
             items.forEach(item => {
-                if(item.isBp) return; const isUnlocked = unlockedItems.includes(item.id); 
-                let isEquipped = false;
-                if(equipVarType === 'skin') isEquipped = (equippedSkin === item.id);
-                
-                let btnHtml = isEquipped ? `<button class="std-btn shop-btn equipped" onclick="unequipItem('${equipVarType}')">Unequip</button>` : 
-                              isUnlocked ? `<button class="std-btn shop-btn" onclick="equipItem('${equipVarType}', '${item.id}')">Equip</button>` : 
-                                           `<button class="std-btn shop-btn" onclick="buyItem('${item.id}', ${item.cost})">Buy (${item.cost} ✦)</button>`;
-                let visual = (equipVarType === 'skin') ? `<div class="skin-preview" style="background: ${item.color}; color: ${item.color}"></div>` : `<div class="item-icon" style="color: ${item.color}">${item.icon}</div>`;
+                if(item.isBp) return; const isUnlocked = unlockedItems.includes(item.id); let isEquipped = (equipVarType === 'skin') && (equippedSkin === item.id);
+                let btnHtml = isEquipped ? `<button class="std-btn shop-btn equipped" onclick="unequipItem('${equipVarType}')">Unequip</button>` : isUnlocked ? `<button class="std-btn shop-btn" onclick="equipItem('${equipVarType}', '${item.id}')">Equip</button>` : `<button class="std-btn shop-btn" onclick="buyItem('${item.id}', ${item.cost})">Buy (${item.cost} ✦)</button>`;
+                let visual = `<div class="skin-preview" style="background: ${item.color}; color: ${item.color}"></div>`;
                 html += `<div class="shop-card">${visual}<div class="item-name">${item.name}</div>${btnHtml}</div>`;
             }); return html + `</div>`;
         }
@@ -545,8 +553,9 @@
 
         function triggerShake() { const wrapper = document.getElementById('game-wrapper'); wrapper.classList.remove('shake-effect'); void wrapper.offsetWidth; wrapper.classList.add('shake-effect'); }
 
+        // ================= GAMEPLAY VARIABLES =================
         const WORLD_WIDTH = 4000; const WORLD_HEIGHT = 4000; let camera = { x: 0, y: 0 };
-        const player = { x: WORLD_WIDTH / 2, y: WORLD_HEIGHT / 2, radius: 15, speed: 5, color: '#ffffff', particleColor: '#ffffff', hp: 100, maxHp: 100, lastHitFrame: 0, level: 1, exp: 0, maxExp: 100, expMultiplier: 1.0, magnetRange: 40, damage: 30, fireRate: 35, attackRange: 500, bulletSpeed: 10, bulletSize: 4.5, hasAura: false, auraRadius: 120, auraDamage: 0.5, isDashing: false, dashSpeed: 18, dashFrames: 0, maxDashFrames: 12, dashCooldown: 0, maxDashCooldown: 90, dashDx: 0, dashDy: 0, trailHistory: [], skinParticles: [], wpnAngle: 0 };
+        const player = {}; 
         
         let enemies = []; let projectiles = []; let enemyProjectiles = []; let expGems = []; let floatingTexts = []; let crosshairs = []; let particleBursts = [];
         let frames = 0; let lastFiredFrame = 0; let gameSeconds = 0;
@@ -555,7 +564,7 @@
 
         const POWER_UP_POOL = [
             { id: 'atk_speed', weight: 100, name: 'Frenzy Fire', desc: 'Increase attack speed.', apply: () => { player.fireRate = Math.max(10, player.fireRate - 8); } },
-            { id: 'atk_dmg', weight: 100, name: 'Astral Power', desc: 'Increase bullet damage.', apply: () => { player.damage += 15; player.bulletSize += 1; } },
+            { id: 'atk_dmg', weight: 100, name: 'Astral Power', desc: 'Increase bullet damage.', apply: () => { player.damage += 15; player.bulletSize += 1.5; } },
             { id: 'range_up', weight: 80, name: 'Eagle Eye', desc: 'Expand attack range.', apply: () => { player.attackRange += 100; } },
             { id: 'move_speed', weight: 80, name: 'Void Walker', desc: 'Increase movement speed.', apply: () => { player.speed += 1.0; } },
             { id: 'aura_unlock', weight: 40, name: 'Hellfire Aura', desc: 'Emit a damaging energy ring.', apply: () => { player.hasAura = true; player.auraRadius += 30; player.auraDamage += 0.3; } },
@@ -566,7 +575,7 @@
             { id: 'dash_cd', weight: 60, name: 'Phantom Wind', desc: 'Reduce Dash cooldown.', apply: () => { player.maxDashCooldown = Math.max(30, player.maxDashCooldown - 20); } }
         ];
 
-        function getWeightedRandomPowerUps(count) { let selected = []; let tempPool = [...POWER_UP_POOL]; for(let i = 0; i < count; i++) { if(tempPool.length === 0) break; let totalWeight = tempPool.reduce((sum, item) => sum + item.weight, 0); let r = Math.random() * totalWeight; let sum = 0; for(let j = 0; j < tempPool.length; j++) { sum += tempPool[j].weight; if(r <= sum) { selected.push(tempPool[j]); tempPool.splice(j, 1); break; } } } return selected; }
+        function getWeightedRandomPowerUps(count) { let selected = []; let tempPool = [...POWER_UP_POOL]; for(let i=0; i<count; i++) { if(tempPool.length===0) break; let totalWeight = tempPool.reduce((sum, item) => sum + item.weight, 0); let r = Math.random() * totalWeight; let sum = 0; for(let j=0; j<tempPool.length; j++) { sum += tempPool[j].weight; if(r <= sum) { selected.push(tempPool[j]); tempPool.splice(j, 1); break; } } } return selected; }
 
         function generateRandomPowerUps() {
             let currentChoices = getWeightedRandomPowerUps(3); const listEl = document.getElementById('dynamic-power-list'); listEl.innerHTML = '';
@@ -574,22 +583,47 @@
             currentChoices.forEach((skill, index) => { 
                 const btn = document.createElement('button'); btn.className = 'std-btn power-btn stagger-anim'; btn.style.animationDelay = `${index * 0.1}s`; 
                 btn.innerHTML = `<strong>${skill.name}</strong><span class="skill-desc">${skill.desc}</span>`;
-                btn.onclick = () => { triggerShake(); skill.apply(); switchScreen(STATES.PLAYING); updateHUD(); };
-                listEl.appendChild(btn);
+                btn.onclick = () => { triggerShake(); skill.apply(); switchScreen(STATES.PLAYING); updateHUD(); }; listEl.appendChild(btn);
             });
             const rerollBtn = document.getElementById('btn-reroll');
-            if (rerollsLeft > 0) { rerollBtn.disabled = false; rerollBtn.innerText = `✦ Reroll (${rerollsLeft} Left) ✦`; } else { rerollBtn.disabled = true; rerollBtn.innerText = `Out of Rerolls`; }
+            if (rerollsLeft > 0) { rerollBtn.disabled = false; rerollBtn.innerText = `✦ Reroll ✦`; } else { rerollBtn.disabled = true; rerollBtn.innerText = `Out of Rerolls`; }
         }
 
         function triggerWaveBanner(text) { waveBannerText = text; waveBannerAlpha = 2.0; }
-        function applySkinColors() { const activeSkin = ITEMS_DB.skins.find(s => s.id === equippedSkin) || ITEMS_DB.skins[0]; player.color = activeSkin.color; player.particleColor = activeSkin.pColor; }
+        
+        function applyStatsFromRunes() {
+            const activeSkin = ITEMS_DB.skins.find(s => s.id === equippedSkin) || ITEMS_DB.skins[0]; player.color = activeSkin.color; player.particleColor = activeSkin.pColor;
+            player.damage = 30 + (playerRunes.atk * 3);
+            player.fireRate = Math.max(10, 35 - (playerRunes.atkSpeed * 1.5));
+            player.critRate = 0.1 + (playerRunes.critRate * 0.02); 
+            player.critMult = 2.0 + (playerRunes.critDmg * 0.2); 
+            player.def = playerRunes.def * 1; 
+            player.speed = 5 + (playerRunes.speed * 0.2);
+        }
 
         function resetGame() {
-            applySkinColors(); player.x = WORLD_WIDTH/2; player.y = WORLD_HEIGHT/2; player.hp = 100; player.maxHp = 100; player.level = 1; player.exp = 0; player.maxExp = 100; player.expMultiplier = 1.0; player.magnetRange = 40; player.damage = 30; player.fireRate = 35; player.attackRange = 450; player.bulletSpeed = 10; player.bulletSize = 4.5; player.speed = 5; player.hasAura = false; player.auraRadius = 120; player.auraDamage = 0.5; player.isDashing = false; player.dashCooldown = 0; player.trailHistory = []; player.skinParticles = []; player.wpnAngle = 0;
-            enemies = []; projectiles = []; enemyProjectiles = []; expGems = []; floatingTexts = []; crosshairs = []; particleBursts = []; frames = 0; gameSeconds = 0;
-            currentWave = 1; enemiesKilled = 0; sessionKills = 0; killsNeededForNextWave = 25; sessionGold = 0; sessionBPExp = 0;
-            isBossActive = false; bossEntity = null; document.getElementById('boss-ui').style.opacity = 0; document.getElementById('end-title').innerText = "YOU DIED"; document.getElementById('end-title').style.color = "#ff0044";
-            updateHUD(); triggerWaveBanner("WAVE 1 START");
+            // FIX: ĐẶT LẠI HOÀN TOÀN MỌI CHỈ SỐ NHÂN VẬT VỀ MẶC ĐỊNH TRƯỚC KHI ÁP DỤNG NGỌC
+            player.x = WORLD_WIDTH/2; player.y = WORLD_HEIGHT/2; player.radius = 15;
+            player.hp = 100; player.maxHp = 100; player.lastHitFrame = 0; player.level = 1;
+            player.exp = 0; player.maxExp = 100; player.expMultiplier = 1.0; player.magnetRange = 40; 
+            player.attackRange = 450; player.bulletSpeed = 10; player.bulletSize = 4.5; 
+            player.hasAura = false; player.auraRadius = 120; player.auraDamage = 0.5; 
+            player.isDashing = false; player.dashSpeed = 18; player.dashFrames = 0; player.maxDashFrames = 12;
+            player.dashCooldown = 0; player.maxDashCooldown = 90; // Sửa lỗi rò rỉ maxDashCooldown
+            player.dashDx = 0; player.dashDy = 0; player.trailHistory = []; player.skinParticles = []; player.wpnAngle = 0;
+            
+            // Ghi đè các chỉ số phụ thuộc Bảng Ngọc
+            applyStatsFromRunes();
+            
+            enemies = []; projectiles = []; enemyProjectiles = []; expGems = []; floatingTexts = []; crosshairs = []; particleBursts = [];
+            frames = 0; lastFiredFrame = 0; gameSeconds = 0;
+            currentWave = 1; enemiesKilled = 0; sessionKills = 0; killsNeededForNextWave = 25;
+            sessionGold = 0; sessionBPExp = 0; isBossActive = false; bossEntity = null;
+            document.getElementById('boss-ui').style.opacity = 0; 
+            
+            updateHUD(); 
+            let waveStr = TRANSLATIONS[currentLang]["wave-start"] ? TRANSLATIONS[currentLang]["wave-start"].replace("{w}", currentWave) : `WAVE ${currentWave} START`;
+            triggerWaveBanner(waveStr);
         }
 
         function updateHUD() {
@@ -597,15 +631,23 @@
             if (isBossActive) { document.getElementById('wave-text').innerText = "BOSS FIGHT"; document.getElementById('wave-text').style.color = "#ff0044"; document.getElementById('wave-progress-bar').style.width = "100%"; document.getElementById('wave-progress-bar').style.background = "#ff0044"; if(bossEntity) document.getElementById('boss-hp-bar').style.width = Math.max(0, (bossEntity.hp / bossEntity.maxHp) * 100) + '%'; } else { document.getElementById('wave-text').innerText = `WAVE ${currentWave}`; document.getElementById('wave-text').style.color = "#fff"; document.getElementById('wave-progress-bar').style.width = Math.min(100, (enemiesKilled / killsNeededForNextWave) * 100) + '%'; document.getElementById('wave-progress-bar').style.background = "#fff"; }
         }
 
+        // Action Functions
         function actStartGame() { triggerShake(); resetGame(); switchScreen(STATES.PLAYING); }
         function actShowShop() { triggerShake(); switchScreen(STATES.SHOP); }
+        function actShowRunes() { triggerShake(); switchScreen(STATES.RUNES); }
         function actShowBattlePass() { triggerShake(); switchScreen(STATES.BP); }
         function actShowProfile() { triggerShake(); switchScreen(STATES.PROFILE); }
         function actShowSettings() { triggerShake(); switchScreen(STATES.SETTINGS); }
+        function actShowCredits() { triggerShake(); switchScreen(STATES.CREDITS); }
         function actPauseGame() { triggerShake(); if(currentState === STATES.PLAYING) switchScreen(STATES.PAUSED); }
         function actResumeGame() { triggerShake(); switchScreen(STATES.PLAYING); }
         function actQuitToMenu() { triggerShake(); saveProfileInfo(); switchScreen(STATES.MENU); }
         function actReroll() { if(rerollsLeft > 0) { rerollsLeft--; triggerShake(); generateRandomPowerUps(); } }
+        
+        // CÁC HÀM XÓA DỮ LIỆU
+        function actShowConfirmReset() { document.getElementById('confirm-reset-screen').classList.remove('hidden'); }
+        function actCancelReset() { document.getElementById('confirm-reset-screen').classList.add('hidden'); }
+        function executeResetData() { localStorage.clear(); location.reload(); }
 
         let mouseXBg = window.innerWidth / 2; let mouseYBg = window.innerHeight / 2;
         window.addEventListener('mousemove', (e) => { mouseXBg = e.clientX; mouseYBg = e.clientY; if(currentState !== STATES.PLAYING) { glowEl.style.left = mouseXBg + 'px'; glowEl.style.top = mouseYBg + 'px'; }});
@@ -613,13 +655,13 @@
         window.addEventListener('keydown', (e) => { const key = e.key; if (keys.hasOwnProperty(key)) keys[key] = true; if (currentState === STATES.PLAYING && (key === 'Escape' || key === 'p' || key === 'P')) actPauseGame(); else if (currentState === STATES.PAUSED && (key === 'Escape' || key === 'p' || key === 'P')) actResumeGame(); else if ((currentState !== STATES.MENU && currentState !== STATES.PLAYING && currentState !== STATES.LEVEL_UP) && key === 'Escape') actQuitToMenu(); });
         window.addEventListener('keyup', (e) => { const key = e.key; if (keys.hasOwnProperty(key)) keys[key] = false; });
 
+        // Background Particles
         const particlesBg = Array.from({length: 120}, () => ({ x: Math.random() * bgCanvas.width, y: Math.random() * bgCanvas.height, radius: Math.random() * 2 + 0.5, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, alpha: Math.random() * 0.6 + 0.1, type: 'dust' }));
         for(let i=0; i<40; i++) { particlesBg.push({ x: Math.random() * bgCanvas.width, y: Math.random() * bgCanvas.height, radius: Math.random() * 2 + 1, vx: (Math.random() - 0.5) * 1, vy: -Math.random() * 1.5 - 0.5, alpha: Math.random() * 0.8 + 0.2, type: 'ember' }); }
         const nebulasBg = Array.from({length: 5}, () => ({ x: Math.random() * bgCanvas.width, y: Math.random() * bgCanvas.height, radius: Math.random() * 400 + 200, color: `hsla(${Math.random() * 60 + 180}, 100%, 50%, 0.05)` }));
 
         function animateParticles() { 
-            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height); 
-            let offsetX = 0; let offsetY = 0;
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height); let offsetX = 0; let offsetY = 0;
             if(currentState !== STATES.PLAYING) { offsetX = (mouseXBg - window.innerWidth / 2) * 0.03; offsetY = (mouseYBg - window.innerHeight / 2) * 0.03; }
             bgCtx.save(); bgCtx.translate(-offsetX, -offsetY);
             nebulasBg.forEach(n => { let gradient = bgCtx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius); gradient.addColorStop(0, n.color); gradient.addColorStop(1, 'transparent'); bgCtx.beginPath(); bgCtx.arc(n.x, n.y, n.radius, 0, Math.PI * 2); bgCtx.fillStyle = gradient; bgCtx.fill(); }); 
@@ -654,13 +696,19 @@
         function handleEnemyKill(enemy) {
             sessionKills++;
             if (enemy.isBoss) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 100 }); } else if (enemy.isElite) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 5 }); } else if (Math.random() < 0.1) { expGems.push({ x: enemy.x, y: enemy.y, type: 'gold', value: 1 }); }
-            if (!isBossActive && !enemy.isBoss) { enemiesKilled++; if (enemiesKilled >= killsNeededForNextWave) { if (currentWave < MAX_WAVE) { currentWave++; enemiesKilled = 0; killsNeededForNextWave = currentWave * 25; triggerWaveBanner(`WAVE ${currentWave} START`); } else { spawnBoss(); triggerWaveBanner("WARNING: ABYSSAL OVERLORD"); } } }
+            if (!isBossActive && !enemy.isBoss) { enemiesKilled++; if (enemiesKilled >= killsNeededForNextWave) { if (currentWave < MAX_WAVE) { currentWave++; enemiesKilled = 0; killsNeededForNextWave = currentWave * 25; triggerWaveBanner(TRANSLATIONS[currentLang]["wave-start"] ? TRANSLATIONS[currentLang]["wave-start"].replace("{w}", currentWave) : `WAVE ${currentWave} START`); } else { spawnBoss(); triggerWaveBanner("WARNING: ABYSSAL OVERLORD"); } } }
         }
 
         function autoFire() {
             if (enemies.length === 0 || frames - lastFiredFrame < player.fireRate) return;
             let nearestEnemy = null; let minDistance = Infinity; enemies.forEach(enemy => { const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y); if (dist < minDistance) { minDistance = dist; nearestEnemy = enemy; } });
-            if (nearestEnemy && minDistance <= player.attackRange) { const angle = Math.atan2(nearestEnemy.y - player.y, nearestEnemy.x - player.x); const startX = player.x + Math.cos(angle) * player.radius; const startY = player.y + Math.sin(angle) * player.radius; projectiles.push({ x: startX, y: startY, vx: Math.cos(angle) * player.bulletSpeed, vy: Math.sin(angle) * player.bulletSpeed, radius: player.bulletSize, color: player.particleColor, damage: player.damage, history: [{x: startX, y: startY}], isCrit: Math.random() < 0.2 }); lastFiredFrame = frames; }
+            if (nearestEnemy && minDistance <= player.attackRange) { 
+                const angle = Math.atan2(nearestEnemy.y - player.y, nearestEnemy.x - player.x); 
+                const startX = player.x + Math.cos(angle) * player.radius; const startY = player.y + Math.sin(angle) * player.radius; 
+                let isCrit = Math.random() < player.critRate;
+                projectiles.push({ x: startX, y: startY, vx: Math.cos(angle) * player.bulletSpeed, vy: Math.sin(angle) * player.bulletSpeed, radius: player.bulletSize, color: player.particleColor, damage: player.damage, history: [{x: startX, y: startY}], isCrit: isCrit, critMult: player.critMult }); 
+                lastFiredFrame = frames; 
+            }
         }
 
         function addFloatingText(x, y, text, color, fontSize = 16) { floatingTexts.push({ x: x + (Math.random()*20-10), y: y - 20, text: text, color: color, alpha: 1.0, dy: -1.5, size: fontSize }); }
@@ -699,44 +747,46 @@
                     if (Math.hypot(player.x - gem.x, player.y - gem.y) < player.radius + player.magnetRange) { 
                         createBurst(gem.x, gem.y, isGold ? '#ffcc00' : '#00ffcc');
                         if (isGold) { 
-                            let isCrit = Math.random() < 0.1;
-                            let finalGold = isCrit ? gem.value * 2 : gem.value;
-                            sessionGold += finalGold; 
+                            let isCrit = Math.random() < 0.1; let finalGold = isCrit ? gem.value * 2 : gem.value; sessionGold += finalGold; 
                             addFloatingText(gem.x, gem.y, isCrit ? `+${finalGold} ✦ CRIT!` : `+${finalGold}`, isCrit ? '#ffaa00' : '#ffcc00', isCrit ? 24 : 16); 
-                        } 
-                        else { let gainedExp = Math.floor(gem.value * player.expMultiplier); player.exp += gainedExp; addFloatingText(gem.x, gem.y, `+${gainedExp}`, '#00ffcc'); if (player.exp >= player.maxExp) { player.level++; player.exp -= player.maxExp; player.maxExp = Math.floor(player.maxExp * 1.5); switchScreen(STATES.LEVEL_UP); } }
+                        } else { 
+                            let gainedExp = Math.floor(gem.value * player.expMultiplier); player.exp += gainedExp; addFloatingText(gem.x, gem.y, `+${gainedExp}`, '#00ffcc'); 
+                            if (player.exp >= player.maxExp) { player.level++; player.exp -= player.maxExp; player.maxExp = Math.floor(player.maxExp * 1.5); switchScreen(STATES.LEVEL_UP); } 
+                        }
                         expGems.splice(i, 1); updateHUD();
                     }
                 }
 
-                for (let i = particleBursts.length - 1; i >= 0; i--) {
-                    let pb = particleBursts[i]; pb.x += pb.vx; pb.y += pb.vy; pb.alpha -= 0.05;
-                    ctx.globalAlpha = Math.max(0, pb.alpha); ctx.beginPath(); ctx.arc(pb.x, pb.y, pb.radius, 0, Math.PI*2); ctx.fillStyle = pb.color; ctx.fill(); ctx.globalAlpha = 1.0;
-                    if(pb.alpha <= 0) particleBursts.splice(i, 1);
-                }
+                for (let i = particleBursts.length - 1; i >= 0; i--) { let pb = particleBursts[i]; pb.x += pb.vx; pb.y += pb.vy; pb.alpha -= 0.05; ctx.globalAlpha = Math.max(0, pb.alpha); ctx.beginPath(); ctx.arc(pb.x, pb.y, pb.radius, 0, Math.PI*2); ctx.fillStyle = pb.color; ctx.fill(); ctx.globalAlpha = 1.0; if(pb.alpha <= 0) particleBursts.splice(i, 1); }
 
+                let showDmgSetting = document.getElementById('setting-dmg').checked;
                 for (let i = projectiles.length - 1; i >= 0; i--) {
                     let p = projectiles[i]; p.history.push({x: p.x, y: p.y}); if (p.history.length > 6) p.history.shift(); p.x += p.vx; p.y += p.vy;
                     if(p.history.length > 1) { ctx.beginPath(); ctx.moveTo(p.history[0].x, p.history[0].y); for(let pos of p.history) ctx.lineTo(pos.x, pos.y); ctx.strokeStyle = p.color; ctx.globalAlpha=0.5; ctx.lineWidth = p.radius * 1.5; ctx.lineCap = 'round'; ctx.stroke(); ctx.globalAlpha=1.0;}
                     ctx.shadowBlur = 15; ctx.shadowColor = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.shadowBlur = 0; 
                     if (p.x < 0 || p.x > WORLD_WIDTH || p.y < 0 || p.y > WORLD_HEIGHT) { projectiles.splice(i, 1); continue; }
                     
-                    let showDmgSetting = document.getElementById('setting-dmg').checked;
                     for (let j = enemies.length - 1; j >= 0; j--) {
                         let e = enemies[j];
                         if (Math.hypot(p.x - e.x, p.y - e.y) < p.radius + e.radius) { 
-                            let finalDmg = p.isCrit ? p.damage * 2 : p.damage; e.hp -= finalDmg; projectiles.splice(i, 1); createBurst(e.x, e.y, p.color); 
-                            if(showDmgSetting) addFloatingText(e.x, e.y, Math.floor(finalDmg), p.isCrit ? '#ff0044' : '#ffffff', p.isCrit ? 22 : 16); 
+                            let finalDmg = p.isCrit ? p.damage * p.critMult : p.damage; 
+                            e.hp -= finalDmg; projectiles.splice(i, 1); createBurst(e.x, e.y, p.color); 
+                            if(showDmgSetting) addFloatingText(e.x, e.y, Math.floor(finalDmg), p.isCrit ? '#ff00ff' : '#ffffff', p.isCrit ? 22 : 16); 
                             if (e.hp <= 0) { expGems.push({ x: e.x, y: e.y, value: e.expReward, type: 'exp' }); handleEnemyKill(e); if(e.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); } break; 
                         }
                     }
                 }
 
-                for (let i = enemyProjectiles.length - 1; i >= 0; i--) { let ep = enemyProjectiles[i]; ep.x += ep.vx; ep.y += ep.vy; ctx.shadowBlur = 15; ctx.shadowColor = ep.color; ctx.beginPath(); ctx.arc(ep.x, ep.y, ep.radius, 0, Math.PI * 2); ctx.fillStyle = ep.color; ctx.fill(); ctx.shadowBlur = 0; if (ep.x < 0 || ep.x > WORLD_WIDTH || ep.y < 0 || ep.y > WORLD_HEIGHT) { enemyProjectiles.splice(i, 1); continue; } if (!player.isDashing && Math.hypot(ep.x - player.x, ep.y - player.y) < ep.radius + player.radius) { player.hp -= ep.damage; enemyProjectiles.splice(i, 1); triggerShake(); addFloatingText(player.x, player.y, `-${ep.damage}`, '#ff0044', 20); if (player.hp <= 0) switchScreen(STATES.GAME_OVER); } }
+                for (let i = enemyProjectiles.length - 1; i >= 0; i--) { let ep = enemyProjectiles[i]; ep.x += ep.vx; ep.y += ep.vy; ctx.shadowBlur = 15; ctx.shadowColor = ep.color; ctx.beginPath(); ctx.arc(ep.x, ep.y, ep.radius, 0, Math.PI * 2); ctx.fillStyle = ep.color; ctx.fill(); ctx.shadowBlur = 0; if (ep.x < 0 || ep.x > WORLD_WIDTH || ep.y < 0 || ep.y > WORLD_HEIGHT) { enemyProjectiles.splice(i, 1); continue; } 
+                if (!player.isDashing && Math.hypot(ep.x - player.x, ep.y - player.y) < ep.radius + player.radius) { 
+                    let dmgTaken = Math.max(1, ep.damage - player.def);
+                    player.hp -= dmgTaken; enemyProjectiles.splice(i, 1); triggerShake(); addFloatingText(player.x, player.y, `-${dmgTaken}`, '#ff0044', 20); 
+                    if (player.hp <= 0) switchScreen(STATES.GAME_OVER); 
+                } }
 
                 for (let j = enemies.length - 1; j >= 0; j--) {
                     let enemy = enemies[j]; const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
-                    if (player.hasAura && dist <= player.auraRadius) { enemy.hp -= player.auraDamage; if(frames % 10 === 0 && document.getElementById('setting-dmg').checked) addFloatingText(enemy.x, enemy.y, Math.floor(player.auraDamage*10), '#ff8800'); if (enemy.hp <= 0) { expGems.push({ x: enemy.x, y: enemy.y, value: enemy.expReward, type: 'exp' }); handleEnemyKill(enemy); if(enemy.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); continue; } }
+                    if (player.hasAura && dist <= player.auraRadius) { enemy.hp -= player.auraDamage; if(frames % 10 === 0 && showDmgSetting) addFloatingText(enemy.x, enemy.y, Math.floor(player.auraDamage*10), '#ff8800'); if (enemy.hp <= 0) { expGems.push({ x: enemy.x, y: enemy.y, value: enemy.expReward, type: 'exp' }); handleEnemyKill(enemy); if(enemy.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); continue; } }
                     
                     if (enemy.dodgeCooldown > 0) enemy.dodgeCooldown--;
                     if (enemy.type === 'phantom') { if (enemy.dodgeCooldown <= 0) { let bulletNear = projectiles.find(p => Math.hypot(p.x - enemy.x, p.y - enemy.y) < 150); if (bulletNear) { let angleToBullet = Math.atan2(bulletNear.y - enemy.y, bulletNear.x - enemy.x); enemy.x += Math.cos(angleToBullet + Math.PI/2) * 100; enemy.y += Math.sin(angleToBullet + Math.PI/2) * 100; enemy.dodgeCooldown = 120; addFloatingText(enemy.x, enemy.y, "DODGE", '#0088ff'); } } if (dist > 0) { enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed; } }
@@ -750,7 +800,11 @@
                     
                     ctx.shadowBlur = enemy.isElite ? (enemy.isBoss? 40: 25) : 15; ctx.shadowColor = enemy.color; ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2); ctx.fillStyle = enemy.color; ctx.fill(); ctx.shadowBlur = 0;
                     if (!enemy.isBoss) { const hpBarWidth = enemy.isElite ? 40 : 30; ctx.fillStyle = '#333'; ctx.fillRect(enemy.x - hpBarWidth/2, enemy.y - enemy.radius - 10, hpBarWidth, 4); ctx.fillStyle = '#ff0000'; ctx.fillRect(enemy.x - hpBarWidth/2, enemy.y - enemy.radius - 10, hpBarWidth * (enemy.hp / enemy.maxHp), 4); }
-                    if (!player.isDashing && dist < player.radius + enemy.radius && frames - player.lastHitFrame > 60) { player.hp -= enemy.damage; player.lastHitFrame = frames; triggerShake(); updateHUD(); addFloatingText(player.x, player.y, `-${enemy.damage}`, '#ff0044', 20); if (player.hp <= 0) switchScreen(STATES.GAME_OVER); }
+                    if (!player.isDashing && dist < player.radius + enemy.radius && frames - player.lastHitFrame > 60) { 
+                        let dmgTaken = Math.max(1, enemy.damage - player.def);
+                        player.hp -= dmgTaken; player.lastHitFrame = frames; triggerShake(); updateHUD(); addFloatingText(player.x, player.y, `-${dmgTaken}`, '#ff0044', 20); 
+                        if (player.hp <= 0) switchScreen(STATES.GAME_OVER); 
+                    }
                 }
 
                 if (frames - player.lastHitFrame > 60 || Math.floor(frames / 5) % 2 === 0) { 
@@ -761,20 +815,15 @@
                 ctx.restore();
 
                 for(let i=floatingTexts.length-1; i>=0; i--) {
-                    let ft = floatingTexts[i];
-                    ctx.fillStyle = ft.color; ctx.globalAlpha = ft.alpha; ctx.font = `bold ${ft.size}px 'Rajdhani', sans-serif`; ctx.textAlign="center"; ctx.shadowBlur = 5; ctx.shadowColor = '#000';
-                    ctx.fillText(ft.text, ft.x - camera.x, ft.y - camera.y);
-                    ctx.globalAlpha = 1.0; ctx.shadowBlur = 0;
-                    ft.y += ft.dy; ft.alpha -= 0.02;
-                    if(ft.alpha <= 0) floatingTexts.splice(i, 1);
+                    let ft = floatingTexts[i]; ctx.fillStyle = ft.color; ctx.globalAlpha = ft.alpha; ctx.font = `bold ${ft.size}px 'Rajdhani', sans-serif`; ctx.textAlign="center"; ctx.shadowBlur = 5; ctx.shadowColor = '#000'; ctx.fillText(ft.text, ft.x - camera.x, ft.y - camera.y); ctx.globalAlpha = 1.0; ctx.shadowBlur = 0; ft.y += ft.dy; ft.alpha -= 0.02; if(ft.alpha <= 0) floatingTexts.splice(i, 1);
                 }
-
-                if (waveBannerAlpha > 0) { ctx.fillStyle = `rgba(255, 204, 0, ${Math.min(1, waveBannerAlpha)})`; ctx.font = "bold 60px 'Cinzel', serif"; ctx.textAlign = "center"; ctx.shadowBlur = 20; ctx.shadowColor = '#ffcc00'; ctx.fillText(waveBannerText, gameCanvas.width / 2, gameCanvas.height / 3); ctx.shadowBlur = 0; waveBannerAlpha -= 0.015; }
+                if (waveBannerAlpha > 0) { ctx.fillStyle = `rgba(255, 204, 0, ${Math.min(1, waveBannerAlpha)})`; ctx.font = "bold 60px 'Montserrat', sans-serif"; ctx.textAlign = "center"; ctx.shadowBlur = 20; ctx.shadowColor = '#ffcc00'; ctx.fillText(waveBannerText, gameCanvas.width / 2, gameCanvas.height / 3); ctx.shadowBlur = 0; waveBannerAlpha -= 0.015; }
             }
             requestAnimationFrame(gameLoop);
         }
 
         // Khởi chạy
+        applyLanguage();
         animateParticles();
         switchScreen(STATES.MENU);
         gameLoop(); 
