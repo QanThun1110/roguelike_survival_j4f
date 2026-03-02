@@ -31,14 +31,21 @@
         #moba-lobby { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
         .moba-element { pointer-events: auto; position: absolute; }
         
-        #moba-top-left { top: 30px; left: 40px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; padding: 10px 20px 10px 10px; border-radius: 50px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,204,0.3); animation: mysticalPulse 4s infinite alternate; }
+        #moba-top-left { top: 30px; left: 40px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; padding: 10px 20px 10px 10px; border-radius: 50px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,204,0.3); animation: mysticalPulse 4s infinite alternate; min-width: 250px; }
         #moba-top-left:hover { background: rgba(0,255,204,0.15); transform: scale(1.02); }
-        .avatar-placeholder { width: 55px; height: 55px; border-radius: 50%; background: #111; border: 2px solid #00ffcc; display: flex; justify-content: center; align-items: center; font-size: 26px; box-shadow: inset 0 0 10px #000; transition: 0.3s;}
-        .commander-name { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 800; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+        .avatar-placeholder { width: 55px; height: 55px; border-radius: 50%; background: #111; border: 2px solid #00ffcc; display: flex; justify-content: center; align-items: center; font-size: 26px; box-shadow: inset 0 0 10px #000; transition: 0.3s; flex-shrink: 0;}
+        .commander-info { display: flex; flex-direction: column; width: 100%; }
+        .commander-name { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 800; color: #fff; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        
+        /* CẤP ĐỘ TÀI KHOẢN UI */
+        .acc-level-container { display: flex; flex-direction: column; width: 100%; margin-top: 3px; }
+        .acc-level-text { font-size: 0.75rem; color: #00ffcc; font-family: 'Rajdhani', sans-serif; font-weight: bold; letter-spacing: 1px;}
+        .acc-level-bar-bg { width: 100%; height: 5px; background: #222; border-radius: 3px; overflow: hidden; margin-top: 2px; border: 1px solid #444; }
+        .acc-level-bar-fill { height: 100%; background: linear-gradient(90deg, #0088ff, #00ffcc); transition: width 0.3s ease; box-shadow: 0 0 5px #00ffcc;}
 
         #moba-top-center { top: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); padding: 10px 30px; border-radius: 30px; border: 1px solid rgba(255,204,0,0.3); box-shadow: 0 0 15px rgba(255,204,0,0.1); }
         .gold-display { font-size: 1.8rem; color: #ffcc00; font-weight: bold; text-shadow: 0 0 10px #ffcc00; display: flex; align-items: center; gap: 10px; font-family: 'Rajdhani', sans-serif; }
-        .gold-display::before { content: '✦'; font-size: 2rem; }
+        .gold-display::before { content: '🪙'; font-size: 2rem; filter: drop-shadow(0 0 5px rgba(255, 204, 0, 0.8)); }
 
         #moba-top-right { top: 30px; right: 40px; display: flex; gap: 15px; }
         .icon-btn { width: 55px; height: 55px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; }
@@ -71,7 +78,7 @@
         .std-btn:hover:not(:disabled) { border-color: #00ffcc; color: #fff; background: rgba(0, 60, 50, 0.6); transform: scale(1.03); box-shadow: 0 0 15px rgba(0,255,204,0.3); }
         .std-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #333; color: #666;}
         
-        /* ================= FIX LỖI BẢNG POWER UP ================= */
+        /* ================= BẢNG KỸ NĂNG & SHOP ================= */
         .power-btn { padding: 20px; text-transform: none; text-align: left; border: 2px solid rgba(0, 255, 204, 0.3); background: rgba(0, 20, 30, 0.8); border-radius: 10px; transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
         .power-btn:hover { border-color: #00ffcc; box-shadow: 0 0 25px rgba(0,255,204,0.5), inset 0 0 20px rgba(0,255,204,0.2); transform: scale(1.03); background: rgba(0, 40, 50, 0.9); }
         .power-btn strong { font-size: 1.4rem; margin-bottom: 8px; color: #fff; text-transform: uppercase; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; transition: 0.3s;}
@@ -81,7 +88,6 @@
         .reroll-btn { margin-top: 10px; border-color: rgba(255, 170, 0, 0.4); color: #ffaa00; width: auto; font-size: 1rem; }
         .reroll-btn:hover:not(:disabled) { border-color: #ffcc00; color: #fff; box-shadow: 0 0 15px rgba(255,170,0,0.4); background: rgba(50, 30, 0, 0.6); }
 
-        /* SHOP TABS & GRID UI */
         .shop-tabs { display: flex; width: 100%; justify-content: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
         .shop-tab-btn { background: transparent; border: none; color: #777; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; padding: 10px 20px; transition: 0.3s; border-radius: 8px; letter-spacing: 1px;}
         .shop-tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
@@ -163,10 +169,11 @@
         #timer-display { font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 10px #fff; letter-spacing: 2px;}
         #pause-btn-hud { pointer-events: auto; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 5px 20px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s; border-radius: 4px; margin-top: 10px; text-transform: uppercase;}
         
-        #boss-ui { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 70%; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s; opacity: 0; }
-        #boss-name { font-size: 2rem; color: #ff0044; text-shadow: 0 0 15px #ff0044; margin-bottom: 10px; letter-spacing: 5px; font-family: 'Montserrat', sans-serif; font-weight: 800; text-transform: uppercase;}
-        #boss-hp-bg { width: 100%; height: 20px; background: #111; border: 2px solid #550000; }
-        #boss-hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #aa0000, #ff0044); box-shadow: 0 0 20px #ff0044; transition: width 0.1s linear;}
+        /* BOSS UI ENHANCEMENT */
+        #boss-ui { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); width: 60%; max-width: 800px; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s; opacity: 0; z-index: 20; }
+        #boss-name { font-size: 2.5rem; color: #ff0044; text-shadow: 0 0 20px #ff0044; margin-bottom: 15px; letter-spacing: 8px; font-family: 'Cinzel', serif; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid rgba(255,0,68,0.5); padding-bottom: 5px;}
+        #boss-hp-bg { width: 100%; height: 25px; background: rgba(0,0,0,0.8); border: 2px solid #ff0044; border-radius: 8px; overflow: hidden; box-shadow: 0 0 15px rgba(255,0,68,0.5);}
+        #boss-hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #aa0000, #ff0044, #ff6666); box-shadow: 0 0 20px #ff0044; transition: width 0.1s linear;}
         
         .shake-effect { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake { 10%, 90% { transform: translate3d(-4px, 1px, 0); } 20%, 80% { transform: translate3d(5px, -2px, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 3px, 0); } 40%, 60% { transform: translate3d(8px, -2px, 0); } }
@@ -181,7 +188,13 @@
             <div id="moba-lobby">
                 <div id="moba-top-left" class="moba-element" onclick="actShowProfile()">
                     <div class="avatar-placeholder" id="lobby-avatar">👤</div>
-                    <div class="commander-name" id="lobby-name">COMMANDER</div>
+                    <div class="commander-info">
+                        <div class="commander-name" id="lobby-name">COMMANDER</div>
+                        <div class="acc-level-container">
+                            <span class="acc-level-text" id="lobby-acc-level-text">LEVEL 1 (0%)</span>
+                            <div class="acc-level-bar-bg"><div class="acc-level-bar-fill" id="lobby-acc-level-bar"></div></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="moba-top-center" class="moba-element">
@@ -196,6 +209,10 @@
                     <button class="side-menu-btn" onclick="actShowBattlePass()">
                         <div class="icon-bg" style="color: #0088ff; border-color: rgba(0,136,255,0.5);">📜</div>
                         <span data-i18n="menu-pass" style="color: #0088ff;">Pass</span>
+                    </button>
+                    <button class="side-menu-btn" onclick="actShowInventory()">
+                        <div class="icon-bg" style="color: #44ff44; border-color: rgba(68,255,68,0.5);">🎒</div>
+                        <span data-i18n="menu-inventory" style="color: #44ff44;">Balo</span>
                     </button>
                     <button class="side-menu-btn" onclick="actShowRunes()">
                         <div class="icon-bg" style="color: #ff00ff; border-color: rgba(255,0,255,0.5);">💎</div>
@@ -225,6 +242,11 @@
                         <div class="prof-name-area">
                             <span class="prof-title" data-i18n="prof-title">PROFILE</span>
                             <input type="text" id="prof-name-edit" class="profile-name-input" style="font-size: 2rem; text-shadow: 0 0 15px #00ffcc; margin:0;" onblur="saveProfileInfo()" placeholder="...">
+                            
+                            <div class="acc-level-container" style="margin-top: 10px; width: 80%;">
+                                <span class="acc-level-text" id="prof-acc-level-text" style="font-size: 1rem;">ACCOUNT LEVEL: 1 (0%)</span>
+                                <div class="acc-level-bar-bg" style="height: 10px;"><div class="acc-level-bar-fill" id="prof-acc-level-bar"></div></div>
+                            </div>
                         </div>
                     </div>
 
@@ -233,13 +255,27 @@
                         <div class="prof-stat-card"><div class="prof-stat-icon" style="color: #0088ff;">🛡️</div><div class="prof-stat-value" id="prof-wave" style="color: #0088ff;">0</div><div class="prof-stat-label" data-i18n="prof-wave">Max Wave</div></div>
                         <div class="prof-stat-card"><div class="prof-stat-icon" style="color: #ff0044;">🔥</div><div class="prof-stat-value" id="prof-kills" style="color: #ff0044;">0</div><div class="prof-stat-label" data-i18n="prof-kills">Kills</div></div>
                         <div class="prof-stat-card" style="grid-column: span 1;"><div class="prof-stat-icon" style="color: #aa00ff;">💀</div><div class="prof-stat-value" id="prof-deaths" style="color: #aa00ff;">0</div><div class="prof-stat-label" data-i18n="prof-deaths">Deaths</div></div>
-                        <div class="prof-stat-card" style="grid-column: span 2; border-color: rgba(255,204,0,0.3); background: rgba(255,204,0,0.05);"><div class="prof-stat-icon" style="color: #ffcc00;">✦</div><div class="prof-stat-value" id="prof-gold" style="color: #ffcc00;">0</div><div class="prof-stat-label" data-i18n="prof-gold">Total Wealth</div></div>
+                        <div class="prof-stat-card" style="grid-column: span 2; border-color: rgba(255,204,0,0.3); background: rgba(255,204,0,0.05);"><div class="prof-stat-icon" style="color: #ffcc00;">🪙</div><div class="prof-stat-value" id="prof-gold" style="color: #ffcc00;">0</div><div class="prof-stat-label" data-i18n="prof-gold">Total Wealth</div></div>
                     </div>
                     <button class="std-btn" style="width: 250px; margin-top: auto;" onclick="actQuitToMenu()" data-i18n="prof-btn">Save & Back</button>
                 </div>
                 <div class="prof-right">
                     <div class="prof-hero-display"><div class="prof-hero-core" id="prof-equipped-core"></div></div>
                 </div>
+            </div>
+        </div>
+
+        <div id="inventory-screen" class="screen hidden">
+            <div class="menu-box" style="padding: 30px 50px; max-width: 900px; width: 90%;">
+                <h2 data-i18n="inv-title">Balo Của Bạn</h2>
+                <div class="shop-tabs">
+                    <button class="shop-tab-btn active" id="inv-tab-skins" onclick="changeInvTab('skins')" data-i18n="shop-tab-skins">CORES</button>
+                    <button class="shop-tab-btn" id="inv-tab-playerAcc" onclick="changeInvTab('playerAcc')" data-i18n="shop-tab-acc">ACCESSORIES</button>
+                    <button class="shop-tab-btn" id="inv-tab-pets" onclick="changeInvTab('pets')" data-i18n="shop-tab-pets">PETS</button>
+                    <button class="shop-tab-btn" id="inv-tab-petAcc" onclick="changeInvTab('petAcc')" data-i18n="shop-tab-pacc">PET ACCS</button>
+                </div>
+                <div class="shop-wrapper" id="inventory-items-container"></div>
+                <button class="std-btn" style="width: auto; padding: 12px 50px; margin-top: 20px;" onclick="actQuitToMenu()" data-i18n="shop-btn">Back to Lobby</button>
             </div>
         </div>
 
@@ -353,12 +389,15 @@
                     <div id="wave-progress-bg"><div id="wave-progress-bar"></div></div>
                 </div>
                 <div id="right-hud">
-                    <div id="ingame-gold-display" style="font-size: 1.8rem; font-weight: bold; color: #ffcc00; text-shadow: 0 0 10px #ffcc00;">0 ✦</div>
+                    <div id="ingame-gold-display" style="font-size: 1.8rem; font-weight: bold; color: #ffcc00; text-shadow: 0 0 10px #ffcc00;">0 🪙</div>
                     <div id="timer-display">00:00</div>
                     <button id="pause-btn-hud" onclick="actPauseGame()" data-i18n="pause-title">|| PAUSE</button>
                 </div>
             </div>
-            <div id="boss-ui"><div id="boss-name">ABYSSAL OVERLORD</div><div id="boss-hp-bg"><div id="boss-hp-bar"></div></div></div>
+            <div id="boss-ui">
+                <div id="boss-name">ABYSSAL OVERLORD</div>
+                <div id="boss-hp-bg"><div id="boss-hp-bar"></div></div>
+            </div>
         </div>
 
         <div id="pause-menu" class="screen hidden">
@@ -385,7 +424,7 @@
                 <div class="stat-row-setting"><span data-i18n="prof-matches">Level Reached:</span> <span class="stat-val" id="go-level">1</span></div>
                 <div class="stat-row-setting"><span data-i18n="prof-wave">Wave Reached:</span> <span class="stat-val" id="go-wave">Wave 1</span></div>
                 <div class="stat-row-setting"><span data-i18n="prof-kills">Enemies Defeated:</span> <span class="stat-val" id="go-kills">0</span></div>
-                <div class="stat-row-setting"><span data-i18n="prof-gold">Gold Earned:</span> <span class="stat-val" id="go-gold" style="color:#ffcc00;">0 ✦</span></div>
+                <div class="stat-row-setting"><span data-i18n="prof-gold">Gold Earned:</span> <span class="stat-val" id="go-gold" style="color:#ffcc00;">0 🪙</span></div>
             </div>
             <div class="btn-group" style="max-width: 400px;">
                 <button class="std-btn" onclick="actStartGame()" data-i18n="go-retry">Reincarnate (Try Again)</button>
@@ -405,8 +444,8 @@
         
         // ================= I18N SYSTEM =================
         const TRANSLATIONS = {
-            en: { "menu-play": "AWAKEN", "menu-pass": "Pass", "menu-shop": "Shop", "menu-runes": "Runes", "menu-credits": "CREDITS", "prof-title": "COMMANDER PROFILE", "prof-matches": "Matches Played", "prof-wave": "Max Wave", "prof-kills": "Enemies Slain", "prof-deaths": "Total Deaths", "prof-gold": "Total Wealth", "prof-btn": "Save & Back", "bp-title": "BATTLE PASS SEASON 1", "bp-btn": "Back to Lobby", "shop-title": "ARMORY VAULT", "shop-btn": "Back to Lobby", "shop-tab-skins": "CORES", "shop-tab-acc": "ACCESSORIES", "shop-tab-pets": "PETS", "shop-tab-pacc": "PET ACCS", "runes-title": "ANCIENT RUNES", "runes-btn": "Back to Lobby", "set-title": "GAME SETTINGS", "set-music": "Music Volume", "set-sfx": "SFX Volume", "set-dmg": "Display Damage Numbers", "set-lang": "Language", "set-btn": "Apply & Back", "set-reset": "Reset Account Data", "set-reset-btn": "RESET", "warn-reset-title": "WARNING", "warn-reset-msg": "Are you sure you want to wipe all your progress? This action cannot be undone!", "warn-reset-cancel": "Cancel", "warn-reset-confirm": "Confirm Reset", "pause-title": "PAUSED", "pause-resume": "Resume Fight", "pause-quit": "Flee to Lobby", "lvl-title": "POWER AWAKENED", "go-title": "YOU DIED", "go-retry": "Reincarnate", "go-quit": "Return to Lobby", "cred-title": "CREDITS", "cred-btn": "Back to Lobby", "rune-atk": "Base ATK", "rune-spd": "ATK Speed", "rune-critR": "Crit Chance", "rune-critD": "Crit Damage", "rune-def": "Defense", "rune-mov": "Move Speed", "btn-upgrade": "UPGRADE", "btn-max": "MAX LEVEL", "wave-start": "WAVE {w} START" },
-            vi: { "menu-play": "THỨC TỈNH", "menu-pass": "Thẻ Vé", "menu-shop": "Cửa Hàng", "menu-runes": "Ngọc", "menu-credits": "TÁC GIẢ", "prof-title": "HỒ SƠ CHỈ HUY", "prof-matches": "Số Trận", "prof-wave": "Wave Kỷ Lục", "prof-kills": "Đã Tiêu Diệt", "prof-deaths": "Số Lần Chết", "prof-gold": "Tổng Tài Sản", "prof-btn": "Lưu & Thoát", "bp-title": "THẺ VÉ MÙA 1", "bp-btn": "Về Sảnh", "shop-title": "KHO VŨ KHÍ", "shop-btn": "Về Sảnh", "shop-tab-skins": "LÕI (SKIN)", "shop-tab-acc": "PHỤ KIỆN", "shop-tab-pets": "THÚ CƯNG", "shop-tab-pacc": "HIỆU ỨNG PET", "runes-title": "BẢNG NGỌC CỔ ĐẠI", "runes-btn": "Về Sảnh", "set-title": "CÀI ĐẶT", "set-music": "Âm Nhạc", "set-sfx": "Hiệu Ứng Âm Thanh", "set-dmg": "Hiện Số Sát Thương", "set-lang": "Ngôn Ngữ", "set-btn": "Áp Dụng", "set-reset": "Xóa Dữ Liệu Chơi", "set-reset-btn": "XÓA", "warn-reset-title": "CẢNH BÁO", "warn-reset-msg": "Bạn có chắc chắn muốn xóa toàn bộ tiến trình không? Hành động này không thể hoàn tác!", "warn-reset-cancel": "Hủy", "warn-reset-confirm": "Xác Nhận Xóa", "pause-title": "TẠM DỪNG", "pause-resume": "Tiếp Tục", "pause-quit": "Bỏ Trốn", "lvl-title": "THỨC TỈNH SỨC MẠNH", "go-title": "TỬ TRẬN", "go-retry": "Đầu Thai", "go-quit": "Về Sảnh", "cred-title": "TÁC GIẢ", "cred-btn": "Về Sảnh", "rune-atk": "Sát Thương", "rune-spd": "Tốc Độ Đánh", "rune-critR": "Tỷ Lệ Chí Mạng", "rune-critD": "Sát Thương Chí Mạng", "rune-def": "Phòng Thủ", "rune-mov": "Tốc Chạy", "btn-upgrade": "NÂNG CẤP", "btn-max": "TỐI ĐA", "wave-start": "BẮT ĐẦU WAVE {w}" }
+            en: { "menu-play": "AWAKEN", "menu-pass": "Pass", "menu-inventory": "Backpack", "menu-shop": "Shop", "menu-runes": "Runes", "menu-credits": "CREDITS", "prof-title": "COMMANDER PROFILE", "prof-matches": "Matches Played", "prof-wave": "Max Wave", "prof-kills": "Enemies Slain", "prof-deaths": "Total Deaths", "prof-gold": "Total Wealth", "prof-btn": "Save & Back", "bp-title": "BATTLE PASS SEASON 1", "bp-btn": "Back to Lobby", "inv-title": "YOUR BACKPACK", "shop-title": "ARMORY VAULT", "shop-btn": "Back to Lobby", "shop-tab-skins": "CORES", "shop-tab-acc": "ACCESSORIES", "shop-tab-pets": "PETS", "shop-tab-pacc": "PET ACCS", "runes-title": "ANCIENT RUNES", "runes-btn": "Back to Lobby", "set-title": "GAME SETTINGS", "set-music": "Music Volume", "set-sfx": "SFX Volume", "set-dmg": "Display Damage Numbers", "set-lang": "Language", "set-btn": "Apply & Back", "set-reset": "Reset Account Data", "set-reset-btn": "RESET", "warn-reset-title": "WARNING", "warn-reset-msg": "Are you sure you want to wipe all your progress? This action cannot be undone!", "warn-reset-cancel": "Cancel", "warn-reset-confirm": "Confirm Reset", "pause-title": "PAUSED", "pause-resume": "Resume Fight", "pause-quit": "Flee to Lobby", "lvl-title": "POWER AWAKENED", "go-title": "YOU DIED", "go-retry": "Reincarnate", "go-quit": "Return to Lobby", "cred-title": "CREDITS", "cred-btn": "Back to Lobby", "rune-atk": "Base ATK", "rune-spd": "ATK Speed", "rune-critR": "Crit Chance", "rune-critD": "Crit Damage", "rune-def": "Defense", "rune-mov": "Move Speed", "btn-upgrade": "UPGRADE", "btn-max": "MAX LEVEL", "wave-start": "WAVE {w} START" },
+            vi: { "menu-play": "THỨC TỈNH", "menu-pass": "Thẻ Vé", "menu-inventory": "Balo", "menu-shop": "Cửa Hàng", "menu-runes": "Ngọc", "menu-credits": "TÁC GIẢ", "prof-title": "HỒ SƠ CHỈ HUY", "prof-matches": "Số Trận", "prof-wave": "Wave Kỷ Lục", "prof-kills": "Đã Tiêu Diệt", "prof-deaths": "Số Lần Chết", "prof-gold": "Tổng Tài Sản", "prof-btn": "Lưu & Thoát", "bp-title": "THẺ VÉ MÙA 1", "bp-btn": "Về Sảnh", "inv-title": "BALO CỦA BẠN", "shop-title": "KHO VŨ KHÍ", "shop-btn": "Về Sảnh", "shop-tab-skins": "LÕI (SKIN)", "shop-tab-acc": "PHỤ KIỆN", "shop-tab-pets": "THÚ CƯNG", "shop-tab-pacc": "HIỆU ỨNG PET", "runes-title": "BẢNG NGỌC CỔ ĐẠI", "runes-btn": "Về Sảnh", "set-title": "CÀI ĐẶT", "set-music": "Âm Nhạc", "set-sfx": "Hiệu Ứng Âm Thanh", "set-dmg": "Hiện Số Sát Thương", "set-lang": "Ngôn Ngữ", "set-btn": "Áp Dụng", "set-reset": "Xóa Dữ Liệu Chơi", "set-reset-btn": "XÓA", "warn-reset-title": "CẢNH BÁO", "warn-reset-msg": "Bạn có chắc chắn muốn xóa toàn bộ tiến trình không? Hành động này không thể hoàn tác!", "warn-reset-cancel": "Hủy", "warn-reset-confirm": "Xác Nhận Xóa", "pause-title": "TẠM DỪNG", "pause-resume": "Tiếp Tục", "pause-quit": "Bỏ Trốn", "lvl-title": "THỨC TỈNH SỨC MẠNH", "go-title": "TỬ TRẬN", "go-retry": "Đầu Thai", "go-quit": "Về Sảnh", "cred-title": "TÁC GIẢ", "cred-btn": "Về Sảnh", "rune-atk": "Sát Thương", "rune-spd": "Tốc Độ Đánh", "rune-critR": "Tỷ Lệ Chí Mạng", "rune-critD": "Sát Thương Chí Mạng", "rune-def": "Phòng Thủ", "rune-mov": "Tốc Chạy", "btn-upgrade": "NÂNG CẤP", "btn-max": "TỐI ĐA", "wave-start": "BẮT ĐẦU WAVE {w}" }
         };
         let currentLang = localStorage.getItem('fightup_lang') || 'en';
         document.getElementById('lang-select').value = currentLang;
@@ -417,6 +456,7 @@
                 if (TRANSLATIONS[currentLang][key]) el.innerText = TRANSLATIONS[currentLang][key];
             });
             if(currentState === STATES.SHOP) renderShop();
+            if(currentState === STATES.INVENTORY) renderInventory();
             if(currentState === STATES.BP) renderBattlePass();
             if(currentState === STATES.RUNES) renderRunes();
         }
@@ -437,6 +477,8 @@
         let statMatches = parseInt(localStorage.getItem('fightup_stat_matches')) || 0;
         let playerName = localStorage.getItem('fightup_player_name') || 'COMMANDER';
         let playerAvatar = localStorage.getItem('fightup_player_avatar') || '👤';
+        
+        let accountTotalExp = parseInt(localStorage.getItem('fightup_acc_total_exp')) || 0; // EXP cho Account Level
         let bpTotalExp = parseInt(localStorage.getItem('fightup_bp_exp')) || 0;
         let bpClaimedTiers = getLocalData('fightup_bp_claimed', []);
         
@@ -452,12 +494,29 @@
         };
 
         function getRuneCost(lvl, base) { return base + (lvl * 100); }
+        
+        function calculateAccountLevel() {
+            let tempExp = accountTotalExp; let lvl = 1; let req = 1000;
+            while(tempExp >= req) { tempExp -= req; lvl++; req = lvl * 1000; }
+            return { level: lvl, currentExp: tempExp, maxExp: req, percent: (tempExp/req)*100 };
+        }
+
+        function updateAccountLevelUI() {
+            let accInfo = calculateAccountLevel();
+            let txt = `LEVEL ${accInfo.level} (${Math.floor(accInfo.percent)}%)`;
+            document.getElementById('lobby-acc-level-text').innerText = txt;
+            document.getElementById('lobby-acc-level-bar').style.width = `${accInfo.percent}%`;
+            
+            document.getElementById('prof-acc-level-text').innerText = `ACCOUNT LEVEL: ${accInfo.level} (${Math.floor(accInfo.percent)}%)`;
+            document.getElementById('prof-acc-level-bar').style.width = `${accInfo.percent}%`;
+        }
 
         document.getElementById('global-gold').innerText = globalGold;
         document.getElementById('lobby-name').innerText = playerName;
         document.getElementById('lobby-avatar').innerText = playerAvatar;
+        updateAccountLevelUI();
 
-        // DATA CỬA HÀNG MỚI (SKINS, TRANG BỊ, THÚ CƯNG)
+        // DATA CỬA HÀNG & ITEM
         const ITEMS_DB = {
             skins: [
                 { id: 'skin_default', name: 'White Spirit', cost: 0, color: '#ffffff', pColor: '#ffffff', isBp: false },
@@ -487,6 +546,7 @@
         };
 
         let currentShopTab = 'skins';
+        let currentInvTab = 'skins';
 
         const BP_TIERS = [];
         function getExpForBpLevel(lvl) { return 500 + (lvl * 150); }
@@ -504,34 +564,42 @@
         }
 
         function saveGameData() {
-            localStorage.setItem('fightup_gold', globalGold); localStorage.setItem('fightup_unlocked_items', JSON.stringify(unlockedItems));
+            localStorage.setItem('fightup_gold', globalGold); 
+            localStorage.setItem('fightup_unlocked_items', JSON.stringify(unlockedItems));
             localStorage.setItem('fightup_eq_skin', equippedSkin); 
             localStorage.setItem('fightup_eq_playerAcc', equippedPlayerAcc);
             localStorage.setItem('fightup_eq_pet', equippedPet);
             localStorage.setItem('fightup_eq_petAcc', equippedPetAcc);
             localStorage.setItem('fightup_bp_exp', bpTotalExp); 
+            localStorage.setItem('fightup_acc_total_exp', accountTotalExp);
             localStorage.setItem('fightup_bp_claimed', JSON.stringify(bpClaimedTiers)); localStorage.setItem('fightup_stat_kills', statKills); 
             localStorage.setItem('fightup_stat_wave', statMaxWave); localStorage.setItem('fightup_stat_deaths', statDeaths);
             localStorage.setItem('fightup_stat_matches', statMatches); localStorage.setItem('fightup_runes', JSON.stringify(playerRunes));
             document.getElementById('global-gold').innerText = globalGold; document.getElementById('lobby-name').innerText = playerName; document.getElementById('lobby-avatar').innerText = playerAvatar;
+            updateAccountLevelUI();
         }
 
-        const STATES = { MENU: 'MENU', SHOP: 'SHOP', BP: 'BP', RUNES: 'RUNES', PROFILE: 'PROFILE', SETTINGS: 'SETTINGS', CREDITS: 'CREDITS', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER' };
+        const STATES = { MENU: 'MENU', SHOP: 'SHOP', INVENTORY: 'INVENTORY', BP: 'BP', RUNES: 'RUNES', PROFILE: 'PROFILE', SETTINGS: 'SETTINGS', CREDITS: 'CREDITS', PLAYING: 'PLAYING', PAUSED: 'PAUSED', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER' };
         let currentState = STATES.MENU;
-        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.RUNES]: document.getElementById('runes-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.SETTINGS]: document.getElementById('settings-screen'), [STATES.CREDITS]: document.getElementById('credits-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
+        const screens = { [STATES.MENU]: document.getElementById('main-menu'), [STATES.SHOP]: document.getElementById('shop-screen'), [STATES.INVENTORY]: document.getElementById('inventory-screen'), [STATES.BP]: document.getElementById('bp-screen'), [STATES.RUNES]: document.getElementById('runes-screen'), [STATES.PROFILE]: document.getElementById('profile-screen'), [STATES.PAUSED]: document.getElementById('pause-menu'), [STATES.LEVEL_UP]: document.getElementById('level-up-menu'), [STATES.SETTINGS]: document.getElementById('settings-screen'), [STATES.CREDITS]: document.getElementById('credits-screen'), [STATES.GAME_OVER]: document.getElementById('game-over-screen') };
 
         function switchScreen(state) {
             currentState = state; Object.values(screens).forEach(screen => { if(screen) screen.classList.add('hidden'); });
             if (state === STATES.PLAYING || state === STATES.PAUSED || state === STATES.LEVEL_UP) { gameCanvas.classList.remove('hidden'); document.getElementById('game-hud').classList.remove('hidden'); glowEl.style.display = 'none'; } else { gameCanvas.classList.add('hidden'); document.getElementById('game-hud').classList.add('hidden'); glowEl.style.display = 'block'; }
             if (state === STATES.LEVEL_UP) { rerollsLeft = 1; generateRandomPowerUps(); }
-            if (state === STATES.SHOP) renderShop(); if (state === STATES.BP) renderBattlePass(); if (state === STATES.RUNES) renderRunes();
+            if (state === STATES.SHOP) renderShop(); 
+            if (state === STATES.INVENTORY) renderInventory();
+            if (state === STATES.BP) renderBattlePass(); 
+            if (state === STATES.RUNES) renderRunes();
             if (state === STATES.PROFILE) { document.getElementById('prof-name-edit').value = playerName; document.getElementById('prof-avatar-edit').innerText = playerAvatar; renderProfile(); }
             if (state === STATES.GAME_OVER) { 
                 statDeaths++; statMatches++; statKills += sessionKills; if(currentWave > statMaxWave) statMaxWave = currentWave;
                 sessionBPExp = Math.floor(sessionKills * 5 + (currentWave * 50) + (isBossActive ? 500 : 0)); 
-                bpTotalExp += sessionBPExp; globalGold += sessionGold; saveGameData();
+                bpTotalExp += sessionBPExp; 
+                accountTotalExp += sessionBPExp; // Cộng exp cho account
+                globalGold += sessionGold; saveGameData();
                 document.getElementById('go-level').innerText = player.level; document.getElementById('go-wave').innerText = isBossActive ? "BOSS STAGE" : `Wave ${currentWave}`; 
-                document.getElementById('go-kills').innerText = sessionKills; document.getElementById('go-gold').innerText = `+${sessionGold} ✦`; 
+                document.getElementById('go-kills').innerText = sessionKills; document.getElementById('go-gold').innerText = `+${sessionGold} 🪙`; 
             }
             if(screens[state]) screens[state].classList.remove('hidden');
         }
@@ -544,13 +612,14 @@
             const activeSkin = ITEMS_DB.skins.find(s => s.id === equippedSkin) || ITEMS_DB.skins[0];
             const coreEl = document.getElementById('prof-equipped-core'); coreEl.style.background = activeSkin.color; coreEl.style.boxShadow = `0 0 40px ${activeSkin.color}, 0 0 100px ${activeSkin.pColor}`;
             document.querySelector('.prof-right').style.background = `radial-gradient(circle at center, ${activeSkin.color}22 0%, transparent 70%)`;
+            updateAccountLevelUI();
         }
 
         function renderRunes() {
             let html = '';
             for(let key in RUNE_DEFS) {
                 let r = RUNE_DEFS[key]; let lvl = playerRunes[key]; let isMax = lvl >= RUNE_MAX; let cost = getRuneCost(lvl, r.baseCost);
-                let btnTxt = isMax ? TRANSLATIONS[currentLang]['btn-max'] : `${TRANSLATIONS[currentLang]['btn-upgrade']} (${cost} ✦)`;
+                let btnTxt = isMax ? TRANSLATIONS[currentLang]['btn-max'] : `${TRANSLATIONS[currentLang]['btn-upgrade']} (${cost} 🪙)`;
                 let btnHtml = `<button class="std-btn shop-btn ${isMax ? 'equipped' : ''}" onclick="upgradeRune('${key}')" ${isMax ? 'disabled' : ''}>${btnTxt}</button>`;
                 let nameStr = TRANSLATIONS[currentLang][`rune-${key}`] || r.id;
                 html += `<div class="shop-card"><div class="item-icon" style="color: ${r.color}">${r.icon}</div><div class="item-name" style="color: ${r.color}; flex-direction:column; gap:5px;"><span>${nameStr}</span><span class="rune-lvl">Lv. ${lvl}/${RUNE_MAX}</span><span style="font-size:0.85rem; color:#aaa; font-weight:normal;">Effect: ${r.stepStr}/Lv</span></div>${btnHtml}</div>`;
@@ -574,57 +643,86 @@
         }
         function claimBPReward(level) { let tier = BP_TIERS.find(t => t.level === level); if (!tier || bpClaimedTiers.includes(level)) return; if (tier.type === 'gold') { globalGold += tier.amount; } else if (tier.type === 'item') { unlockedItems.push(tier.itemId); } bpClaimedTiers.push(level); saveGameData(); renderBattlePass(); triggerShake(); }
 
-        // SHOP MỚI CÓ TAB
+        // SHOP & INVENTORY
         function changeShopTab(tab) {
             currentShopTab = tab;
-            document.querySelectorAll('.shop-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('#shop-screen .shop-tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
             renderShop();
         }
 
-        function renderShopGrid(items, equipVarType, currentEquipped) {
+        function changeInvTab(tab) {
+            currentInvTab = tab;
+            document.querySelectorAll('#inventory-screen .shop-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`inv-tab-${tab}`).classList.add('active');
+            renderInventory();
+        }
+
+        function renderShopGrid(items, equipVarType, currentEquipped, isInventory = false) {
             let html = `<div class="shop-grid">`;
             items.forEach(item => {
-                if(item.isBp) return; const isUnlocked = unlockedItems.includes(item.id); 
+                const isUnlocked = unlockedItems.includes(item.id); 
+                if(isInventory && !isUnlocked) return; // Balo chỉ hiển thị đồ đã có
+                if(!isInventory && item.isBp) return; // Shop không bán đồ Battle Pass
+                
                 let isEquipped = (currentEquipped === item.id);
                 
-                let btnHtml = isEquipped ? `<button class="std-btn shop-btn equipped" onclick="unequipItem('${equipVarType}')">Unequip</button>` : 
+                let btnHtml = '';
+                if(isInventory) {
+                    btnHtml = isEquipped ? `<button class="std-btn shop-btn equipped" onclick="unequipItem('${equipVarType}', true)">Unequip</button>` : 
+                                           `<button class="std-btn shop-btn" onclick="equipItem('${equipVarType}', '${item.id}', true)">Equip</button>`;
+                } else {
+                    btnHtml = isEquipped ? `<button class="std-btn shop-btn equipped" onclick="unequipItem('${equipVarType}')">Unequip</button>` : 
                               isUnlocked ? `<button class="std-btn shop-btn" onclick="equipItem('${equipVarType}', '${item.id}')">Equip</button>` : 
-                                           `<button class="std-btn shop-btn" onclick="buyItem('${item.id}', ${item.cost})">Buy (${item.cost} ✦)</button>`;
-                
+                                           `<button class="std-btn shop-btn" onclick="buyItem('${item.id}', ${item.cost})">Buy (${item.cost} 🪙)</button>`;
+                }
+
                 let visual = (equipVarType === 'skins') ? `<div class="skin-preview" style="background: ${item.color}; color: ${item.color}"></div>` : `<div class="item-icon" style="color: ${item.color}">${item.icon}</div>`;
                 html += `<div class="shop-card">${visual}<div class="item-name">${item.name}</div>${btnHtml}</div>`;
-            }); return html + `</div>`;
+            }); 
+            return html + `</div>`;
         }
 
         function renderShop() { 
             let container = document.getElementById('shop-items-container');
-            if(currentShopTab === 'skins') container.innerHTML = renderShopGrid(ITEMS_DB.skins, 'skins', equippedSkin);
-            if(currentShopTab === 'playerAcc') container.innerHTML = renderShopGrid(ITEMS_DB.playerAcc, 'playerAcc', equippedPlayerAcc);
-            if(currentShopTab === 'pets') container.innerHTML = renderShopGrid(ITEMS_DB.pets, 'pets', equippedPet);
-            if(currentShopTab === 'petAcc') container.innerHTML = renderShopGrid(ITEMS_DB.petAcc, 'petAcc', equippedPetAcc);
+            if(currentShopTab === 'skins') container.innerHTML = renderShopGrid(ITEMS_DB.skins, 'skins', equippedSkin, false);
+            if(currentShopTab === 'playerAcc') container.innerHTML = renderShopGrid(ITEMS_DB.playerAcc, 'playerAcc', equippedPlayerAcc, false);
+            if(currentShopTab === 'pets') container.innerHTML = renderShopGrid(ITEMS_DB.pets, 'pets', equippedPet, false);
+            if(currentShopTab === 'petAcc') container.innerHTML = renderShopGrid(ITEMS_DB.petAcc, 'petAcc', equippedPetAcc, false);
+        }
+
+        function renderInventory() {
+            let container = document.getElementById('inventory-items-container');
+            if(currentInvTab === 'skins') container.innerHTML = renderShopGrid(ITEMS_DB.skins, 'skins', equippedSkin, true);
+            if(currentInvTab === 'playerAcc') container.innerHTML = renderShopGrid(ITEMS_DB.playerAcc, 'playerAcc', equippedPlayerAcc, true);
+            if(currentInvTab === 'pets') container.innerHTML = renderShopGrid(ITEMS_DB.pets, 'pets', equippedPet, true);
+            if(currentInvTab === 'petAcc') container.innerHTML = renderShopGrid(ITEMS_DB.petAcc, 'petAcc', equippedPetAcc, true);
         }
 
         function buyItem(id, cost) { if (globalGold >= cost) { globalGold -= cost; unlockedItems.push(id); saveGameData(); renderShop(); triggerShake(); } else { alert("Insufficient Gold!"); } }
         
-        function equipItem(type, id) { 
+        function equipItem(type, id, fromInventory = false) { 
             if(type === 'skins') equippedSkin = id; 
             if(type === 'playerAcc') equippedPlayerAcc = id; 
             if(type === 'pets') equippedPet = id; 
             if(type === 'petAcc') equippedPetAcc = id; 
-            saveGameData(); renderShop(); triggerShake(); 
+            saveGameData(); 
+            if(fromInventory) renderInventory(); else renderShop(); 
+            triggerShake(); 
         }
-        function unequipItem(type) { 
+        function unequipItem(type, fromInventory = false) { 
             if(type === 'skins') return; // Không cho phép cởi Skin gốc
             if(type === 'playerAcc') equippedPlayerAcc = 'acc_none'; 
             if(type === 'pets') equippedPet = 'pet_none'; 
             if(type === 'petAcc') equippedPetAcc = 'pAcc_none'; 
-            saveGameData(); renderShop(); triggerShake(); 
+            saveGameData(); 
+            if(fromInventory) renderInventory(); else renderShop(); 
+            triggerShake(); 
         }
 
         function triggerShake() { const wrapper = document.getElementById('game-wrapper'); wrapper.classList.remove('shake-effect'); void wrapper.offsetWidth; wrapper.classList.add('shake-effect'); }
 
-        // ================= GAMEPLAY VARIABLES & PET LOGIC =================
+        // ================= GAMEPLAY VARIABLES =================
         const WORLD_WIDTH = 4000; const WORLD_HEIGHT = 4000; let camera = { x: 0, y: 0 };
         const player = {}; 
         
@@ -643,15 +741,12 @@
             { id: 'magnet', weight: 70, name: 'Magnetic Field', desc: 'Increase EXP pickup radius.', apply: () => { player.magnetRange += 60; } },
             { id: 'exp_boost', weight: 60, name: 'Enlightenment', desc: 'Gain 30% more EXP.', apply: () => { player.expMultiplier += 0.3; } },
             { id: 'dash_cd', weight: 60, name: 'Phantom Wind', desc: 'Reduce Dash cooldown.', apply: () => { player.maxDashCooldown = Math.max(30, player.maxDashCooldown - 20); } },
-            
-            // SKILL MỚI DÀNH CHO PET (Chỉ hiện khi có Pet)
             { id: 'pet_atk_speed', weight: 60, name: 'Pet Frenzy', desc: 'Increase Pet attack speed.', apply: () => { if(player.pet.active) player.pet.fireRate = Math.max(10, player.pet.fireRate - 10); } },
             { id: 'pet_atk_dmg', weight: 60, name: 'Pet Empower', desc: 'Increase Pet damage.', apply: () => { if(player.pet.active) player.pet.damage += 15; } }
         ];
 
         function getWeightedRandomPowerUps(count) { 
             let selected = []; 
-            // Lọc Bể Kỹ Năng: Không cho ra chiêu Pet nếu chưa trang bị Pet
             let tempPool = POWER_UP_POOL.filter(p => {
                 if (p.id.startsWith('pet_') && (!player.pet || !player.pet.active)) return false;
                 return true;
@@ -684,17 +779,17 @@
         
         function applyStatsFromRunes() {
             const activeSkin = ITEMS_DB.skins.find(s => s.id === equippedSkin) || ITEMS_DB.skins[0]; player.color = activeSkin.color; player.particleColor = activeSkin.pColor;
-            player.damage = 30 + (playerRunes.atk * 3);
-            player.fireRate = Math.max(10, 35 - (playerRunes.atkSpeed * 1.5));
-            player.critRate = 0.1 + (playerRunes.critRate * 0.02); 
-            player.critMult = 2.0 + (playerRunes.critDmg * 0.2); 
+            // NERF MAIN CHARACTER BASE STATS HERE
+            player.damage = 15 + (playerRunes.atk * 2); // Giảm base dmg, giảm bonus từ Rune
+            player.fireRate = Math.max(15, 45 - (playerRunes.atkSpeed * 1.5)); // Tốc bắn chậm hơn
+            player.critRate = 0.05 + (playerRunes.critRate * 0.02); // Giảm tỉ lệ chí mạng
+            player.critMult = 1.5 + (playerRunes.critDmg * 0.2); // Giảm sát thương chí mạng
             player.def = playerRunes.def * 1; 
-            player.speed = 5 + (playerRunes.speed * 0.2);
-            player.acc = equippedPlayerAcc; // Lưu phụ kiện người chơi
+            player.speed = 4 + (playerRunes.speed * 0.15); // Giảm tốc độ chạy
+            player.acc = equippedPlayerAcc;
         }
 
         function resetGame() {
-            // FIX: ĐẶT LẠI HOÀN TOÀN MỌI CHỈ SỐ NHÂN VẬT VỀ MẶC ĐỊNH
             player.x = WORLD_WIDTH/2; player.y = WORLD_HEIGHT/2; player.radius = 15;
             player.hp = 100; player.maxHp = 100; player.lastHitFrame = 0; player.level = 1;
             player.exp = 0; player.maxExp = 100; player.expMultiplier = 1.0; player.magnetRange = 40; 
@@ -706,7 +801,6 @@
             
             applyStatsFromRunes();
             
-            // LOGIC KHỞI TẠO THÚ CƯNG
             const petData = ITEMS_DB.pets.find(p => p.id === equippedPet);
             if(petData && petData.id !== 'pet_none') {
                 player.pet = { active: true, x: player.x, y: player.y, radius: 8, speed: player.speed + 1.5, color: petData.color, damage: petData.dmg, fireRate: petData.fireRate, attackRange: 400, lastFiredFrame: 0, acc: equippedPetAcc };
@@ -726,13 +820,14 @@
         }
 
         function updateHUD() {
-            document.getElementById('level-display').innerText = `LV. ${player.level}`; document.getElementById('hp-bar').style.width = Math.max(0, (player.hp / player.maxHp) * 100) + '%'; document.getElementById('hp-text').innerText = `${Math.floor(player.hp)} / ${player.maxHp}`; document.getElementById('exp-bar').style.width = Math.min(100, (player.exp / player.maxExp) * 100) + '%'; document.getElementById('timer-display').innerText = `${Math.floor(gameSeconds / 60).toString().padStart(2, '0')}:${(gameSeconds % 60).toString().padStart(2, '0')}`; document.getElementById('ingame-gold-display').innerText = `${sessionGold} ✦`;
+            document.getElementById('level-display').innerText = `LV. ${player.level}`; document.getElementById('hp-bar').style.width = Math.max(0, (player.hp / player.maxHp) * 100) + '%'; document.getElementById('hp-text').innerText = `${Math.floor(player.hp)} / ${player.maxHp}`; document.getElementById('exp-bar').style.width = Math.min(100, (player.exp / player.maxExp) * 100) + '%'; document.getElementById('timer-display').innerText = `${Math.floor(gameSeconds / 60).toString().padStart(2, '0')}:${(gameSeconds % 60).toString().padStart(2, '0')}`; document.getElementById('ingame-gold-display').innerText = `${sessionGold} 🪙`;
             if (isBossActive) { document.getElementById('wave-text').innerText = "BOSS FIGHT"; document.getElementById('wave-text').style.color = "#ff0044"; document.getElementById('wave-progress-bar').style.width = "100%"; document.getElementById('wave-progress-bar').style.background = "#ff0044"; if(bossEntity) document.getElementById('boss-hp-bar').style.width = Math.max(0, (bossEntity.hp / bossEntity.maxHp) * 100) + '%'; } else { document.getElementById('wave-text').innerText = `WAVE ${currentWave}`; document.getElementById('wave-text').style.color = "#fff"; document.getElementById('wave-progress-bar').style.width = Math.min(100, (enemiesKilled / killsNeededForNextWave) * 100) + '%'; document.getElementById('wave-progress-bar').style.background = "#fff"; }
         }
 
         // Action Functions
         function actStartGame() { triggerShake(); resetGame(); switchScreen(STATES.PLAYING); }
         function actShowShop() { triggerShake(); switchScreen(STATES.SHOP); }
+        function actShowInventory() { triggerShake(); switchScreen(STATES.INVENTORY); }
         function actShowRunes() { triggerShake(); switchScreen(STATES.RUNES); }
         function actShowBattlePass() { triggerShake(); switchScreen(STATES.BP); }
         function actShowProfile() { triggerShake(); switchScreen(STATES.PROFILE); }
@@ -783,13 +878,26 @@
         function spawnEnemy() {
             if (isBossActive) return; 
             const angle = Math.random() * Math.PI * 2; const distance = Math.max(gameCanvas.width, gameCanvas.height) / 2 + 100; const ex = player.x + Math.cos(angle) * distance; const ey = player.y + Math.sin(angle) * distance;
-            let isElite = false; let isRanged = false; let type = 'normal'; let color = '#cc0000'; let radius = 12; let speed = Math.random() * 1.5 + 1.2 + (currentWave * 0.2); let hp = 20 + ((currentWave - 1) * 15); let expReward = 20; let damage = 15;
+            
+            // BUFF ENEMIES
+            let isElite = false; let isRanged = false; let type = 'normal'; let color = '#cc0000'; 
+            let radius = 12; let speed = Math.random() * 1.5 + 1.5 + (currentWave * 0.3); // Buff Speed
+            let hp = 30 + ((currentWave - 1) * 25); // Buff HP
+            let expReward = 20; let damage = 20; // Buff Dmg
+            
             const rand = Math.random();
-            if (currentWave >= 2 && rand < 0.2) { isRanged = true; type = 'sniper'; color = '#00ff44'; radius = 14; speed = Math.random() * 1.0 + 1.5; hp = 40 + (currentWave * 10); expReward = 40; damage = 15; } else if (currentWave >= 3 && rand < 0.3) { isElite = true; type = 'phantom'; color = '#0088ff'; radius = 15; speed = Math.random() * 1.5 + 2.5; hp = 100 + (currentWave * 20); expReward = 100; damage = 25; } else if (currentWave >= 4 && rand < 0.45) { isElite = true; type = 'berserker'; color = '#ff3300'; radius = 18; speed = Math.random() * 1.0 + 1.0; hp = 150 + (currentWave * 30); expReward = 120; damage = 35; }
+            if (currentWave >= 2 && rand < 0.2) { isRanged = true; type = 'sniper'; color = '#00ff44'; radius = 14; speed = Math.random() * 1.0 + 1.8; hp = 50 + (currentWave * 15); expReward = 40; damage = 25; } 
+            else if (currentWave >= 3 && rand < 0.3) { isElite = true; type = 'phantom'; color = '#0088ff'; radius = 15; speed = Math.random() * 1.5 + 2.8; hp = 150 + (currentWave * 30); expReward = 100; damage = 35; } 
+            else if (currentWave >= 4 && rand < 0.45) { isElite = true; type = 'berserker'; color = '#ff3300'; radius = 18; speed = Math.random() * 1.0 + 1.2; hp = 200 + (currentWave * 40); expReward = 120; damage = 45; }
             enemies.push({ x: ex, y: ey, radius, speed, color, hp, maxHp: hp, isElite, isRanged, type, expReward, damage, state: 'moving', stateTimer: 0, dodgeCooldown: 0 });
         }
 
-        function spawnBoss() { isBossActive = true; document.getElementById('boss-ui').style.opacity = 1; enemies = enemies.slice(-5); bossEntity = { x: player.x, y: player.y - 600, radius: 70, speed: 1.5, color: '#ff0044', hp: 6000 + (player.level * 150), maxHp: 6000 + (player.level * 150), isElite: true, isBoss: true, damage: 50, expReward: 5000, state: 'moving', stateTimer: frames, isFiring: false }; enemies.push(bossEntity); }
+        // BUFF BOSS
+        function spawnBoss() { 
+            isBossActive = true; document.getElementById('boss-ui').style.opacity = 1; enemies = enemies.slice(-5); 
+            bossEntity = { x: player.x, y: player.y - 600, radius: 70, speed: 1.8, color: '#ff0044', hp: 8000 + (player.level * 250), maxHp: 8000 + (player.level * 250), isElite: true, isBoss: true, damage: 60, expReward: 5000, state: 'moving', stateTimer: frames, isFiring: false }; 
+            enemies.push(bossEntity); 
+        }
 
         function handleEnemyKill(enemy) {
             sessionKills++;
@@ -811,12 +919,38 @@
 
         function addFloatingText(x, y, text, color, fontSize = 16) { floatingTexts.push({ x: x + (Math.random()*20-10), y: y - 20, text: text, color: color, alpha: 1.0, dy: -1.5, size: fontSize }); }
 
+        // VẼ KIM CƯƠNG CHO EXP
+        function drawDiamond(ctx, x, y, size, color, isGold, frames) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(frames * 0.05); // Xoay kim cương
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = color;
+            ctx.beginPath();
+            ctx.moveTo(0, -size);
+            ctx.lineTo(size * 0.8, 0);
+            ctx.lineTo(0, size);
+            ctx.lineTo(-size * 0.8, 0);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            
+            // Vẽ vân sáng (Highlight)
+            ctx.beginPath();
+            ctx.moveTo(0, -size * 0.8);
+            ctx.lineTo(size * 0.4, 0);
+            ctx.lineTo(0, size * 0.8);
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fill();
+            ctx.restore();
+        }
+
         function gameLoop() {
             if (currentState === STATES.PLAYING) {
                 frames++; if (frames % 60 === 0) { gameSeconds++; updateHUD(); }
                 
                 camera.x = player.x - gameCanvas.width / 2; camera.y = player.y - gameCanvas.height / 2; camera.x = Math.max(0, Math.min(camera.x, WORLD_WIDTH - gameCanvas.width)); camera.y = Math.max(0, Math.min(camera.y, WORLD_HEIGHT - gameCanvas.height));
-                if (!isBossActive) { let spawnRate = Math.max(10, 45 - (currentWave * 5)); if (frames % spawnRate === 0) spawnEnemy(); } else { if (frames % 120 === 0) spawnEnemy(); }
+                if (!isBossActive) { let spawnRate = Math.max(10, 45 - (currentWave * 5)); if (frames % spawnRate === 0) spawnEnemy(); } else { if (frames % 90 === 0) spawnEnemy(); } // Boss gọi đệ nhanh hơn
                 autoFire();
 
                 if (player.dashCooldown > 0) player.dashCooldown--; document.getElementById('dash-bar').style.width = Math.min(100, (1 - player.dashCooldown / player.maxDashCooldown) * 100) + '%'; if (player.dashCooldown === 0) document.getElementById('dash-bar').style.background = '#00ffff'; else document.getElementById('dash-bar').style.background = '#444';
@@ -827,10 +961,8 @@
 
                 ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); ctx.save(); ctx.translate(-camera.x, -camera.y);
 
-                // Grid background
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)'; ctx.lineWidth = 2; const gridSize = 100; const startX = Math.floor(camera.x / gridSize) * gridSize; const startY = Math.floor(camera.y / gridSize) * gridSize; for (let x = startX; x < camera.x + gameCanvas.width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, camera.y); ctx.lineTo(x, camera.y + gameCanvas.height); ctx.stroke(); } for (let y = startY; y < camera.y + gameCanvas.height; y += gridSize) { ctx.beginPath(); ctx.moveTo(camera.x, y); ctx.lineTo(camera.x + gameCanvas.width, y); ctx.stroke(); }
                 
-                // Crosshairs
                 for (let i = crosshairs.length - 1; i >= 0; i--) { 
                     let ch = crosshairs[i]; ch.radius -= 0.5; if(ch.radius < 5) ch.radius = 5;
                     ctx.beginPath(); ctx.arc(ch.x, ch.y, ch.radius, 0, Math.PI * 2); ctx.strokeStyle = `rgba(255, 0, 68, ${ch.framesLeft > 10 ? 0.8 : 0.2})`; ctx.lineWidth = 2; ctx.stroke();
@@ -838,12 +970,10 @@
                     ch.framesLeft--; if (ch.framesLeft <= 0) crosshairs.splice(i, 1); 
                 }
 
-                // Trails & Aura
                 for (let i = player.trailHistory.length - 1; i >= 0; i--) { let trail = player.trailHistory[i]; ctx.beginPath(); ctx.arc(trail.x, trail.y, player.radius, 0, Math.PI * 2); ctx.fillStyle = `rgba(0, 255, 255, ${trail.alpha})`; ctx.fill(); trail.alpha -= 0.1; if (trail.alpha <= 0) player.trailHistory.splice(i, 1); }
                 for (let i = player.skinParticles.length - 1; i >= 0; i--) { let sp = player.skinParticles[i]; ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.radius, 0, Math.PI * 2); ctx.fillStyle = sp.color; ctx.globalAlpha = sp.alpha; ctx.shadowBlur = 10; ctx.shadowColor = sp.color; ctx.fill(); ctx.shadowBlur=0; ctx.globalAlpha = 1.0; sp.y -= 0.5; sp.alpha -= 0.05; if (sp.alpha <= 0) player.skinParticles.splice(i, 1); }
                 if (player.hasAura) { ctx.beginPath(); ctx.arc(player.x, player.y, player.auraRadius, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 100, 0, 0.15)'; ctx.fill(); ctx.strokeStyle = 'rgba(255, 100, 0, 0.5)'; ctx.lineWidth = 2; ctx.stroke(); }
 
-                // TRANG BỊ: PHỤ KIỆN NGƯỜI CHƠI
                 if (player.acc === 'acc_halo') {
                     ctx.save(); ctx.translate(player.x, player.y - player.radius - 15); ctx.scale(1, 0.3); ctx.rotate(frames * 0.05);
                     ctx.beginPath(); ctx.arc(0, 0, player.radius + 10, 0, Math.PI*2); ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 3; ctx.shadowBlur = 10; ctx.shadowColor = '#ffcc00'; ctx.stroke(); ctx.restore();
@@ -854,19 +984,16 @@
                     ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(40 - Math.cos(wingAngle)*10, -30 + Math.sin(wingAngle)*20); ctx.lineTo(20, 10); ctx.stroke(); ctx.restore();
                 }
 
-                // TRANG BỊ: THÚ CƯNG & PHỤ KIỆN THÚ CƯNG
                 if (player.pet && player.pet.active) {
                     let p = player.pet;
                     let dx = player.x - p.x; let dy = player.y - p.y; let dist = Math.hypot(dx, dy);
                     if (dist > 70) { p.x += (dx / dist) * p.speed; p.y += (dy / dist) * p.speed; }
                     
-                    // Hiệu ứng phụ kiện Pet
                     if (frames % 4 === 0) {
                         if(p.acc === 'pAcc_fire') particleBursts.push({x: p.x, y: p.y, vx: (Math.random()-0.5), vy: -1, radius: 3, color: '#ff4400', alpha: 0.8});
                         if(p.acc === 'pAcc_ice') particleBursts.push({x: p.x, y: p.y, vx: (Math.random()-0.5), vy: 1, radius: 3, color: '#00aaff', alpha: 0.8});
                     }
 
-                    // Pet Auto Fire
                     if (enemies.length > 0 && frames - p.lastFiredFrame > p.fireRate) {
                         let nearest = null; let minDist = Infinity;
                         enemies.forEach(e => { let d = Math.hypot(p.x - e.x, p.y - e.y); if(d < minDist){ minDist=d; nearest=e;} });
@@ -877,19 +1004,23 @@
                         }
                     }
 
-                    // Vẽ Pet
                     ctx.shadowBlur = 15; ctx.shadowColor = p.color;
                     ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fillStyle = p.color; ctx.fill(); ctx.shadowBlur = 0;
                 }
 
-                // EXP Gems
                 for (let i = expGems.length - 1; i >= 0; i--) {
-                    let gem = expGems[i]; let isGold = gem.type === 'gold'; ctx.shadowBlur = 10; ctx.shadowColor = isGold ? '#ffcc00' : '#00ffcc'; ctx.beginPath(); ctx.arc(gem.x, gem.y, isGold ? 6 : 4, 0, Math.PI * 2); ctx.fillStyle = isGold ? '#ffcc00' : '#00ffcc'; ctx.fill(); ctx.shadowBlur = 0;
+                    let gem = expGems[i]; let isGold = gem.type === 'gold'; 
+                    let size = isGold ? 8 : 6;
+                    let color = isGold ? '#ffcc00' : '#00ffcc';
+                    
+                    // SKIN CHO EXP (Diamond)
+                    drawDiamond(ctx, gem.x, gem.y, size, color, isGold, frames);
+                    
                     if (Math.hypot(player.x - gem.x, player.y - gem.y) < player.radius + player.magnetRange) { 
-                        createBurst(gem.x, gem.y, isGold ? '#ffcc00' : '#00ffcc');
+                        createBurst(gem.x, gem.y, color);
                         if (isGold) { 
                             let isCrit = Math.random() < 0.1; let finalGold = isCrit ? gem.value * 2 : gem.value; sessionGold += finalGold; 
-                            addFloatingText(gem.x, gem.y, isCrit ? `+${finalGold} ✦ CRIT!` : `+${finalGold}`, isCrit ? '#ffaa00' : '#ffcc00', isCrit ? 24 : 16); 
+                            addFloatingText(gem.x, gem.y, isCrit ? `+${finalGold} 🪙 CRIT!` : `+${finalGold}`, isCrit ? '#ffaa00' : '#ffcc00', isCrit ? 24 : 16); 
                         } else { 
                             let gainedExp = Math.floor(gem.value * player.expMultiplier); player.exp += gainedExp; addFloatingText(gem.x, gem.y, `+${gainedExp}`, '#00ffcc'); 
                             if (player.exp >= player.maxExp) { player.level++; player.exp -= player.maxExp; player.maxExp = Math.floor(player.maxExp * 1.5); switchScreen(STATES.LEVEL_UP); } 
@@ -898,12 +1029,10 @@
                     }
                 }
 
-                // Particles
                 for (let i = particleBursts.length - 1; i >= 0; i--) { let pb = particleBursts[i]; pb.x += pb.vx; pb.y += pb.vy; pb.alpha -= 0.05; ctx.globalAlpha = Math.max(0, pb.alpha); ctx.beginPath(); ctx.arc(pb.x, pb.y, pb.radius, 0, Math.PI*2); ctx.fillStyle = pb.color; ctx.fill(); ctx.globalAlpha = 1.0; if(pb.alpha <= 0) particleBursts.splice(i, 1); }
 
                 let showDmgSetting = document.getElementById('setting-dmg').checked;
                 
-                // Projectiles (Chung cho người và pet)
                 for (let i = projectiles.length - 1; i >= 0; i--) {
                     let p = projectiles[i]; p.history.push({x: p.x, y: p.y}); if (p.history.length > 6) p.history.shift(); p.x += p.vx; p.y += p.vy;
                     if(p.history.length > 1) { ctx.beginPath(); ctx.moveTo(p.history[0].x, p.history[0].y); for(let pos of p.history) ctx.lineTo(pos.x, pos.y); ctx.strokeStyle = p.color; ctx.globalAlpha=0.5; ctx.lineWidth = p.radius * 1.5; ctx.lineCap = 'round'; ctx.stroke(); ctx.globalAlpha=1.0;}
@@ -921,7 +1050,6 @@
                     }
                 }
 
-                // Enemy Projectiles
                 for (let i = enemyProjectiles.length - 1; i >= 0; i--) { let ep = enemyProjectiles[i]; ep.x += ep.vx; ep.y += ep.vy; ctx.shadowBlur = 15; ctx.shadowColor = ep.color; ctx.beginPath(); ctx.arc(ep.x, ep.y, ep.radius, 0, Math.PI * 2); ctx.fillStyle = ep.color; ctx.fill(); ctx.shadowBlur = 0; if (ep.x < 0 || ep.x > WORLD_WIDTH || ep.y < 0 || ep.y > WORLD_HEIGHT) { enemyProjectiles.splice(i, 1); continue; } 
                 if (!player.isDashing && Math.hypot(ep.x - player.x, ep.y - player.y) < ep.radius + player.radius) { 
                     let dmgTaken = Math.max(1, ep.damage - player.def);
@@ -929,7 +1057,6 @@
                     if (player.hp <= 0) switchScreen(STATES.GAME_OVER); 
                 } }
 
-                // Enemies Logic
                 for (let j = enemies.length - 1; j >= 0; j--) {
                     let enemy = enemies[j]; const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
                     if (player.hasAura && dist <= player.auraRadius) { enemy.hp -= player.auraDamage; if(frames % 10 === 0 && showDmgSetting) addFloatingText(enemy.x, enemy.y, Math.floor(player.auraDamage*10), '#ff8800'); if (enemy.hp <= 0) { expGems.push({ x: enemy.x, y: enemy.y, value: enemy.expReward, type: 'exp' }); handleEnemyKill(enemy); if(enemy.isBoss) { document.getElementById('end-title').innerText = "VICTORY"; document.getElementById('end-title').style.color = "#00ffcc"; switchScreen(STATES.GAME_OVER); } enemies.splice(j, 1); continue; } }
@@ -940,8 +1067,9 @@
                     else if (enemy.type === 'sniper') { if (enemy.state === 'moving') { if (dist > 500) { enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed; } else if (dist < 300) { enemy.x -= ((player.x - enemy.x) / dist) * enemy.speed; enemy.y -= ((player.y - enemy.y) / dist) * enemy.speed; } if (frames - enemy.stateTimer > 150) { enemy.state = 'aiming'; enemy.stateTimer = frames; enemy.targetX = player.x; enemy.targetY = player.y; crosshairs.push({x: player.x, y: player.y, radius: 30, framesLeft: 60}); } } else if (enemy.state === 'aiming' && frames - enemy.stateTimer > 60) { const angle = Math.atan2(enemy.targetY - enemy.y, enemy.targetX - enemy.x); enemyProjectiles.push({ x: enemy.x, y: enemy.y, vx: Math.cos(angle) * 8, vy: Math.sin(angle) * 8, radius: 5, color: '#00ff44', damage: enemy.damage }); enemy.state = 'moving'; enemy.stateTimer = frames; } } 
                     else if (enemy.isBoss) {
                         enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed;
-                        if (!enemy.isFiring && frames - enemy.stateTimer > 150) { enemy.stateTimer = frames; enemy.isFiring = true; enemy.fireDelay = 45; crosshairs.push({x: player.x, y: player.y, radius: 60, framesLeft: 45}); enemy.targetX = player.x; enemy.targetY = player.y; }
-                        if (enemy.isFiring && frames - enemy.stateTimer >= enemy.fireDelay) { enemy.isFiring = false; const angleToPlayer = Math.atan2(enemy.targetY - enemy.y, enemy.targetX - enemy.x); for(let i = -2; i <= 2; i++) { let spreadAngle = angleToPlayer + (i * 0.2); enemyProjectiles.push({ x: enemy.x, y: enemy.y, vx: Math.cos(spreadAngle) * 8, vy: Math.sin(spreadAngle) * 8, radius: 8, color: '#ff0044', damage: 30 }); } }
+                        // Boss bắn đạn dày hơn
+                        if (!enemy.isFiring && frames - enemy.stateTimer > 120) { enemy.stateTimer = frames; enemy.isFiring = true; enemy.fireDelay = 45; crosshairs.push({x: player.x, y: player.y, radius: 60, framesLeft: 45}); enemy.targetX = player.x; enemy.targetY = player.y; }
+                        if (enemy.isFiring && frames - enemy.stateTimer >= enemy.fireDelay) { enemy.isFiring = false; const angleToPlayer = Math.atan2(enemy.targetY - enemy.y, enemy.targetX - enemy.x); for(let i = -3; i <= 3; i++) { let spreadAngle = angleToPlayer + (i * 0.2); enemyProjectiles.push({ x: enemy.x, y: enemy.y, vx: Math.cos(spreadAngle) * 9, vy: Math.sin(spreadAngle) * 9, radius: 8, color: '#ff0044', damage: 35 }); } }
                     } else { if (dist > 0) { enemy.x += ((player.x - enemy.x) / dist) * enemy.speed; enemy.y += ((player.y - enemy.y) / dist) * enemy.speed; } }
                     
                     ctx.shadowBlur = enemy.isElite ? (enemy.isBoss? 40: 25) : 15; ctx.shadowColor = enemy.color; ctx.beginPath(); ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2); ctx.fillStyle = enemy.color; ctx.fill(); ctx.shadowBlur = 0;
@@ -953,7 +1081,6 @@
                     }
                 }
 
-                // Draw Player
                 if (frames - player.lastHitFrame > 60 || Math.floor(frames / 5) % 2 === 0) { 
                     ctx.beginPath(); ctx.arc(player.x, player.y, player.radius + 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
                     ctx.shadowBlur = 20; ctx.shadowColor = player.color; ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2); ctx.fillStyle = player.color; ctx.fill(); ctx.shadowBlur = 0; 
@@ -961,7 +1088,6 @@
 
                 ctx.restore();
 
-                // Draw Texts
                 for(let i=floatingTexts.length-1; i>=0; i--) {
                     let ft = floatingTexts[i]; ctx.fillStyle = ft.color; ctx.globalAlpha = ft.alpha; ctx.font = `bold ${ft.size}px 'Rajdhani', sans-serif`; ctx.textAlign="center"; ctx.shadowBlur = 5; ctx.shadowColor = '#000'; ctx.fillText(ft.text, ft.x - camera.x, ft.y - camera.y); ctx.globalAlpha = 1.0; ctx.shadowBlur = 0; ft.y += ft.dy; ft.alpha -= 0.02; if(ft.alpha <= 0) floatingTexts.splice(i, 1);
                 }
@@ -970,7 +1096,6 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // Khởi chạy
         applyLanguage();
         animateParticles();
         switchScreen(STATES.MENU);
