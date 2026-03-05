@@ -43,7 +43,8 @@
         
         <div class="version-info">v0.0.1 Alpha - WebGL Engine Ready</div>
     </div>
-<div id="loading-screen" class="hidden">
+
+    <div id="loading-screen" class="hidden">
         <div class="loading-content">
             <div class="loading-icon"></div>
             <div class="loading-text">Synchronizing World Data...</div>
@@ -53,6 +54,7 @@
             <div class="progress-percentage" id="progress-text">0%</div>
         </div>
     </div>
+
     <div id="game-world" class="hidden-world">
         <div class="layer sky"></div>
         <div class="layer mountains-back"></div>
@@ -63,92 +65,18 @@
             <div class="player-sprite" id="player-visual">
                 <div class="player-core"></div>
                 <div class="player-trail"></div>
+                
+                <div class="sword-slash" id="sword-slash"></div>
             </div>
         </div>
+
+        <div class="enemy" id="enemy-1">
+            <div class="enemy-core"></div>
+            <div class="enemy-hp-bar"><div class="enemy-hp-fill" id="enemy-hp-fill"></div></div>
         </div>
+
     </div>
-    ```
 
----
-
-### Bước 2: Thêm Nghệ thuật Môi trường vào `style.css`
-
-Mở file `style.css`, cuộn xuống **DƯỚI CÙNG** và dán toàn bộ đoạn mã này. Chú ý cách tôi dùng `box-shadow` và màu sắc để tạo cảm giác mặt đất đang phát ra nguồn năng lượng bí ẩn.
-
-```css
-/* =========================================
-   HỆ THỐNG THẾ GIỚI MỞ (GAME WORLD)
-   ========================================= */
-
-#game-world {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background-color: var(--bg-dark);
-    z-index: 50; /* Nằm dưới Loading Screen nhưng trên Menu */
-    opacity: 0;
-    pointer-events: none; /* Không cho tương tác khi chưa load xong */
-    transition: opacity 2s ease-in-out; /* Hiệu ứng sáng dần lên (Fade in) siêu mượt */
-}
-
-/* Class kích hoạt thế giới sau khi load xong */
-#game-world.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.layer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-/* 1. Bầu trời ma thuật (Gradient từ tối sang xanh sẫm) */
-.sky {
-    background: linear-gradient(to bottom, #05070a 0%, #111827 50%, #1e293b 100%);
-    z-index: 1;
-}
-
-/* 2. Dãy núi xa (Dùng kỹ thuật Inline SVG để vẽ núi trực tiếp bằng code) */
-.mountains-back {
-    height: 60%;
-    /* Mã hóa SVG thành background image */
-    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg"><path d="M0,300 L0,150 L150,50 L300,200 L500,80 L700,220 L850,100 L1000,250 L1000,300 Z" fill="%230f172a"/></svg>') repeat-x bottom left;
-    background-size: auto 100%;
-    z-index: 2;
-    opacity: 0.6; /* Mờ đi để tạo hiệu ứng không khí xa xăm */
-}
-
-/* 3. Dãy núi gần (Màu đậm hơn, sắc nét hơn) */
-.mountains-front {
-    height: 40%;
-    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg"><path d="M0,300 L0,200 L100,120 L250,220 L400,150 L600,250 L800,130 L1000,200 L1000,300 Z" fill="%23090e17"/></svg>') repeat-x bottom left;
-    background-size: auto 100%;
-    z-index: 3;
-}
-
-/* 4. Mặt đất (Nơi nhân vật sẽ đứng và chiến đấu) */
-.ground {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 15vh; /* Chiếm 15% chiều cao màn hình từ dưới lên */
-    background: linear-gradient(to bottom, #020406 0%, #000000 100%);
-    
-    /* Viền trên cùng phát sáng màu Cyan ma thuật */
-    border-top: 2px solid var(--primary-color);
-    box-shadow: 0 -15px 40px rgba(0, 240, 255, 0.15), 
-                inset 0 10px 20px rgba(0, 240, 255, 0.05);
-    z-index: 10;
-}
-    <script src="script.js"></script> </body>
-</html>
     <script src="script.js"></script>
 </body>
 </html>
