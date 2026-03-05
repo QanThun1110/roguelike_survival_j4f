@@ -1,194 +1,51 @@
-// Hệ thống tạo hạt (Particle System) cho Background
-class ParticleSystem {
-    constructor(containerId, count) {
-        this.container = document.getElementById(containerId);
-        this.count = count;
-        this.init();
-    }
-
-    init() {
-        for (let i = 0; i < this.count; i++) {
-            this.createParticle();
-        }
-    }
-
-    createParticle() {
-        const particle = document.createElement('div');
-        
-        // Cấu hình CSS inline cho từng hạt
-        particle.style.position = 'absolute';
-        particle.style.width = Math.random() * 3 + 1 + 'px';
-        particle.style.height = particle.style.width;
-        particle.style.background = '#00f0ff'; // Màu cyan
-        particle.style.borderRadius = '50%';
-        particle.style.boxShadow = '0 0 5px #00f0ff';
-        particle.style.opacity = Math.random() * 0.5 + 0.2;
-        
-        // Vị trí ngẫu nhiên
-        particle.style.left = Math.random() * 100 + 'vw';
-        particle.style.top = Math.random() * 100 + 'vh';
-        
-        // Hiệu ứng di chuyển
-        const duration = Math.random() * 10 + 5; // 5-15 giây
-        particle.animate([
-            { transform: 'translateY(0) scale(1)', opacity: particle.style.opacity },
-            { transform: `translateY(-100px) scale(0)`, opacity: 0 }
-        ], {
-            duration: duration * 1000,
-            iterations: Infinity,
-            easing: 'ease-in-out'
-        });
-
-        this.container.appendChild(particle);
-    }
-}
-
-// Khởi tạo hệ thống khi DOM tải xong
-document.addEventListener('DOMContentLoaded', () => {
-    // Khởi tạo 50 hạt bụi ma thuật
-    new ParticleSystem('particle-container', 50);
-
-    // Xử lý sự kiện click của Menu
-    const menuButtons = document.querySelectorAll('.menu-btn');
-    
-    menuButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const action = btn.getAttribute('data-action');
-            
-            // Âm thanh click giả định (bạn có thể chèn Audio object vào đây)
-            console.log(`System: Executing [${action}] protocol...`);
-            
-            // Logic chuyển cảnh sẽ viết ở đây
-            switch(action) {
-                case 'new-game':
-                    startLoadingSequence(); // Gọi hàm Loading cực ngầu vừa viết
-                    break;
-                //...
-                case 'quit':
-                    window.close(); // Lưu ý: Trình duyệt có thể chặn lệnh này nếu không phải pop-up
-                    break;
-                default:
-                    console.log('Feature currently in development.');
-            }
-        });
-    });
-});
-// HÀM XỬ LÝ QUÁ TRÌNH LOADING (Đã bao gồm Bước 4: Kích hoạt Game)
-function startLoadingSequence() {
-    const menuContainer = document.querySelector('.menu-container');
-    const loadingScreen = document.getElementById('loading-screen');
-    const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
-    const loadingText = document.querySelector('.loading-text');
-
-    const loreTexts = [
-        "Synchronizing World Data...",
-        "Awakening the Elements...",
-        "Calibrating Combat Physics...",
-        "Rendering Ethereal Landscapes...",
-        "Establishing Connection..."
-    ];
-
-    // 1. Làm mờ Menu chính đi
-    menuContainer.style.transition = "opacity 0.5s ease";
-    menuContainer.style.opacity = "0";
-
-    // 2. Chờ 0.5s cho menu mờ hẳn, rồi hiện Loading Screen lên
-    setTimeout(() => {
-        loadingScreen.classList.remove('hidden');
-        
-        let progress = 0;
-        let textIndex = 0;
-
-        const textInterval = setInterval(() => {
-            textIndex = (textIndex + 1) % loreTexts.length;
-            loadingText.innerText = loreTexts[textIndex];
-        }, 900);
-
-        const loadInterval = setInterval(() => {
-            progress += Math.floor(Math.random() * 6) + 1; 
-            
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(loadInterval);
-                clearInterval(textInterval);
-                
-                loadingText.innerText = "Welcome to Ethereal.";
-                
-                // Giữ ở 100% khoảng 1 giây rồi mờ đi
-                setTimeout(() => {
-                    loadingScreen.classList.add('hidden'); // Ẩn Loading đi
-                    console.log("System: Game World Initialized!");
-                    
-                    // --- ĐOẠN CODE KÍCH HOẠT THẾ GIỚI VÀ NHÂN VẬT ---
-                    const gameWorld = document.getElementById('game-world');
-                    const particleContainer = document.getElementById('particle-container');
-                    
-                    // Hiện thế giới game lên
-                    gameWorld.classList.add('active');
-                    
-                    // CHÍNH LÀ CHỖ NÀY: Gọi vòng lặp game để nhân vật bắt đầu hoạt động!
-                    gameLoop(); 
-                    
-                    // Dọn dẹp Menu cho nhẹ máy
-                    setTimeout(() => {
-                        menuContainer.style.display = 'none';
-                        particleContainer.style.display = 'none';
-                        document.querySelector('.game-background').style.display = 'none';
-                    }, 500); 
-                    // ------------------------------------------------
-
-                }, 1000);
-            }
-            
-            progressBar.style.width = `${progress}%`;
-            progressText.innerText = `${progress}%`;
-            
-        }, 120);
-
-    }, 500);
-}
 // =========================================
-// HỆ THỐNG VẬT LÝ VÀ ĐIỀU KHIỂN NHÂN VẬT
-// =========================================
-
-// =========================================
-// HỆ THỐNG VẬT LÝ, CAMERA VÀ ĐIỀU KHIỂN
+// HỆ THỐNG VẬT LÝ, CAMERA, ĐIỀU KHIỂN & COMBAT
 // =========================================
 
 const player = {
     element: document.getElementById('player'),
     visual: document.getElementById('player-visual'),
-    x: 500,                     // Vị trí X trong THẾ GIỚI THỰC (Không phải trên màn hình nữa)
-    y: 0,                       // Vị trí Y (0 là mặt đất)
-    vx: 0,                      // Vận tốc trục X
-    vy: 0,                      // Vận tốc trục Y
-    speed: 8,                   // Tốc độ chạy (Tăng lên một chút cho đã)
-    jumpForce: 15,              // Lực nhảy
-    gravity: 0.8,               // Trọng lực
+    x: 500,
+    y: 0,
+    vx: 0,
+    vy: 0,
+    speed: 8,
+    jumpForce: 15,
+    gravity: 0.8,
     width: 40,
+    height: 80, // Thêm chiều cao để tính va chạm
     isGrounded: true,
-    direction: 1                
+    direction: 1,
+    isAttacking: false
 };
 
-// Khởi tạo Camera bám đuổi
-const camera = {
-    x: 0,
-    smoothSpeed: 0.08 // Độ mượt của camera (Càng nhỏ camera bám càng trễ, tạo cảm giác Cinematic)
+// Khai báo Thực thể Kẻ địch
+const enemy = {
+    element: document.getElementById('enemy-1'),
+    hpFill: document.getElementById('enemy-hp-fill'),
+    x: 1200,    // Quái đứng ở tọa độ 1200 (Bên phải nhân vật một đoạn)
+    y: 0,
+    width: 50,
+    height: 50,
+    maxHp: 3,   // Chém 3 nhát sẽ chết
+    hp: 3,
+    isDead: false,
+    isInvulnerable: false // Thời gian tàng hình ngắn sau khi bị chém (i-frames)
 };
 
-// Lấy các lớp background để làm hiệu ứng Parallax
+const camera = { x: 0, smoothSpeed: 0.08 };
+
 const mountainsBack = document.querySelector('.mountains-back');
 const mountainsFront = document.querySelector('.mountains-front');
 const ground = document.querySelector('.ground');
 
-// Theo dõi phím bấm
-const keys = { a: false, d: false, w: false, space: false };
+const keys = { a: false, d: false, w: false, space: false, j: false };
 
 window.addEventListener('keydown', (e) => {
     if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.a = true;
     if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.d = true;
     if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp' || e.code === 'Space') keys.w = true;
+    if ((e.key === 'j' || e.key === 'J') && !player.isAttacking) performAttack();
 });
 
 window.addEventListener('keyup', (e) => {
@@ -197,78 +54,113 @@ window.addEventListener('keyup', (e) => {
     if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp' || e.code === 'Space') keys.w = false;
 });
 
-// Vòng lặp Game 60FPS
+// Hàm kiểm tra va chạm giữa 2 hình chữ nhật (Hitbox)
+function checkCollision(r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h) {
+    return (
+        r1x < r2x + r2w &&
+        r1x + r1w > r2x &&
+        r1y < r2y + r2h &&
+        r1y + r1h > r2y
+    );
+}
+
+// HÀM XỬ LÝ COMBAT & GÂY SÁT THƯƠNG
+function performAttack() {
+    player.isAttacking = true;
+    player.vx = player.direction * 12; // Lướt tới (Dash)
+    
+    // 1. Tính toán vùng sát thương của nhát chém (Sword Hitbox)
+    // Nếu quay phải, vùng chém nằm trước mặt. Quay trái, vùng chém nằm sau lưng (trên trục X)
+    let swordHitboxX = player.direction === 1 ? player.x + player.width : player.x - 60;
+    let swordHitboxY = player.y; 
+    let swordHitboxW = 60; // Chiều dài nhát chém
+    let swordHitboxH = 80; // Chiều cao nhát chém
+
+    // 2. Kiểm tra va chạm với Quái
+    if (!enemy.isDead && !enemy.isInvulnerable) {
+        let isHit = checkCollision(
+            swordHitboxX, swordHitboxY, swordHitboxW, swordHitboxH,
+            enemy.x, enemy.y, enemy.width, enemy.height
+        );
+
+        if (isHit) {
+            enemy.hp -= 1; // Trừ 1 máu
+            enemy.isInvulnerable = true;
+            enemy.element.classList.add('hit'); // Bật hiệu ứng chớp trắng
+            
+            // Cập nhật thanh máu UI (Tính phần trăm máu còn lại)
+            enemy.hpFill.style.width = `${(enemy.hp / enemy.maxHp) * 100}%`;
+
+            // Kiểm tra chết
+            if (enemy.hp <= 0) {
+                enemy.isDead = true;
+                enemy.element.classList.add('dead'); // Bật hiệu ứng tan biến
+            }
+
+            // Tắt chớp trắng và hết trạng thái bất tử sau 0.4s
+            setTimeout(() => {
+                enemy.element.classList.remove('hit');
+                enemy.isInvulnerable = false;
+            }, 400);
+        }
+    }
+    
+    // Kết thúc đòn đánh của nhân vật
+    setTimeout(() => { player.isAttacking = false; }, 300);
+}
+
 function gameLoop() {
-    // 1. XỬ LÝ VẬT LÝ VÀ DI CHUYỂN
-    if (keys.a) {
-        player.vx = -player.speed;
-        player.direction = -1;
-    } else if (keys.d) {
-        player.vx = player.speed;
-        player.direction = 1;
+    // 1. VẬT LÝ NHÂN VẬT
+    if (!player.isAttacking) {
+        if (keys.a) { player.vx = -player.speed; player.direction = -1; } 
+        else if (keys.d) { player.vx = player.speed; player.direction = 1; } 
+        else {
+            player.vx *= 0.7; 
+            if (Math.abs(player.vx) < 0.5) player.vx = 0;
+        }
     } else {
-        player.vx *= 0.7; // Ma sát trượt
-        if (Math.abs(player.vx) < 0.5) player.vx = 0;
+        player.vx *= 0.8; // Ma sát hãm đà lướt
     }
 
-    if (keys.w && player.isGrounded) {
+    if (keys.w && player.isGrounded && !player.isAttacking) {
         player.vy = player.jumpForce;
         player.isGrounded = false;
     }
     
     player.vy -= player.gravity;
-
-    // Cập nhật tọa độ thế giới (Vũ trụ game giờ là vô tận!)
     player.x += player.vx;
     player.y += player.vy;
 
-    // Chặn không cho rớt xuống lòng đất
-    if (player.y <= 0) {
-        player.y = 0;
-        player.vy = 0;
-        player.isGrounded = true;
-    }
-
-    // Chặn không cho đi lùi quá ranh giới bên trái của thế giới (Tọa độ 0)
+    if (player.y <= 0) { player.y = 0; player.vy = 0; player.isGrounded = true; }
     if (player.x < 0) player.x = 0;
 
-    // ==========================================
-    // 2. XỬ LÝ CAMERA BÁM ĐUỔI (CINEMATIC LERP)
-    // ==========================================
-    
-    // Tính toán vị trí camera lý tưởng: Giữ nhân vật ở chính giữa màn hình
+    // 2. CAMERA LERP
     let targetCameraX = player.x - (window.innerWidth / 2) + (player.width / 2);
-    
-    // Không cho camera lùi ra ngoài ranh giới bên trái của thế giới
     if (targetCameraX < 0) targetCameraX = 0;
-
-    // Di chuyển camera từ từ về vị trí lý tưởng (Lerp algorithm)
     camera.x += (targetCameraX - camera.x) * camera.smoothSpeed;
 
-    // ==========================================
-    // 3. CẬP NHẬT HIỂN THỊ (RENDER & PARALLAX)
-    // ==========================================
-
-    // Vị trí nhân vật trên màn hình máy tính = Tọa độ thế giới - Tọa độ Camera
+    // 3. RENDER NHÂN VẬT
     const screenX = player.x - camera.x;
     player.element.style.transform = `translate(${screenX}px, ${-player.y}px)`;
     
-    // Cập nhật Animation nhân vật
     let transformString = `scaleX(${player.direction})`;
-    if (!player.isGrounded) {
-        player.visual.className = 'player-sprite jumping';
-    } else if (Math.abs(player.vx) > 1) {
-        player.visual.className = 'player-sprite running';
-    } else {
-        player.visual.className = 'player-sprite idle';
-    }
+    if (player.isAttacking) player.visual.className = 'player-sprite attacking';
+    else if (!player.isGrounded) player.visual.className = 'player-sprite jumping';
+    else if (Math.abs(player.vx) > 1) player.visual.className = 'player-sprite running';
+    else player.visual.className = 'player-sprite idle';
+    
     player.visual.style.transform = transformString;
 
-    // Cập nhật Parallax Scrolling cho Background
-    // Lớp càng xa, nhân với số càng nhỏ để di chuyển chậm lại
-    mountainsBack.style.backgroundPositionX = `${-camera.x * 0.15}px`;  // Chậm nhất
-    mountainsFront.style.backgroundPositionX = `${-camera.x * 0.4}px`;   // Nhanh vừa
-    ground.style.backgroundPositionX = `${-camera.x * 1}px`;             // Nhanh bằng nhân vật (100%)
+    // 4. RENDER BACKGROUND PARALLAX
+    mountainsBack.style.backgroundPositionX = `${-camera.x * 0.15}px`;  
+    mountainsFront.style.backgroundPositionX = `${-camera.x * 0.4}px`;   
+    ground.style.backgroundPositionX = `${-camera.x * 1}px`;             
+
+    // 5. RENDER KẺ ĐỊCH VÀO CAMERA THẾ GIỚI MỞ
+    if (!enemy.isDead || enemy.element.classList.contains('dead')) {
+        const enemyScreenX = enemy.x - camera.x;
+        enemy.element.style.transform = `translate(${enemyScreenX}px, ${-enemy.y}px)`;
+    }
 
     requestAnimationFrame(gameLoop);
 }
