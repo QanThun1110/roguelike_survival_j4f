@@ -1,0 +1,367 @@
+:root {
+    --primary-color: #00f0ff; 
+    --bg-dark: #0a0e17;
+    --text-glow: 0 0 10px rgba(0, 240, 255, 0.5);
+    --btn-bg: rgba(10, 14, 23, 0.6);
+    --font-title: 'Cinzel', serif;
+    --font-ui: 'Montserrat', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none; 
+}
+
+body, html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    font-family: var(--font-ui);
+}
+
+/* Background gradient u ám bí ẩn */
+.game-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #1a2235 0%, #05070a 100%);
+    z-index: 1;
+}
+
+/* Hạt particles JS sẽ sinh ra ở đây */
+#particle-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.menu-container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding-left: 10%; 
+}
+
+/* Xử lý Title */
+.game-title {
+    margin-bottom: 50px;
+    animation: float 4s ease-in-out infinite;
+}
+
+.title-main {
+    font-family: var(--font-title);
+    font-size: 5rem;
+    color: #ffffff;
+    letter-spacing: 15px;
+    text-shadow: var(--text-glow);
+}
+
+.title-sub {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    letter-spacing: 8px;
+    margin-top: -10px;
+    opacity: 0.8;
+}
+
+/* Xử lý Navigation Buttons */
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 350px;
+}
+
+.menu-btn {
+    position: relative;
+    background: var(--btn-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 30px;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.btn-text {
+    position: relative;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: var(--font-ui);
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: block;
+}
+
+.menu-btn:hover {
+    border-color: var(--primary-color);
+    box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.2);
+    transform: translateX(15px); 
+}
+
+.menu-btn:hover .btn-text {
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--primary-color);
+    transform: scale(1.05);
+}
+
+.menu-btn .btn-glare {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+    transform: skewX(-20deg);
+    transition: 0s;
+    z-index: 1;
+}
+
+.menu-btn:hover .btn-glare {
+    left: 200%;
+    transition: left 0.6s ease-in-out;
+}
+
+.version-info {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+/* =========================================
+   HỆ THỐNG LOADING SCREEN
+   ========================================= */
+
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-dark); 
+    z-index: 999; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.8s ease-in-out;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+    max-width: 700px;
+}
+
+.loading-icon {
+    width: 50px;
+    height: 50px;
+    border: 3px solid transparent;
+    border-top-color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1.2s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+    margin-bottom: 25px;
+}
+
+.loading-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: var(--font-ui);
+    letter-spacing: 3px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px var(--primary-color);
+    height: 24px; 
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+    transition: width 0.1s linear; 
+}
+
+.progress-percentage {
+    margin-top: 15px;
+    color: var(--primary-color);
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* =========================================
+   HỆ THỐNG THẾ GIỚI MỞ (GAME WORLD)
+   ========================================= */
+
+#game-world {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    z-index: 50; 
+    opacity: 0;
+    pointer-events: none; 
+    transition: opacity 2s ease-in-out; 
+}
+
+#game-world.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.sky {
+    background: linear-gradient(to bottom, #05070a 0%, #111827 50%, #1e293b 100%);
+    z-index: 1;
+}
+
+.mountains-back {
+    height: 60%;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg"><path d="M0,300 L0,150 L150,50 L300,200 L500,80 L700,220 L850,100 L1000,250 L1000,300 Z" fill="%230f172a"/></svg>') repeat-x bottom left;
+    background-size: auto 100%;
+    z-index: 2;
+    opacity: 0.6; 
+}
+
+.mountains-front {
+    height: 40%;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg"><path d="M0,300 L0,200 L100,120 L250,220 L400,150 L600,250 L800,130 L1000,200 L1000,300 Z" fill="%23090e17"/></svg>') repeat-x bottom left;
+    background-size: auto 100%;
+    z-index: 3;
+}
+
+/* 4. Mặt đất (Nơi nhân vật sẽ đứng và chiến đấu) - CẬP NHẬT HIỆU ỨNG PARALLAX Ở ĐÂY */
+.ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15vh;
+    /* Thêm các vạch kẻ dọc mờ ảo (Lưới không gian) để thấy rõ tốc độ chạy */
+    background: 
+        repeating-linear-gradient(90deg, transparent, transparent 200px, rgba(0, 240, 255, 0.15) 200px, rgba(0, 240, 255, 0.15) 202px),
+        linear-gradient(to bottom, #020406 0%, #000000 100%);
+    
+    border-top: 2px solid var(--primary-color);
+    box-shadow: 0 -15px 40px rgba(0, 240, 255, 0.15), 
+                inset 0 10px 20px rgba(0, 240, 255, 0.05);
+    z-index: 10;
+    will-change: background-position; /* Tối ưu hóa GPU cho việc cuộn */
+}
+
+/* =========================================
+   HỆ THỐNG NHÂN VẬT & ANIMATION
+   ========================================= */
+
+#player {
+    position: absolute;
+    bottom: 15vh; 
+    left: 10vw; 
+    width: 40px;  
+    height: 80px; 
+    z-index: 20;
+    will-change: transform; 
+}
+
+.player-sprite {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.1s ease-out; 
+}
+
+.player-core {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #ffffff 0%, var(--primary-color) 100%);
+    border-radius: 20px 20px 5px 5px; 
+    box-shadow: 0 0 20px var(--primary-color), 
+                inset 0 0 10px rgba(255,255,255,0.8);
+    position: relative;
+    z-index: 2;
+}
+
+.player-trail {
+    position: absolute;
+    bottom: -5px;
+    left: 10%;
+    width: 80%;
+    height: 10px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    filter: blur(8px);
+    opacity: 0.8;
+}
+
+/* --- HỆ THỐNG ANIMATION CƠ BẢN --- */
+
+@keyframes breathe {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.95) translateY(2px); }
+}
+.idle .player-core {
+    animation: breathe 2s infinite ease-in-out;
+}
+
+.running .player-core {
+    transform: skewX(-10deg) scaleY(0.95);
+    box-shadow: 0 0 30px var(--primary-color);
+}
+
+.jumping .player-core {
+    transform: scaleY(1.1) scaleX(0.9);
+}
